@@ -5,6 +5,7 @@ import { Loot } from "../entities/Loot";
 import type { Orc } from "../entities/Orc";
 import { gameStore } from "../stores/gameStore";
 import { CombatSystem } from "../systems/CombatSystem";
+import { calculateDropChance } from "../systems/calculations";
 import { EffectsManager } from "../systems/EffectsManager";
 import { LogSystem } from "../systems/LogSystem";
 import { createProceduralMap } from "../systems/MapRenderer";
@@ -407,12 +408,13 @@ export class GameScene extends Phaser.Scene {
 		// Check if max bags on field reached
 		if (this.loots.getLength() >= GAME_CONFIG.loot.maxBagsOnField) return;
 
-		// Calculate drop chance: luck - (level - 1) * reduction, minimum 50%
-		const baseLuck = this.getTotalLuck();
-		const levelReduction = (orcLevel - 1) * GAME_CONFIG.orc.levelDropReduction;
-		const dropChance = Math.max(
+		// Calculate drop chance: 10% base + luck% - orcLevel * 2%, minimum 1%
+		const totalLuck = this.getTotalLuck();
+		const dropChance = calculateDropChance(
+			totalLuck,
+			orcLevel,
+			GAME_CONFIG.orc.levelDropReduction,
 			GAME_CONFIG.orc.minDropChance,
-			baseLuck - levelReduction,
 		);
 
 		// Check drop chance

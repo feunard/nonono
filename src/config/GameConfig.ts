@@ -23,7 +23,7 @@ export const GAME_CONFIG = {
 		agility: 50, // 1-1000, reduces attack intervals (1000 = 10ms bow interval)
 		strength: 50, // 1-100, increases damage (100 = 50% more damage)
 		critical: 10, // 0-100, % chance to deal x2 damage
-		luck: 20, // 0-100, % chance for loot drop on kill
+		luck: 10, // Base luck stat, affects drop chance (10% + luck% - orcLevel*2%)
 		dodge: 10, // 0-100, % chance to avoid an attack
 		accuracy: 0, // 0-100, % subtracted from target's dodge before roll
 		armor: 5, // 0-100, % damage reduction
@@ -83,8 +83,8 @@ export const GAME_CONFIG = {
 		levelHpMultiplier: 0.1, // +10% HP per level
 		levelDamageMultiplier: 0.1, // +10% damage per level
 		levelSpeedMultiplier: 0.1, // +10% speed per level
-		levelDropReduction: 1, // -1% drop chance per level
-		minDropChance: 50, // minimum 50% drop chance
+		levelDropReduction: 2, // -2% drop chance per level
+		minDropChance: 1, // minimum 1% drop chance
 	},
 	waves: {
 		initialSpawnInterval: 1000,
