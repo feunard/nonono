@@ -46,7 +46,7 @@ function WaveTooltipContent({ wave }: { wave: number }) {
 	}
 
 	return (
-		<div className="flex flex-col gap-0.5">
+		<div className="flex flex-col gap-0.5 text-neutral-300">
 			<span className="text-neutral-400 font-medium mb-1">Enemy Scaling</span>
 			<span>HP: +{scaling.hpBonus}%</span>
 			<span>Damage: +{scaling.damageBonus}%</span>

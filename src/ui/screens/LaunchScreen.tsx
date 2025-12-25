@@ -29,11 +29,7 @@ export function LaunchScreen({ onStartGame, onOpenEditor }: LaunchScreenProps) {
 					</Button>
 
 					{/* Editor button */}
-					<Button
-						size="lg"
-						onClick={onOpenEditor}
-						className="min-w-48"
-					>
+					<Button size="lg" onClick={onOpenEditor} className="min-w-48">
 						<span>Map Editor</span>
 					</Button>
 				</div>
