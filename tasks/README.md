@@ -12,7 +12,6 @@ Task tracker for AI implementation. Each task is a standalone file with full his
 | [feat-dash-sprint-energy](./backlog/feat-dash-sprint-energy.md) | Medium | Feature | Backlog | - |
 | [feat-bagcard-visual-feedback](./backlog/feat-bagcard-visual-feedback.md) | Low | Feature | Backlog | - |
 | [feat-power-card-list-ux](./backlog/feat-power-card-list-ux.md) | Medium | Feature | Backlog | - |
-| [feat-logging-system](./backlog/feat-logging-system.md) | Medium | Feature | Backlog | - |
 | [feat-agility-dodge-chance](./backlog/feat-agility-dodge-chance.md) | Medium | Feature | Backlog | - |
 | [chore-luck-stat-refactoring](./backlog/chore-luck-stat-refactoring.md) | Medium | Refactor | Backlog | - |
 | [feat-power-prerequisites](./backlog/feat-power-prerequisites.md) | Medium | Feature | Backlog | - |
@@ -21,6 +20,7 @@ Task tracker for AI implementation. Each task is a standalone file with full his
 
 | Task | Priority | Type | Agent |
 |------|----------|------|-------|
+| [feat-logging-system](./done/feat-logging-system.md) | Medium | Feature | Cartman |
 | [feat-strength-armor-pen](./done/feat-strength-armor-pen.md) | Medium | Feature | Kenny |
 | [fix-pause-animations](./done/fix-pause-animations.md) | Medium | Bug | Kenny |
 | [chore-decouple-phaser-react](./done/chore-decouple-phaser-react.md) | High | Refactor | Francis |

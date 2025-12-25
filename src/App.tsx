@@ -4,6 +4,7 @@ import { getRandomPowers, type Power } from "./config/PowersConfig";
 import { BootScene } from "./scenes/BootScene";
 import { GameScene } from "./scenes/GameScene";
 import { gameStore, useGameStore } from "./stores/gameStore";
+import { LogSystem } from "./systems/LogSystem";
 import { GameUI } from "./ui/GameUI";
 import { LoadingScreen } from "./ui/LoadingScreen";
 
@@ -102,6 +103,8 @@ export function App() {
 	}, []);
 
 	const handleLootSelect = useCallback((power: Power) => {
+		// Log power pickup
+		LogSystem.logPowerPickup(power);
 		// Apply the selected power to bonus stats
 		gameStore.applyPower(power);
 		// Consume one bag

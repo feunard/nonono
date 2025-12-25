@@ -1,5 +1,7 @@
+import { Download } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useGameStore } from "../../stores/gameStore";
+import { LogSystem } from "../../systems/LogSystem";
 import { Card } from "../primitives/Card";
 
 // Highlight numbers and important keywords in white
@@ -46,6 +48,10 @@ export function LogsCard() {
 		}
 	}, [logsLength]);
 
+	const handleExport = () => {
+		LogSystem.downloadLogs();
+	};
+
 	return (
 		<Card className="w-[512px] h-48 p-2" transparent>
 			{/* Inner recessed chat area */}
@@ -64,6 +70,15 @@ export function LogsCard() {
 							"linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 100%)",
 					}}
 				/>
+				{/* Export button */}
+				<button
+					type="button"
+					onClick={handleExport}
+					className="absolute top-1 right-1 z-20 p-1 rounded bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white transition-colors"
+					title="Export game logs (JSON lines)"
+				>
+					<Download size={14} />
+				</button>
 				{/* Scrollable content */}
 				<div
 					ref={scrollRef}

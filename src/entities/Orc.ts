@@ -2,10 +2,12 @@ import Phaser from "phaser";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
 import { gameStore } from "../stores/gameStore";
 import type { EffectsManager } from "../systems/EffectsManager";
+import { LogSystem } from "../systems/LogSystem";
 import type { PathfindingManager } from "../systems/PathfindingManager";
 import type { Hero } from "./Hero";
 
 export class Orc extends Phaser.Physics.Arcade.Sprite {
+	public readonly orcId: number; // Unique ID for logging
 	public level: number; // Orc level (equals wave number)
 	public health: number;
 	public maxHealth: number;
@@ -62,6 +64,9 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 
 		this.pathfindingManager = pathfindingManager;
 		this.effectsManager = effectsManager;
+
+		// Assign unique ID for logging
+		this.orcId = LogSystem.getNextOrcId();
 
 		// Level = wave number
 		this.level = wave;
@@ -474,7 +479,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 
 		this.health -= finalDamage;
 
-		// Combat log (WoW style) - include orc level
+		// Combat log (WoW style) - include orc level and ID
 		if (ignoreArmor && isCritical) {
 			gameStore.addLog(
 				`You crit Orc L${this.level} for ${finalDamage}! (ARMOR PEN)`,
@@ -484,9 +489,13 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 				`You hit Orc L${this.level} for ${finalDamage}. (ARMOR PEN)`,
 			);
 		} else if (isCritical) {
-			gameStore.addLog(`You crit Orc L${this.level} for ${finalDamage}!`);
+			gameStore.addLog(
+				`You crit Orc L${this.level} #${this.orcId} for ${finalDamage}!`,
+			);
 		} else {
-			gameStore.addLog(`You hit Orc L${this.level} for ${finalDamage}.`);
+			gameStore.addLog(
+				`You hit Orc L${this.level} #${this.orcId} for ${finalDamage}.`,
+			);
 		}
 
 		// Floating damage text
@@ -551,8 +560,8 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		this.play("orc-death");
 		this.scene.events.emit("orcKilled", this);
 
-		// Combat log (WoW style) - include orc level
-		gameStore.addLog(`Orc L${this.level} dies.`);
+		// Combat log (WoW style) - include orc level and ID
+		gameStore.addLog(`Orc L${this.level} #${this.orcId} dies.`);
 
 		if (this.debugGraphics) {
 			this.debugGraphics.destroy();

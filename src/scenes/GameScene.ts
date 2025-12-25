@@ -6,6 +6,7 @@ import type { Orc } from "../entities/Orc";
 import { gameStore } from "../stores/gameStore";
 import { CombatSystem } from "../systems/CombatSystem";
 import { EffectsManager } from "../systems/EffectsManager";
+import { LogSystem } from "../systems/LogSystem";
 import { createProceduralMap } from "../systems/MapRenderer";
 import { PathfindingManager } from "../systems/PathfindingManager";
 import { WaveManager } from "../systems/WaveManager";
@@ -38,6 +39,9 @@ export class GameScene extends Phaser.Scene {
 		this.pausedAt = 0;
 		this.totalPausedTime = 0;
 
+		// Reset logging system for new game
+		LogSystem.reset();
+
 		// Ensure physics and time are running (may be paused from previous game over)
 		this.physics.resume();
 		this.time.paused = false;
@@ -53,6 +57,9 @@ export class GameScene extends Phaser.Scene {
 		if (GAME_CONFIG.debug.showFPS) {
 			this.createFPSDisplay();
 		}
+
+		// Log game start
+		LogSystem.logGameStart(GAME_CONFIG.map.seed);
 
 		// Signal to React that the game is ready
 		gameStore.setGameReady();
@@ -372,16 +379,31 @@ export class GameScene extends Phaser.Scene {
 	private onOrcKilled(orc: Phaser.Physics.Arcade.Sprite): void {
 		this.hero.showCatchphrase();
 		this.effectsManager.deathPoof(orc.x, orc.y);
-		// Cast to Orc to get level for drop chance calculation
+		// Cast to Orc to get level and ID for drop chance calculation and logging
 		const orcEntity = orc as Orc;
-		this.trySpawnLoot(orc.x, orc.y, orcEntity.level);
+
+		// Log orc kill event (we don't have specific kill info here, logged in combat)
+		LogSystem.logOrcKill(
+			orcEntity.orcId,
+			orcEntity.level,
+			"unknown", // Kill source tracked separately in combat
+			0,
+			false,
+		);
+
+		this.trySpawnLoot(orc.x, orc.y, orcEntity.level, orcEntity.orcId);
 	}
 
 	private getTotalLuck(): number {
 		return GAME_CONFIG.hero.luck + gameStore.getState().bonusStats.luck;
 	}
 
-	private trySpawnLoot(x: number, y: number, orcLevel: number): void {
+	private trySpawnLoot(
+		x: number,
+		y: number,
+		orcLevel: number,
+		orcId: number,
+	): void {
 		// Check if max bags on field reached
 		if (this.loots.getLength() >= GAME_CONFIG.loot.maxBagsOnField) return;
 
@@ -398,6 +420,9 @@ export class GameScene extends Phaser.Scene {
 
 		const loot = new Loot(this, x, y);
 		this.loots.add(loot);
+
+		// Log loot drop event
+		LogSystem.logLootDrop(x, y, orcId, orcLevel);
 	}
 
 	private onLootPickup(
@@ -409,8 +434,13 @@ export class GameScene extends Phaser.Scene {
 			return; // Don't pick up, leave bag on ground
 		}
 
+		const lootSprite = loot as Loot;
+
+		// Log loot pickup event
+		LogSystem.logLootPickup(lootSprite.x, lootSprite.y);
+
 		// Destroy the loot sprite
-		(loot as Loot).destroy();
+		lootSprite.destroy();
 
 		// Add to bag inventory - no pause, player opens bag when ready
 		gameStore.addBag();
@@ -444,6 +474,20 @@ export class GameScene extends Phaser.Scene {
 		const survivalTime = this.getElapsedTime();
 		const kills = this.combatSystem.getKillCount();
 		const wave = this.waveManager.getCurrentWave();
+		const state = gameStore.getState();
+
+		// Log hero death
+		LogSystem.logHeroDeath(
+			undefined, // We don't track killer orc ID currently
+			undefined,
+			this.hero.health,
+			this.hero.maxHealth,
+			kills,
+			wave,
+			survivalTime,
+			state.bonusStats,
+			state.collectedPowers.length,
+		);
 
 		this.physics.pause();
 		this.time.paused = true;
