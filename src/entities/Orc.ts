@@ -177,6 +177,12 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 			return;
 		}
 
+		// Don't move while attack animation is playing
+		if (this.isAttacking) {
+			this.setVelocity(0, 0);
+			return;
+		}
+
 		const distanceToHero = Phaser.Math.Distance.Between(
 			this.x,
 			this.y,
@@ -184,18 +190,19 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 			this.target.y,
 		);
 
-		if (distanceToHero < GAME_CONFIG.orc.attackRange) {
+		// Try to attack if in range and attack is ready (not on cooldown)
+		const currentTime = this.scene.time.now;
+		const canAttack =
+			currentTime - this.lastAttackTime >= GAME_CONFIG.orc.attackCooldown;
+
+		if (distanceToHero < GAME_CONFIG.orc.attackRange && canAttack) {
 			this.attack();
 			return;
 		}
 
-		if (this.isAttacking) {
-			this.setVelocity(0, 0);
-			return;
-		}
+		// Keep chasing the hero (even if in attack range but on cooldown)
 
 		// Recalculate path periodically
-		const currentTime = this.scene.time.now;
 		if (
 			currentTime - this.lastPathCalcTime >
 				GAME_CONFIG.orc.pathRecalcInterval &&
@@ -335,16 +342,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		if (this.isDead || !this.target) return;
 
 		this.setVelocity(0, 0);
-
-		const currentTime = this.scene.time.now;
-		if (currentTime - this.lastAttackTime < GAME_CONFIG.orc.attackCooldown) {
-			if (!this.isAttacking && this.anims.currentAnim?.key !== "orc-idle") {
-				this.play("orc-idle");
-			}
-			return;
-		}
-
-		this.lastAttackTime = currentTime;
+		this.lastAttackTime = this.scene.time.now;
 		this.isAttacking = true;
 		this.play("orc-attack");
 
