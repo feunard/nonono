@@ -12,7 +12,6 @@ Task tracker for AI implementation. Each task is a standalone file with full his
 | [feat-dash-sprint-energy](./backlog/feat-dash-sprint-energy.md) | Medium | Feature |
 | [feat-bagcard-visual-feedback](./backlog/feat-bagcard-visual-feedback.md) | Low | Feature |
 | [feat-power-card-list-ux](./backlog/feat-power-card-list-ux.md) | Medium | Feature |
-| [feat-logging-system](./backlog/feat-logging-system.md) | Medium | Feature |
 | [feat-agility-dodge-chance](./backlog/feat-agility-dodge-chance.md) | Medium | Feature |
 | [feat-strength-armor-pen](./backlog/feat-strength-armor-pen.md) | Medium | Feature |
 | [chore-luck-stat-refactoring](./backlog/chore-luck-stat-refactoring.md) | Medium | Refactor |
@@ -20,7 +19,9 @@ Task tracker for AI implementation. Each task is a standalone file with full his
 
 ### In Progress
 
-_No tasks in progress_
+| Task | Priority | Type | Agent |
+|------|----------|------|-------|
+| [feat-logging-system](./in-progress/feat-logging-system.md) | Medium | Feature | Cartman |
 
 ### Done
 

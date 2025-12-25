@@ -4,6 +4,7 @@ import type { Hero } from "../entities/Hero";
 import { Orc } from "../entities/Orc";
 import { gameStore } from "../stores/gameStore";
 import type { EffectsManager } from "./EffectsManager";
+import { LogSystem } from "./LogSystem";
 import type { PathfindingManager } from "./PathfindingManager";
 
 export class WaveManager {
@@ -54,6 +55,9 @@ export class WaveManager {
 		);
 
 		this.scene.events.emit("waveStarted", this.currentWave);
+
+		// Log wave start event
+		LogSystem.logWaveStart(this.currentWave, this.orcsToSpawn);
 
 		this.spawnTimer = this.scene.time.addEvent({
 			delay: this.spawnInterval,
@@ -121,6 +125,20 @@ export class WaveManager {
 		);
 		orc.setTarget(this.hero);
 		this.orcs.add(orc);
+
+		// Log orc spawn event
+		LogSystem.logOrcSpawn(
+			orc.orcId,
+			orc.level,
+			orc.health,
+			orc.maxHealth,
+			orc.damage,
+			orc.armor,
+			orc.dodge,
+			0, // Speed is private, we can't access it - not critical for logging
+			x,
+			y,
+		);
 
 		// Spawn smoke effect
 		this.effectsManager.spawnSmoke(x, y);
