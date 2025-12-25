@@ -317,6 +317,10 @@ export class GameScene extends Phaser.Scene {
 			this.collisionLayer,
 			this.effectsManager,
 		);
+
+		// Enable orc-to-orc collision so orcs don't stack on top of each other
+		this.physics.add.collider(this.waveManager.orcs, this.waveManager.orcs);
+
 		this.combatSystem = new CombatSystem(
 			this,
 			this.hero,
