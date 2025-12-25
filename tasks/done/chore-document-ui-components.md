@@ -1,9 +1,9 @@
 # [chore] Document UI Cards/Dialogs
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Low
 **Type:** Docs
-**Agent:** -
+**Agent:** Kenny
 
 ## Description
 
@@ -11,12 +11,12 @@ Create documentation listing all UI cards and dialogs in the main game screen. E
 
 ## Acceptance Criteria
 
-- [ ] Create `docs/UI.md` documenting all UI components
-- [ ] List all cards (HUD elements visible during gameplay)
-- [ ] List all dialogs/overlays (modal screens)
-- [ ] For each component: What | How | Why
-- [ ] Include file paths for each component
-- [ ] Add rule to `CLAUDE.md` requiring UI doc updates when creating new UI
+- [x] Create `docs/UI.md` documenting all UI components
+- [x] List all cards (HUD elements visible during gameplay)
+- [x] List all dialogs/overlays (modal screens)
+- [x] For each component: What | How | Why
+- [x] Include file paths for each component
+- [x] Add rule to `CLAUDE.md` requiring UI doc updates when creating new UI
 
 ## Document Structure
 
@@ -58,4 +58,9 @@ Add to `CLAUDE.md` Documentation Maintenance table:
 
 ## History
 
-_No history yet_
+- **Kenny**: Created comprehensive UI documentation
+  - Created `docs/UI.md` with all UI components documented
+  - Organized into sections: Screens, Cards (HUD), Debug Cards, Dialogs, Debug Dialogs
+  - Each component has What/How/Why/File format
+  - Added maintenance rule to `CLAUDE.md` documentation table
+  - Updated to include new EnergyBarCard component

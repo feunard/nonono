@@ -105,6 +105,7 @@ When modifying game mechanics, **update the corresponding documentation**:
 | Stats, formulas, caps | `docs/STATS.md` |
 | Combat mechanics | `docs/STATS.md` (Combat Flow section) |
 | Enemy scaling | `docs/STATS.md` (Enemy Scaling section) |
+| UI components (add/modify) | `docs/UI.md` |
 
 **Key files that require doc updates when changed:**
 - `src/config/PowersConfig.ts` → Update `docs/POWERS.md`
@@ -112,6 +113,9 @@ When modifying game mechanics, **update the corresponding documentation**:
 - `src/systems/calculations.ts` → Update `docs/STATS.md`
 - `src/entities/Hero.ts` (stat methods) → Update `docs/STATS.md`
 - `src/entities/Orc.ts` (scaling) → Update `docs/STATS.md`
+- `src/ui/cards/*.tsx` → Update `docs/UI.md`
+- `src/ui/dialogs/*.tsx` → Update `docs/UI.md`
+- `src/ui/screens/*.tsx` → Update `docs/UI.md`
 
 ## AI Agents
 
