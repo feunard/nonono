@@ -48,6 +48,7 @@ type EditorState = {
 	// File handle for File System Access API
 	fileHandle: FileSystemFileHandle | null;
 	fileName: string | null;
+	mapId: string | null;
 	hasUnsavedChanges: boolean;
 
 	// History for undo/redo
@@ -117,6 +118,7 @@ const initialState: EditorState = {
 	isReady: false,
 	fileHandle: null,
 	fileName: null,
+	mapId: null,
 	hasUnsavedChanges: false,
 	history: [],
 	future: [],
@@ -130,7 +132,8 @@ function isFileSystemAccessSupported(): boolean {
 // Create map data JSON from current state
 function createMapJson(state: EditorState): string {
 	const name = state.fileName?.replace(/\.json$/, "") || "Untitled Map";
-	const id = generateMapId(name);
+	// Use preserved ID if available, otherwise generate new one
+	const id = state.mapId || generateMapId(name);
 	const mapData = createMapData(
 		id,
 		name,
@@ -265,6 +268,7 @@ export const useEditorStore = create<EditorState & EditorActions>(
 				set({
 					fileHandle,
 					fileName: file.name,
+					mapId: data.id || null,
 					hasUnsavedChanges: false,
 				});
 			} catch (error) {

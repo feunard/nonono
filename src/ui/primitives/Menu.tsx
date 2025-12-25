@@ -111,6 +111,7 @@ type MenuItemProps = {
 	onClick?: () => void;
 	disabled?: boolean;
 	shortcut?: string;
+	icon?: ReactNode;
 	children: ReactNode;
 };
 
@@ -118,6 +119,7 @@ export function MenuItem({
 	onClick,
 	disabled,
 	shortcut,
+	icon,
 	children,
 }: MenuItemProps) {
 	const { setOpenMenuId } = useContext(MenuContext);
@@ -140,7 +142,10 @@ export function MenuItem({
 					: "text-neutral-200 hover:bg-neutral-700 cursor-pointer",
 			)}
 		>
-			<span>{children}</span>
+			<span className="flex items-center gap-2">
+				{icon && <span className="w-4 text-center opacity-70">{icon}</span>}
+				{children}
+			</span>
 			{shortcut && (
 				<Kbd className="ml-4 px-1.5 py-0.5 text-[10px]">{shortcut}</Kbd>
 			)}
@@ -151,10 +156,11 @@ export function MenuItem({
 // Submenu (nested menu)
 type SubMenuProps = {
 	label: string;
+	icon?: ReactNode;
 	children: ReactNode;
 };
 
-export function SubMenu({ label, children }: SubMenuProps) {
+export function SubMenu({ label, icon, children }: SubMenuProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const timeoutRef = useRef<number | null>(null);
 
@@ -184,7 +190,10 @@ export function SubMenu({ label, children }: SubMenuProps) {
 					"text-neutral-200 hover:bg-neutral-700 cursor-pointer",
 				)}
 			>
-				<span>{label}</span>
+				<span className="flex items-center gap-2">
+					{icon && <span className="w-4 text-center opacity-70">{icon}</span>}
+					{label}
+				</span>
 				<span className="text-neutral-500">▶</span>
 			</div>
 			{isOpen && (
@@ -206,6 +215,7 @@ type MenuCheckboxProps = {
 	checked: boolean;
 	onChange: (checked: boolean) => void;
 	shortcut?: string;
+	icon?: ReactNode;
 	children: ReactNode;
 };
 
@@ -213,6 +223,7 @@ export function MenuCheckbox({
 	checked,
 	onChange,
 	shortcut,
+	icon,
 	children,
 }: MenuCheckboxProps) {
 	const { setOpenMenuId } = useContext(MenuContext);
@@ -230,6 +241,7 @@ export function MenuCheckbox({
 		>
 			<span className="flex items-center gap-2">
 				<span className="w-4 text-center">{checked ? "✓" : ""}</span>
+				{icon && <span className="w-4 text-center opacity-70">{icon}</span>}
 				{children}
 			</span>
 			{shortcut && (

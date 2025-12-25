@@ -179,6 +179,11 @@ export class EditorScene extends Phaser.Scene {
 	}
 
 	private onStoreChange(state: ReturnType<typeof editorStore.getState>): void {
+		// Guard: don't process changes if scene isn't ready
+		if (!this.cameras?.main || !this.tileGraphics) {
+			return;
+		}
+
 		// Check what changed and update accordingly
 		const tilesChanged =
 			state.tiles !== this.cachedTiles ||

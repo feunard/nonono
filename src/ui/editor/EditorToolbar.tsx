@@ -64,61 +64,80 @@ export function EditorToolbar({
 				<MenuBar>
 					{/* File Menu */}
 					<Menu id="file" label="File">
-						<MenuItem onClick={onClearMap}>New Map</MenuItem>
+						<MenuItem icon="□" onClick={onClearMap}>
+							New Map
+						</MenuItem>
 						<MenuSeparator />
-						<SubMenu label="Open Built-in">
+						<SubMenu icon="▤" label="Open Built-in">
 							{availableMaps.map((mapId) => (
-								<MenuItem key={mapId} onClick={() => onLoadMap(mapId)}>
+								<MenuItem icon="▫" key={mapId} onClick={() => onLoadMap(mapId)}>
 									{mapId}
 								</MenuItem>
 							))}
 						</SubMenu>
-						<MenuItem onClick={onOpenFile} shortcut="Ctrl+O">
+						<MenuItem icon="📂" onClick={onOpenFile} shortcut="Ctrl+O">
 							Open...
 						</MenuItem>
 						<MenuSeparator />
-						<MenuItem onClick={onSaveFile} shortcut="Ctrl+S">
+						<MenuItem icon="💾" onClick={onSaveFile} shortcut="Ctrl+S">
 							Save
 						</MenuItem>
-						<MenuItem onClick={onSaveFileAs} shortcut="Ctrl+Shift+S">
+						<MenuItem icon="📄" onClick={onSaveFileAs} shortcut="Ctrl+Shift+S">
 							Save As...
 						</MenuItem>
 						<MenuSeparator />
-						<MenuItem onClick={onBack}>Exit Editor</MenuItem>
+						<MenuItem icon="←" onClick={onBack}>
+							Exit Editor
+						</MenuItem>
 					</Menu>
 
 					{/* Edit Menu */}
 					<Menu id="edit" label="Edit">
-						<MenuItem onClick={onUndo} disabled={!canUndo} shortcut="Ctrl+Z">
+						<MenuItem
+							icon="↶"
+							onClick={onUndo}
+							disabled={!canUndo}
+							shortcut="Ctrl+Z"
+						>
 							Undo
 						</MenuItem>
-						<MenuItem onClick={onRedo} disabled={!canRedo} shortcut="Ctrl+Y">
+						<MenuItem
+							icon="↷"
+							onClick={onRedo}
+							disabled={!canRedo}
+							shortcut="Ctrl+Y"
+						>
 							Redo
 						</MenuItem>
 						<MenuSeparator />
-						<MenuItem onClick={onClearMap}>Clear All</MenuItem>
+						<MenuItem icon="⌫" onClick={onClearMap}>
+							Clear All
+						</MenuItem>
 					</Menu>
 
 					{/* View Menu */}
 					<Menu id="view" label="View">
-						<MenuCheckbox checked={showGrid} onChange={onToggleGrid}>
+						<MenuCheckbox icon="#" checked={showGrid} onChange={onToggleGrid}>
 							Show Grid
 						</MenuCheckbox>
 						<MenuSeparator />
-						<MenuItem onClick={onZoomIn} shortcut="Ctrl++">
+						<MenuItem icon="+" onClick={onZoomIn} shortcut="Ctrl++">
 							Zoom In
 						</MenuItem>
-						<MenuItem onClick={onZoomOut} shortcut="Ctrl+-">
+						<MenuItem icon="−" onClick={onZoomOut} shortcut="Ctrl+-">
 							Zoom Out
 						</MenuItem>
-						<MenuItem disabled>Zoom: {Math.round(zoom * 100)}%</MenuItem>
+						<MenuItem icon="◎" disabled>
+							Zoom: {Math.round(zoom * 100)}%
+						</MenuItem>
 					</Menu>
 
 					{/* Map Menu */}
 					<Menu id="map" label="Map">
-						<SubMenu label="Resize">
+						<SubMenu icon="⤢" label="Resize">
 							{MAP_SIZES.map((size) => (
 								<MenuItem
+									icon="▫"
 									key={size}
 									onClick={() => onSetMapSize(size)}
 									shortcut={mapSize === size ? "●" : ""}
