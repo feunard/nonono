@@ -65,8 +65,8 @@ Cards are HUD elements visible during gameplay. They use the Card primitive for 
 
 ### PowersCard
 
-- **What:** Shows collected power orbs with rank-colored rings
-- **How:** Groups duplicate powers with count badges, shows tooltips on hover with power details
+- **What:** Shows collected power hexagons with rank-colored borders
+- **How:** Groups duplicate powers with count badges, shows tooltips on hover with power details, displays 4-5 per row
 - **Why:** Visual inventory of acquired powers
 - **File:** `src/ui/cards/PowersCard.tsx`
 
