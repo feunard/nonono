@@ -275,3 +275,15 @@ export function rollDodge(
 		randomValue !== undefined ? randomValue * 100 : Math.random() * 100;
 	return effectiveDodge > 0 && roll < effectiveDodge;
 }
+
+/**
+ * Calculate dodge chance bonus from Agility.
+ * Each point of Agility above 100 grants 0.1% dodge chance.
+ * Formula: dodgeChance = max(0, (agility - 100) * 0.1)
+ * @param agility - Total agility value
+ * @returns Dodge chance as 0-100 percentage
+ */
+export function calculateAgilityDodge(agility: number): number {
+	if (agility <= 100) return 0;
+	return (agility - 100) * 0.1;
+}

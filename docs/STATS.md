@@ -103,15 +103,22 @@ When armor penetration procs, the attack ignores the target's armor entirely.
 ### Agility
 
 **Base Value:** 50
-**Purpose:** Reduces attack intervals (faster attacks)
+**Purpose:** Reduces attack intervals (faster attacks) and grants dodge chance
 
-**Formula:**
+**Attack Speed Formula:**
 ```
 agilityModifier = 1 - ((agility - 50) * 0.995) / 450
 attackInterval = baseInterval * agilityModifier / speedMultipliers
 ```
 
-**Scaling Examples:**
+**Dodge Chance Formula:**
+```
+agilityDodge = max(0, (agility - 100) * 0.1%)
+```
+
+Each point of Agility above 100 grants 0.1% dodge chance. This stacks with base dodge and dodge from powers.
+
+**Attack Speed Scaling:**
 | Agility | Interval Multiplier | Bow Interval (base 2000ms) |
 |---------|---------------------|----------------------------|
 | 1 | 1.11x | 2220ms (slower) |
@@ -120,6 +127,15 @@ attackInterval = baseInterval * agilityModifier / speedMultipliers
 | 250 | 0.56x | 1120ms |
 | 500 (cap) | 0.005x | 10ms (200 attacks/sec) |
 
+**Dodge Chance Scaling:**
+| Agility | Dodge Bonus |
+|---------|-------------|
+| ≤100 | 0% |
+| 150 | 5% |
+| 200 | 10% |
+| 300 | 20% |
+| 500 (cap) | 40% |
+
 **Affected By:**
 - Minor Agility (+5)
 - Agility (+10)
@@ -127,7 +143,7 @@ attackInterval = baseInterval * agilityModifier / speedMultipliers
 - Superior Agility (+35)
 - Godlike Agility (+50)
 
-**Note:** Agility affects both bow and sword attack speed.
+**Note:** Agility affects both bow and sword attack speed, and grants dodge chance above 100 AGI.
 
 ---
 
@@ -227,9 +243,15 @@ finalDamage = floor(baseDamage * (1 - effectiveArmor / 100))
 **Base Value:** 10%
 **Purpose:** Chance to completely avoid incoming damage
 
-**Formula:**
+**Total Dodge Formula:**
 ```
-effectiveDodge = max(0, dodge - attackerAccuracy)
+totalDodge = baseDodge + bonusDodge + agilityDodge
+agilityDodge = max(0, (agility - 100) * 0.1%)
+```
+
+**Combat Formula:**
+```
+effectiveDodge = max(0, totalDodge - attackerAccuracy)
 isDodged = random(0, 100) < effectiveDodge
 ```
 
@@ -237,8 +259,9 @@ isDodged = random(0, 100) < effectiveDodge
 
 **Mechanics:**
 - Dodge is rolled before armor
-- Successful dodge triggers "Miss" text
+- Successful dodge triggers "Miss" text and particle effect
 - Riposte can trigger on successful dodge
+- Agility above 100 grants bonus dodge (0.1% per point)
 
 **Affected By:**
 - Quick Reflexes (+3)
@@ -246,6 +269,7 @@ isDodged = random(0, 100) < effectiveDodge
 - Evasive (+10)
 - Ghost Step (+15)
 - Untouchable (+25)
+- Agility (+0.1% per point above 100)
 
 ---
 

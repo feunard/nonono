@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
 import { gameStore } from "../stores/gameStore";
 import {
+	calculateAgilityDodge,
 	getAgilityModifier,
 	getStrengthModifier,
 	STAT_CAPS,
@@ -112,9 +113,12 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		return this.cachedBonusStats.hpRegen;
 	}
 
-	// Get total dodge (base + bonus, capped at 100)
+	// Get total dodge (base + bonus + agility bonus, capped at 100)
+	// Agility bonus: each point above 100 grants 0.1% dodge
 	public getDodge(): number {
-		return Math.min(GAME_CONFIG.hero.dodge + this.cachedBonusStats.dodge, 100);
+		const baseDodge = GAME_CONFIG.hero.dodge + this.cachedBonusStats.dodge;
+		const agilityDodge = calculateAgilityDodge(this.getTotalAgility());
+		return Math.min(baseDodge + agilityDodge, 100);
 	}
 
 	// Arrow power getters

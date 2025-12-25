@@ -1,9 +1,9 @@
 # [feat] Agility grants dodge chance
 
-**Status:** Backlog
+**Status:** In Progress
 **Priority:** Medium
 **Type:** Feature
-**Agent:** -
+**Agent:** Kenny
 
 ## Description
 

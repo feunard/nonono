@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { GAME_CONFIG } from "../../config/GameConfig";
 import { useGameStore } from "../../stores/gameStore";
+import { calculateAgilityDodge } from "../../systems/calculations";
 import { Card } from "../primitives/Card";
 
 type StatRowProps = {
@@ -36,6 +37,11 @@ function StatRow({ icon, label, base, bonus }: StatRowProps) {
 export function HeroStatsCard() {
 	const { hero } = GAME_CONFIG;
 	const bonusStats = useGameStore((state) => state.bonusStats);
+
+	// Calculate total agility and agility-based dodge bonus
+	const totalAgility = hero.agility + bonusStats.agility;
+	const agilityDodge = calculateAgilityDodge(totalAgility);
+	const totalDodgeBonus = bonusStats.dodge + agilityDodge;
 
 	return (
 		<Card className="px-3 py-2 w-fit self-end">
@@ -92,7 +98,7 @@ export function HeroStatsCard() {
 					icon={<Wind className="w-3 h-3" />}
 					label="Dodge"
 					base={hero.dodge}
-					bonus={bonusStats.dodge}
+					bonus={totalDodgeBonus}
 				/>
 			</div>
 		</Card>
