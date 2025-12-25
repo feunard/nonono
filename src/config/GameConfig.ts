@@ -47,6 +47,14 @@ export const GAME_CONFIG = {
 		attackHitboxHeight: 23,
 		attackHitboxOffsetX: 42,
 		attackHitboxOffsetY: 38,
+		// Sprint/Energy system
+		energy: {
+			max: 100, // Maximum energy
+			drainRate: 25, // Energy drained per second while sprinting
+			regenRate: 15, // Energy regenerated per second when not sprinting
+			sprintThreshold: 20, // Minimum energy % to start sprinting
+			speedMultiplier: 1.5, // Speed multiplier while sprinting (1.5 = +50%)
+		},
 	},
 	arrow: {
 		spawnOffset: 40, // pixels from hero center

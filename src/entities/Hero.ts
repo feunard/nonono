@@ -43,6 +43,9 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		S: Phaser.Input.Keyboard.Key;
 		D: Phaser.Input.Keyboard.Key;
 	};
+	private shiftKey!: Phaser.Input.Keyboard.Key;
+	private energy: number = GAME_CONFIG.hero.energy.max;
+	private isSprinting: boolean = false;
 	private lastAutoAttackTime: number = 0;
 	private lastMeleeTime: number = 0;
 	private isDead: boolean = false;
@@ -341,6 +344,9 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 			S: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
 			D: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
 		};
+		this.shiftKey = this.scene.input.keyboard.addKey(
+			Phaser.Input.Keyboard.KeyCodes.SHIFT,
+		);
 	}
 
 	update(orcs?: Phaser.Physics.Arcade.Group, delta?: number): void {
@@ -351,6 +357,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 
 		this.checkBonusHealthChange();
 		this.handleHpRegen(delta);
+		this.handleSprint(delta);
 		this.handleMovement();
 
 		// Compute orc distances once per frame (avoid duplicate iteration)
@@ -431,6 +438,61 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 			this.health = Math.min(this.health + hpToAdd, this.maxHealth);
 			this.regenAccumulator -= hpToAdd;
 		}
+	}
+
+	// Handle sprint energy drain/regen
+	private handleSprint(delta?: number): void {
+		const config = GAME_CONFIG.hero.energy;
+		const dt = delta ?? 16.67;
+		const secondsFraction = dt / 1000;
+
+		const wantsSprint = this.shiftKey?.isDown ?? false;
+		const isMoving = this.body?.velocity.x !== 0 || this.body?.velocity.y !== 0;
+
+		// Check if we can sprint
+		const energyPercent = (this.energy / config.max) * 100;
+		const canStartSprint = energyPercent >= config.sprintThreshold;
+		const canContinueSprint = this.energy > 0;
+
+		// Determine if we should be sprinting
+		if (
+			wantsSprint &&
+			isMoving &&
+			(this.isSprinting ? canContinueSprint : canStartSprint)
+		) {
+			// Drain energy while sprinting
+			this.energy = Math.max(
+				0,
+				this.energy - config.drainRate * secondsFraction,
+			);
+
+			if (!this.isSprinting) {
+				this.isSprinting = true;
+				gameStore.setIsSprinting(true);
+			}
+
+			// Stop sprinting if energy depleted
+			if (this.energy <= 0) {
+				this.isSprinting = false;
+				gameStore.setIsSprinting(false);
+			}
+		} else {
+			// Regenerate energy when not sprinting
+			if (this.energy < config.max) {
+				this.energy = Math.min(
+					config.max,
+					this.energy + config.regenRate * secondsFraction,
+				);
+			}
+
+			if (this.isSprinting) {
+				this.isSprinting = false;
+				gameStore.setIsSprinting(false);
+			}
+		}
+
+		// Update store with current energy
+		gameStore.updateEnergy(this.energy);
 	}
 
 	private handleMeleeAttack(orcData: {
@@ -765,7 +827,11 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	private handleMovement(): void {
-		const speed = this.getTotalMoveSpeed();
+		const baseSpeed = this.getTotalMoveSpeed();
+		const sprintMultiplier = this.isSprinting
+			? GAME_CONFIG.hero.energy.speedMultiplier
+			: 1;
+		const speed = baseSpeed * sprintMultiplier;
 		let velocityX = 0;
 		let velocityY = 0;
 

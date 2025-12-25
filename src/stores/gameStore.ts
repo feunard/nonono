@@ -85,6 +85,8 @@ type GameState = {
 	zoomLevel: number;
 	bagCount: number; // Number of unopened loot bags in inventory
 	isSpawnPaused: boolean; // Debug: whether orc spawning is paused
+	energy: number; // Current energy (0-100)
+	isSprinting: boolean; // Whether sprint is currently active
 };
 
 type UIBatchUpdate = {
@@ -123,6 +125,8 @@ type GameActions = {
 	addBag: () => void;
 	consumeBag: () => void;
 	toggleSpawnPaused: () => void;
+	updateEnergy: (energy: number) => void;
+	setIsSprinting: (isSprinting: boolean) => void;
 	reset: () => void;
 };
 
@@ -188,6 +192,8 @@ const initialState: GameState = {
 	zoomLevel: 2,
 	bagCount: 0,
 	isSpawnPaused: false,
+	energy: 100,
+	isSprinting: false,
 };
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
@@ -292,6 +298,10 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
 	toggleSpawnPaused: () =>
 		set((state) => ({ isSpawnPaused: !state.isSpawnPaused })),
 
+	updateEnergy: (energy) => set({ energy: Math.max(0, Math.min(100, energy)) }),
+
+	setIsSprinting: (isSprinting) => set({ isSprinting }),
+
 	reset: () =>
 		set((state) => ({
 			...initialState,
@@ -338,6 +348,10 @@ export const gameStore = {
 	addBag: () => useGameStore.getState().addBag(),
 	consumeBag: () => useGameStore.getState().consumeBag(),
 	toggleSpawnPaused: () => useGameStore.getState().toggleSpawnPaused(),
+	updateEnergy: (energy: number) =>
+		useGameStore.getState().updateEnergy(energy),
+	setIsSprinting: (isSprinting: boolean) =>
+		useGameStore.getState().setIsSprinting(isSprinting),
 	reset: () => useGameStore.getState().reset(),
 };
 
