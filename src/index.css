@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "Wotfard";
+    src: url("./assets/fonts/wotfard-regular-webfont.woff2") format("woff2"),
+        url("./assets/fonts/wotfard-regular-webfont.ttf") format("truetype"),
+        url("./assets/fonts/wotfard-regular-webfont.eot") format("embedded-opentype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+#app {
+    background: white;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: "Wotfard", system-ui, sans-serif;
+}
+
+/* Subtle scrollbar */
+.scrollbar-hidden {
+    scrollbar-color: gray transparent;
+    scrollbar-width: thin;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+    background: gray;
+    border-radius: 3px;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-track {
+    background: transparent;
+}
