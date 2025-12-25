@@ -87,6 +87,20 @@ export function App() {
 		gameStore.goToMenu();
 	}, []);
 
+	const handleExitToMenu = useCallback(() => {
+		// Destroy Phaser game instance
+		if (gameRef.current) {
+			gameRef.current.destroy(true);
+			gameRef.current = null;
+		}
+		// Reset all stores
+		gameStore.reset();
+		heroStore.reset();
+		inventoryStore.reset();
+		// Go back to menu
+		gameStore.goToMenu();
+	}, []);
+
 	const handleRestart = useCallback(() => {
 		// Reset store state first (clears isGameOver, etc.)
 		gameStore.reset();
@@ -317,6 +331,7 @@ export function App() {
 						onRestart={handleRestart}
 						onResume={handleResume}
 						onPause={handlePause}
+						onExit={handleExitToMenu}
 						onLootSelect={handleLootSelect}
 						onLootCancel={handleLootCancel}
 						onOpenBag={handleOpenBag}

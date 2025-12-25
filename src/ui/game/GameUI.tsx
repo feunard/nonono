@@ -28,6 +28,7 @@ type GameUIProps = {
 	onRestart: () => void;
 	onResume: () => void;
 	onPause: () => void;
+	onExit: () => void;
 	onLootSelect: (power: Power) => void;
 	onLootCancel: () => void;
 	onOpenBag: () => void;
@@ -39,6 +40,7 @@ export function GameUI({
 	onRestart,
 	onResume,
 	onPause,
+	onExit,
 	onLootSelect,
 	onLootCancel,
 	onOpenBag,
@@ -101,7 +103,7 @@ export function GameUI({
 
 			{/* Pause, Game Over, Loot Selection, and Debug Dialogs */}
 			{isPaused && !isGameOver && !isLootSelection && !isDebugPowerOverlay && (
-				<PauseDialog onResume={onResume} />
+				<PauseDialog onResume={onResume} onExit={onExit} />
 			)}
 			{isGameOver && gameOverStats && (
 				<GameOverDialog

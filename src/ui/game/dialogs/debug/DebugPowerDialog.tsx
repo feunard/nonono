@@ -210,9 +210,6 @@ export function DebugPowerDialog({ onSelect, onClose }: DebugPowerDialogProps) {
 				<CardHeader className="flex flex-row items-center justify-between border-b border-neutral-700 pb-2 pt-2 px-3">
 					<div className="flex items-center gap-3">
 						<CardTitle className="text-sm">Debug: Powers</CardTitle>
-						<span className="text-neutral-500 text-xs">
-							Click to add (cheat)
-						</span>
 					</div>
 					<div className="flex items-center gap-1">
 						<Button variant="ghost" size="sm" onClick={onClose}>
