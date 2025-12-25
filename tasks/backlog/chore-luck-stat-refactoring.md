@@ -1,9 +1,9 @@
 # [chore] Luck stat refactoring
 
-**Status:** Backlog
+**Status:** In Progress
 **Priority:** Medium
 **Type:** Refactor
-**Agent:** -
+**Agent:** Kenny
 
 ## Description
 
