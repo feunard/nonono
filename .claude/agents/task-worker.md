@@ -68,7 +68,7 @@ Commit message rules:
 - One line only - just describe the task
 - Use `feat` for features, `fix` for bugs, `chore` for refactors/cleanup
 - Scope = affected area (e.g., `hero`, `ui`, `combat`, `powers`)
-- Use the user's default git config - do NOT add Co-Authored-By lines or Claude signatures
+- Use regular git commit with user's git config. No Claude signatures or Co-Authored-By lines.
 
 ### Step 7: Pull and Push
 ```bash
