@@ -1,9 +1,9 @@
 # [feat] Chat Bubble System
 
-**Status:** Backlog
+**Status:** In Progress
 **Priority:** Low
 **Type:** Feature
-**Agent:** -
+**Agent:** Cartman
 
 ## Description
 

@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { getRandomMessageFromArray } from "../config/ChatMessages";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
 import { gameStore } from "../stores/gameStore";
 import {
@@ -9,19 +10,6 @@ import {
 } from "../systems/calculations";
 import type { EffectsManager } from "../systems/EffectsManager";
 import { Arrow } from "./Arrow";
-
-const KILL_CATCHPHRASES = [
-	"Too easy!",
-	"Next!",
-	"Is that all?",
-	"Pathetic.",
-	"Another one bites the dust!",
-	"You call that a fight?",
-	"Sweet dreams!",
-	"Rest in pieces!",
-	"Get rekt!",
-	"Back to the shadow!",
-];
 
 // Cached bonus stats type for performance
 type CachedBonusStats = ReturnType<typeof gameStore.getState>["bonusStats"];
@@ -1010,17 +998,21 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		};
 	}
 
-	public showCatchphrase(force = false): void {
+	public showChatBubble(
+		messages: readonly string[],
+		options: { force?: boolean; duration?: number } = {},
+	): void {
+		const { force = false, duration = 2000 } = options;
+
 		// Ignore if one is already showing
 		if (this.isCatchphraseActive) return;
 
-		// 15% chance to show catchphrase (unless forced)
+		// 15% chance to show (unless forced)
 		if (!force && Math.random() > 0.15) return;
 
 		this.isCatchphraseActive = true;
 
-		const phrase =
-			KILL_CATCHPHRASES[Math.floor(Math.random() * KILL_CATCHPHRASES.length)];
+		const phrase = getRandomMessageFromArray(messages);
 
 		// Create text first to measure it
 		const text = this.scene.add.text(0, 0, phrase, {
@@ -1139,16 +1131,17 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		};
 		this.scene.events.on("update", updatePosition);
 
-		// Fade out after 2 seconds
+		// Fade out (start fading 75% through duration)
+		const fadeDelay = Math.max(0, duration - 500);
 		this.scene.tweens.add({
 			targets: text,
 			alpha: 0,
-			delay: 1500,
+			delay: fadeDelay,
 			duration: 500,
 		});
 
 		// Clean up after animation
-		this.scene.time.delayedCall(2000, () => {
+		this.scene.time.delayedCall(duration, () => {
 			if (this.active) {
 				this.scene.events.off("update", updatePosition);
 				if (bubble.active) bubble.destroy();

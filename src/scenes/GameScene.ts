@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { CHAT_MESSAGES } from "../config/ChatMessages";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
 import { Hero } from "../entities/Hero";
 import { Loot } from "../entities/Loot";
@@ -62,6 +63,11 @@ export class GameScene extends Phaser.Scene {
 		// Log game start
 		LogSystem.logGameStart(GAME_CONFIG.map.seed);
 
+		// Show game start chat bubble after a short delay
+		this.time.delayedCall(500, () => {
+			this.hero.showChatBubble(CHAT_MESSAGES.gameStart, { force: true });
+		});
+
 		// Signal to React that the game is ready
 		gameStore.setGameReady();
 	}
@@ -99,7 +105,7 @@ export class GameScene extends Phaser.Scene {
 		this.input.keyboard
 			?.addKey(Phaser.Input.Keyboard.KeyCodes.O)
 			.on("down", () => {
-				this.hero.showCatchphrase(true);
+				this.hero.showChatBubble(CHAT_MESSAGES.orcKill, { force: true });
 			});
 
 		// Debug: "I" key opens power cheat overlay (only in debug mode)
@@ -386,7 +392,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private onOrcKilled(orc: Phaser.Physics.Arcade.Sprite): void {
-		this.hero.showCatchphrase();
+		this.hero.showChatBubble(CHAT_MESSAGES.orcKill);
 		this.effectsManager.deathPoof(orc.x, orc.y);
 		// Cast to Orc to get level and ID for drop chance calculation and logging
 		const orcEntity = orc as Orc;
