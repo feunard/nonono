@@ -112,3 +112,56 @@ When modifying game mechanics, **update the corresponding documentation**:
 - `src/systems/calculations.ts` → Update `docs/STATS.md`
 - `src/entities/Hero.ts` (stat methods) → Update `docs/STATS.md`
 - `src/entities/Orc.ts` (scaling) → Update `docs/STATS.md`
+
+## AI Worker Agents
+
+If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow this workflow:
+
+### Task Workflow
+
+1. **Pick ONE task** from `tasks/backlog/`
+2. **Pull latest changes:**
+   ```bash
+   git pull
+   ```
+   Handle any conflicts before proceeding.
+
+3. **Claim the task:**
+   - Move file from `backlog/` to `in-progress/`
+   - Update status and agent name in the file
+   - Update `tasks/README.md`
+
+4. **Implement the task**
+
+5. **Validate (ALL must pass):**
+   ```bash
+   npm run v
+   ```
+
+6. **Pull again before commit:**
+   ```bash
+   git pull
+   ```
+   Handle any conflicts.
+
+7. **Commit with conventional format:**
+   ```bash
+   git commit -m "feat(scope): task title"
+   ```
+   - Use `feat` for features, `fix` for bugs, `chore` for refactors
+   - Scope = affected area (e.g., `hero`, `ui`, `combat`)
+   - Title = short description from task
+
+8. **DO NOT PUSH** - Wait for further instructions
+
+9. **Move task to done:**
+   - Move file from `in-progress/` to `done/`
+   - Update status and history in the file
+   - Update `tasks/README.md`
+
+### Rules
+
+- One task at a time
+- Always `git pull` before starting and before committing
+- Always run `npm run v` before committing
+- Never push without explicit permission
