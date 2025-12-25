@@ -1,4 +1,5 @@
-import { useCallback, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { getAvailableMaps, getMapConfig } from "../../config/MapConfig";
 import {
 	createMapData,
 	generateMapId,
@@ -6,6 +7,8 @@ import {
 	MapValidationError,
 	validateMapData,
 } from "../../config/MapData";
+
+const MAX_HISTORY = 50; // Maximum undo steps
 
 // Tile definitions
 export const TILES = [
@@ -138,12 +141,105 @@ const initialState: EditorState = {
 	importError: null,
 };
 
+// Deep clone tiles array
+function cloneTiles(tiles: number[][]): number[][] {
+	return tiles.map((row) => [...row]);
+}
+
 export function useMapEditor() {
 	const [state, dispatch] = useReducer(editorReducer, initialState);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+	// Undo/Redo history
+	const historyRef = useRef<number[][][]>([]);
+	const futureRef = useRef<number[][][]>([]);
+	const isPaintingRef = useRef(false);
+	const [historyLength, setHistoryLength] = useState(0);
+	const [futureLength, setFutureLength] = useState(0);
+
+	// Save current state to history (call before making changes)
+	const saveToHistory = useCallback(() => {
+		historyRef.current.push(cloneTiles(state.tiles));
+		if (historyRef.current.length > MAX_HISTORY) {
+			historyRef.current.shift();
+		}
+		futureRef.current = []; // Clear redo stack on new action
+		setHistoryLength(historyRef.current.length);
+		setFutureLength(0);
+	}, [state.tiles]);
+
+	const undo = useCallback(() => {
+		if (historyRef.current.length === 0) return;
+		const previousTiles = historyRef.current.pop();
+		if (previousTiles) {
+			futureRef.current.push(cloneTiles(state.tiles));
+			dispatch({
+				type: "IMPORT_MAP",
+				mapData: {
+					tilemap: previousTiles,
+					width: state.width,
+					height: state.height,
+				} as MapData,
+			});
+			setHistoryLength(historyRef.current.length);
+			setFutureLength(futureRef.current.length);
+		}
+	}, [state.tiles, state.width, state.height]);
+
+	const redo = useCallback(() => {
+		if (futureRef.current.length === 0) return;
+		const nextTiles = futureRef.current.pop();
+		if (nextTiles) {
+			historyRef.current.push(cloneTiles(state.tiles));
+			dispatch({
+				type: "IMPORT_MAP",
+				mapData: {
+					tilemap: nextTiles,
+					width: state.width,
+					height: state.height,
+				} as MapData,
+			});
+			setHistoryLength(historyRef.current.length);
+			setFutureLength(futureRef.current.length);
+		}
+	}, [state.tiles, state.width, state.height]);
+
+	// Keyboard shortcuts for undo/redo
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+				e.preventDefault();
+				if (e.shiftKey) {
+					redo();
+				} else {
+					undo();
+				}
+			}
+			if ((e.ctrlKey || e.metaKey) && e.key === "y") {
+				e.preventDefault();
+				redo();
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [undo, redo]);
+
 	const setTile = useCallback((x: number, y: number, tileId: number) => {
 		dispatch({ type: "SET_TILE", x, y, tileId });
+	}, []);
+
+	// Start a paint stroke (save state for undo)
+	const startPaint = useCallback(() => {
+		if (!isPaintingRef.current) {
+			isPaintingRef.current = true;
+			saveToHistory();
+		}
+	}, [saveToHistory]);
+
+	// End a paint stroke
+	const endPaint = useCallback(() => {
+		isPaintingRef.current = false;
 	}, []);
 
 	const paintTile = useCallback(
@@ -166,13 +262,18 @@ export function useMapEditor() {
 		dispatch({ type: "TOGGLE_GRID" });
 	}, []);
 
-	const setMapSize = useCallback((size: MapSize) => {
-		dispatch({ type: "SET_MAP_SIZE", size });
-	}, []);
+	const setMapSize = useCallback(
+		(size: MapSize) => {
+			saveToHistory();
+			dispatch({ type: "SET_MAP_SIZE", size });
+		},
+		[saveToHistory],
+	);
 
 	const clearMap = useCallback(() => {
+		saveToHistory();
 		dispatch({ type: "CLEAR_MAP" });
-	}, []);
+	}, [saveToHistory]);
 
 	const setHover = useCallback((position: { x: number; y: number } | null) => {
 		dispatch({ type: "SET_HOVER", position });
@@ -252,6 +353,18 @@ export function useMapEditor() {
 		dispatch({ type: "SET_IMPORT_ERROR", error: null });
 	}, []);
 
+	const loadMap = useCallback((mapId: string) => {
+		try {
+			const mapData = getMapConfig(mapId);
+			dispatch({ type: "IMPORT_MAP", mapData });
+		} catch {
+			dispatch({
+				type: "SET_IMPORT_ERROR",
+				error: `Failed to load map: ${mapId}`,
+			});
+		}
+	}, []);
+
 	const triggerImport = useCallback(() => {
 		fileInputRef.current?.click();
 	}, []);
@@ -270,8 +383,13 @@ export function useMapEditor() {
 
 	return {
 		...state,
+		availableMaps: getAvailableMaps(),
+		canUndo: historyLength > 0,
+		canRedo: futureLength > 0,
 		setTile,
 		paintTile,
+		startPaint,
+		endPaint,
 		selectTile,
 		setTool,
 		toggleGrid,
@@ -283,9 +401,12 @@ export function useMapEditor() {
 		setZoom,
 		exportMap,
 		importMap,
+		loadMap,
 		triggerImport,
 		handleFileChange,
 		clearImportError,
+		undo,
+		redo,
 		fileInputRef,
 	};
 }

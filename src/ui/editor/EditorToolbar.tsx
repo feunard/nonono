@@ -1,6 +1,12 @@
 import type { RefObject } from "react";
-import { Button } from "../primitives/Button";
-import { cn } from "../utils";
+import {
+	Menu,
+	MenuBar,
+	MenuCheckbox,
+	MenuItem,
+	MenuSeparator,
+	SubMenu,
+} from "../primitives/Menu";
 import { MAP_SIZES, type MapSize } from "./useMapEditor";
 
 type EditorToolbarProps = {
@@ -8,6 +14,9 @@ type EditorToolbarProps = {
 	mapSize: MapSize;
 	zoom: number;
 	importError: string | null;
+	availableMaps: string[];
+	canUndo: boolean;
+	canRedo: boolean;
 	fileInputRef: RefObject<HTMLInputElement | null>;
 	onToggleGrid: () => void;
 	onClearMap: () => void;
@@ -17,6 +26,9 @@ type EditorToolbarProps = {
 	onBack: () => void;
 	onExport: () => void;
 	onImport: () => void;
+	onLoadMap: (mapId: string) => void;
+	onUndo: () => void;
+	onRedo: () => void;
 	onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onClearImportError: () => void;
 };
@@ -26,6 +38,9 @@ export function EditorToolbar({
 	mapSize,
 	zoom,
 	importError,
+	availableMaps,
+	canUndo,
+	canRedo,
 	fileInputRef,
 	onToggleGrid,
 	onClearMap,
@@ -35,87 +50,106 @@ export function EditorToolbar({
 	onBack,
 	onExport,
 	onImport,
+	onLoadMap,
+	onUndo,
+	onRedo,
 	onFileChange,
 	onClearImportError,
 }: EditorToolbarProps) {
 	return (
 		<div className="flex flex-col">
-			<div className="flex items-center justify-between px-4 py-3 bg-neutral-900 border-b border-neutral-700">
-				{/* Left: Title and back button */}
-				<div className="flex items-center gap-4">
-					<Button variant="ghost" size="sm" onClick={onBack}>
-						Back
-					</Button>
-					<h1 className="text-lg font-semibold text-white">Map Editor</h1>
-				</div>
+			{/* Menu bar */}
+			<div className="flex items-center gap-2 px-2 py-1 bg-neutral-900 border-b border-neutral-700">
+				{/* Hidden file input for import */}
+				<input
+					ref={fileInputRef}
+					type="file"
+					accept=".json"
+					className="hidden"
+					onChange={onFileChange}
+				/>
 
-				{/* Center: Map size selector */}
-				<div className="flex items-center gap-2">
-					<span className="text-xs text-neutral-400">Size:</span>
-					<div className="flex gap-1">
-						{MAP_SIZES.map((size) => (
-							<button
-								type="button"
-								key={size}
-								onClick={() => onSetMapSize(size)}
-								className={cn(
-									"px-2 py-1 text-xs rounded cursor-pointer transition-colors",
-									mapSize === size
-										? "bg-white text-black font-semibold"
-										: "bg-neutral-700 text-neutral-300 hover:bg-neutral-600",
-								)}
-							>
-								{size}x{size}
-							</button>
-						))}
-					</div>
-				</div>
+				<MenuBar>
+					{/* File Menu */}
+					<Menu id="file" label="File">
+						<MenuItem onClick={onClearMap}>New Map</MenuItem>
+						<MenuSeparator />
+						<SubMenu label="Open Map">
+							{availableMaps.map((mapId) => (
+								<MenuItem key={mapId} onClick={() => onLoadMap(mapId)}>
+									{mapId}
+								</MenuItem>
+							))}
+						</SubMenu>
+						<MenuItem onClick={onImport} shortcut="Ctrl+O">
+							Import...
+						</MenuItem>
+						<MenuSeparator />
+						<MenuItem onClick={onExport} shortcut="Ctrl+S">
+							Export...
+						</MenuItem>
+						<MenuSeparator />
+						<MenuItem onClick={onBack}>Exit Editor</MenuItem>
+					</Menu>
 
-				{/* Right: Tools */}
-				<div className="flex items-center gap-2">
-					{/* Import/Export buttons */}
-					<div className="flex items-center gap-1 mr-2 border-r border-neutral-700 pr-3">
-						<input
-							ref={fileInputRef}
-							type="file"
-							accept=".json"
-							className="hidden"
-							onChange={onFileChange}
-						/>
-						<Button variant="ghost" size="sm" onClick={onImport}>
-							Import
-						</Button>
-						<Button variant="ghost" size="sm" onClick={onExport}>
-							Export
-						</Button>
-					</div>
+					{/* Edit Menu */}
+					<Menu id="edit" label="Edit">
+						<MenuItem onClick={onUndo} disabled={!canUndo} shortcut="Ctrl+Z">
+							Undo
+						</MenuItem>
+						<MenuItem onClick={onRedo} disabled={!canRedo} shortcut="Ctrl+Y">
+							Redo
+						</MenuItem>
+						<MenuSeparator />
+						<MenuItem onClick={onClearMap}>Clear All</MenuItem>
+					</Menu>
 
-					{/* Zoom controls */}
-					<div className="flex items-center gap-1 mr-2">
-						<Button variant="ghost" size="sm" onClick={onZoomOut}>
-							-
-						</Button>
-						<span className="text-xs text-neutral-400 w-12 text-center">
-							{Math.round(zoom * 100)}%
-						</span>
-						<Button variant="ghost" size="sm" onClick={onZoomIn}>
-							+
-						</Button>
-					</div>
+					{/* View Menu */}
+					<Menu id="view" label="View">
+						<MenuCheckbox checked={showGrid} onChange={onToggleGrid}>
+							Show Grid
+						</MenuCheckbox>
+						<MenuSeparator />
+						<MenuItem onClick={onZoomIn} shortcut="Ctrl++">
+							Zoom In
+						</MenuItem>
+						<MenuItem onClick={onZoomOut} shortcut="Ctrl+-">
+							Zoom Out
+						</MenuItem>
+						<MenuItem disabled>Zoom: {Math.round(zoom * 100)}%</MenuItem>
+					</Menu>
 
-					{/* Grid toggle */}
-					<Button
-						variant={showGrid ? "secondary" : "ghost"}
-						size="sm"
-						onClick={onToggleGrid}
-					>
-						Grid
-					</Button>
+					{/* Map Menu */}
+					<Menu id="map" label="Map">
+						<SubMenu label="Resize">
+							{MAP_SIZES.map((size) => (
+								<MenuItem
+									key={size}
+									onClick={() => onSetMapSize(size)}
+									shortcut={mapSize === size ? "●" : ""}
+								>
+									{size}×{size}
+								</MenuItem>
+							))}
+						</SubMenu>
+					</Menu>
+				</MenuBar>
 
-					{/* Clear button */}
-					<Button variant="ghost" size="sm" onClick={onClearMap}>
-						Clear
-					</Button>
+				{/* Spacer */}
+				<div className="flex-1" />
+
+				{/* Title */}
+				<span className="text-sm text-neutral-400">Map Editor</span>
+
+				{/* Spacer */}
+				<div className="flex-1" />
+
+				{/* Quick info */}
+				<div className="flex items-center gap-4 text-xs text-neutral-500">
+					<span>
+						Size: {mapSize}×{mapSize}
+					</span>
+					<span>Zoom: {Math.round(zoom * 100)}%</span>
 				</div>
 			</div>
 

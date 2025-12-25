@@ -19,6 +19,9 @@ export function MapEditor({ onBack }: MapEditorProps) {
 				mapSize={editor.width}
 				zoom={editor.zoom}
 				importError={editor.importError}
+				availableMaps={editor.availableMaps}
+				canUndo={editor.canUndo}
+				canRedo={editor.canRedo}
 				fileInputRef={editor.fileInputRef}
 				onToggleGrid={editor.toggleGrid}
 				onClearMap={editor.clearMap}
@@ -28,6 +31,9 @@ export function MapEditor({ onBack }: MapEditorProps) {
 				onBack={onBack}
 				onExport={() => editor.exportMap()}
 				onImport={editor.triggerImport}
+				onLoadMap={editor.loadMap}
+				onUndo={editor.undo}
+				onRedo={editor.redo}
 				onFileChange={editor.handleFileChange}
 				onClearImportError={editor.clearImportError}
 			/>
@@ -48,6 +54,8 @@ export function MapEditor({ onBack }: MapEditorProps) {
 					showGrid={editor.showGrid}
 					zoom={editor.zoom}
 					onPaintTile={editor.paintTile}
+					onStartPaint={editor.startPaint}
+					onEndPaint={editor.endPaint}
 					onHover={editor.setHover}
 				/>
 			</div>

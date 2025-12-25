@@ -9,6 +9,8 @@ type MapCanvasProps = {
 	showGrid: boolean;
 	zoom: number;
 	onPaintTile: (x: number, y: number) => void;
+	onStartPaint: () => void;
+	onEndPaint: () => void;
 	onHover: (position: { x: number; y: number } | null) => void;
 };
 
@@ -21,6 +23,8 @@ export function MapCanvas({
 	showGrid,
 	zoom,
 	onPaintTile,
+	onStartPaint,
+	onEndPaint,
 	onHover,
 }: MapCanvasProps) {
 	const [isPainting, setIsPainting] = useState(false);
@@ -61,12 +65,13 @@ export function MapCanvas({
 		(e: React.MouseEvent<HTMLDivElement>) => {
 			if (e.button !== 0) return; // Only left click
 			setIsPainting(true);
+			onStartPaint();
 			const coords = getTileCoords(e);
 			if (coords) {
 				onPaintTile(coords.x, coords.y);
 			}
 		},
-		[getTileCoords, onPaintTile],
+		[getTileCoords, onPaintTile, onStartPaint],
 	);
 
 	const handleMouseMove = useCallback(
@@ -83,12 +88,14 @@ export function MapCanvas({
 
 	const handleMouseUp = useCallback(() => {
 		setIsPainting(false);
-	}, []);
+		onEndPaint();
+	}, [onEndPaint]);
 
 	const handleMouseLeave = useCallback(() => {
 		setIsPainting(false);
+		onEndPaint();
 		onHover(null);
-	}, [onHover]);
+	}, [onHover, onEndPaint]);
 
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: editor canvas scroll container
