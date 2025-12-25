@@ -1029,15 +1029,30 @@ export function isPowerMaxed(power: Power, collectedPowers: Power[]): boolean {
 export function getAvailablePowersByRank(
 	rank: PowerRank,
 	collectedPowers: Power[],
+	bonusStats?: Record<BonusStat, number>,
 ): Power[] {
-	return POWERS.filter(
-		(p) => p.rank === rank && !isPowerMaxed(p, collectedPowers),
-	);
+	return POWERS.filter((p) => {
+		if (p.rank !== rank) return false;
+		if (isPowerMaxed(p, collectedPowers)) return false;
+		// If bonusStats provided, also check prerequisites
+		if (bonusStats && isPowerLocked(p, bonusStats, collectedPowers))
+			return false;
+		return true;
+	});
 }
 
-// Helper to get all available powers (not at max stack)
-export function getAvailablePowers(collectedPowers: Power[]): Power[] {
-	return POWERS.filter((p) => !isPowerMaxed(p, collectedPowers));
+// Helper to get all available powers (not at max stack, prerequisites met)
+export function getAvailablePowers(
+	collectedPowers: Power[],
+	bonusStats?: Record<BonusStat, number>,
+): Power[] {
+	return POWERS.filter((p) => {
+		if (isPowerMaxed(p, collectedPowers)) return false;
+		// If bonusStats provided, also check prerequisites
+		if (bonusStats && isPowerLocked(p, bonusStats, collectedPowers))
+			return false;
+		return true;
+	});
 }
 
 // Helper to roll a random rank based on weights
@@ -1056,7 +1071,10 @@ export function rollRandomRank(): PowerRank {
 }
 
 // Helper to roll a random rank that has available powers
-export function rollAvailableRank(collectedPowers: Power[]): PowerRank | null {
+export function rollAvailableRank(
+	collectedPowers: Power[],
+	bonusStats?: Record<BonusStat, number>,
+): PowerRank | null {
 	// Build weights only for ranks that have available powers
 	const availableRanks: { rank: PowerRank; weight: number }[] = [];
 
@@ -1064,6 +1082,7 @@ export function rollAvailableRank(collectedPowers: Power[]): PowerRank | null {
 		const available = getAvailablePowersByRank(
 			rank as PowerRank,
 			collectedPowers,
+			bonusStats,
 		);
 		if (available.length > 0) {
 			availableRanks.push({ rank: rank as PowerRank, weight });
@@ -1097,8 +1116,9 @@ export function getRandomPowerOfRank(rank: PowerRank): Power {
 export function getRandomAvailablePowerOfRank(
 	rank: PowerRank,
 	collectedPowers: Power[],
+	bonusStats?: Record<BonusStat, number>,
 ): Power | null {
-	const powers = getAvailablePowersByRank(rank, collectedPowers);
+	const powers = getAvailablePowersByRank(rank, collectedPowers, bonusStats);
 	if (powers.length === 0) {
 		return null;
 	}
@@ -1124,10 +1144,11 @@ export function getRandomPowers(count: number): Power[] {
 	return powers;
 }
 
-// Helper to get N random powers excluding maxed powers
+// Helper to get N random powers excluding maxed powers and locked powers
 export function getRandomAvailablePowers(
 	count: number,
 	collectedPowers: Power[],
+	bonusStats?: Record<BonusStat, number>,
 ): Power[] {
 	const powers: Power[] = [];
 	const usedIds = new Set<string>();
@@ -1137,12 +1158,16 @@ export function getRandomAvailablePowers(
 	while (powers.length < count && attempts < maxAttempts) {
 		attempts++;
 
-		const rank = rollAvailableRank(collectedPowers);
+		const rank = rollAvailableRank(collectedPowers, bonusStats);
 		if (rank === null) {
 			break; // No more available powers
 		}
 
-		const power = getRandomAvailablePowerOfRank(rank, collectedPowers);
+		const power = getRandomAvailablePowerOfRank(
+			rank,
+			collectedPowers,
+			bonusStats,
+		);
 		if (power === null) {
 			continue; // No powers available at this rank
 		}

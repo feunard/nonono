@@ -1,6 +1,6 @@
 # [fix] Hide Powers With Unmet Requirements From Selection
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Bug
 
@@ -26,11 +26,11 @@ When opening a loot bag to choose powers, powers with unmet requirements (prereq
 
 ## Acceptance Criteria
 
-- [ ] Powers with unmet stat requirements are NOT shown in loot selection
-- [ ] Powers with unmet power requirements (need another power first) are NOT shown
-- [ ] Only valid, immediately selectable powers appear in the choice pool
-- [ ] If fewer than 3 valid powers exist, show however many are available
-- [ ] Existing `maxStack` filtering continues to work
+- [x] Powers with unmet stat requirements are NOT shown in loot selection
+- [x] Powers with unmet power requirements (need another power first) are NOT shown
+- [x] Only valid, immediately selectable powers appear in the choice pool
+- [x] If fewer than 3 valid powers exist, show however many are available
+- [x] Existing `maxStack` filtering continues to work
 
 ## Technical Context
 
@@ -99,4 +99,4 @@ Examples of powers with prerequisites:
 
 ## History
 
-_No history yet_
+- 2025-12-25: Implemented prerequisite filtering in power selection. Modified `getAvailablePowersByRank()`, `getAvailablePowers()`, `rollAvailableRank()`, `getRandomAvailablePowerOfRank()`, and `getRandomAvailablePowers()` to accept optional `bonusStats` parameter and filter out locked powers. Updated `App.tsx` to use `getRandomAvailablePowers()` with current game state. Simplified `LootSelectionDialog.tsx` by removing lock icon logic since locked powers no longer appear.
