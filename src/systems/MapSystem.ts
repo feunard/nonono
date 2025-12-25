@@ -117,6 +117,10 @@ export class MapSystem {
 			}
 		}
 
+		// Draw black border around map perimeter to delineate playable area
+		this.graphics.lineStyle(2, 0x000000, 1);
+		this.graphics.strokeRect(0, 0, mapWidth, mapHeight);
+
 		// Convert Graphics to a static texture for optimal performance
 		const textureKey = "map-texture";
 

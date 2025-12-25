@@ -349,18 +349,13 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private setupCamera(): void {
-		const mapConfig = this.mapSystem.getMapConfig();
 		this.zoomIndex = 2; // Start at max zoom (index 2 = zoom level 4)
 		const targetZoom = ZOOM_LEVELS[this.zoomIndex];
 
 		this.cameras.main.setZoom(targetZoom);
 		this.cameras.main.startFollow(this.hero, true, 0.1, 0.1);
-		this.cameras.main.setBounds(
-			0,
-			0,
-			mapConfig.width * mapConfig.tileSize,
-			mapConfig.height * mapConfig.tileSize,
-		);
+		// Camera bounds removed to allow following hero past map edges
+		// Physics world bounds still constrain hero movement to within the map
 
 		// Scroll wheel zoom control
 		this.input.on("wheel", this.handleZoom, this);
