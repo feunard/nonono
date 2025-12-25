@@ -173,6 +173,7 @@ Modal dialogs that pause gameplay and require player interaction.
 
 Reusable UI building blocks in `src/ui/primitives/`. These are not documented individually as they are implementation details:
 
+- `Accordion.tsx` - Collapsible sections with smooth animations
 - `Button.tsx` - Styled button component
 - `Card.tsx` - Card container with variants
 - `IconBox.tsx` - Icon wrapper with background
@@ -180,3 +181,36 @@ Reusable UI building blocks in `src/ui/primitives/`. These are not documented in
 - `Overlay.tsx` - Modal backdrop
 - `Stat.tsx` - Stat display with icon, label, value
 - `Tooltip.tsx` - Hover tooltip
+
+### Accordion
+
+Collapsible accordion component for organizing content into expandable sections.
+
+**Components:**
+- `Accordion` - Container that manages open/closed state
+- `AccordionItem` - Individual collapsible section with title and content
+
+**Props (Accordion):**
+- `allowMultiple?: boolean` - When false (default), only one section can be open at a time
+- `defaultOpen?: number | number[]` - Index(es) of initially open section(s)
+
+**Props (AccordionItem):**
+- `title: string` - Section header text
+
+**Features:**
+- Smooth CSS-based expand/collapse animation using grid-template-rows
+- Chevron indicator rotates to show open/closed state
+- Black & white theme compatible
+- Supports conditional rendering of items
+
+**Usage:**
+```tsx
+<Accordion allowMultiple={false} defaultOpen={0}>
+  <AccordionItem title="Section 1">
+    <p>Content for section 1</p>
+  </AccordionItem>
+  <AccordionItem title="Section 2">
+    <p>Content for section 2</p>
+  </AccordionItem>
+</Accordion>
+```

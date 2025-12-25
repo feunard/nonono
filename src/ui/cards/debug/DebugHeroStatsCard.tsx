@@ -7,6 +7,7 @@ import {
 	getStrengthModifier,
 	STAT_CAPS,
 } from "../../../systems/calculations";
+import { Accordion, AccordionItem } from "../../primitives/Accordion";
 import { Card } from "../../primitives/Card";
 
 type DebugRowProps = {
@@ -26,10 +27,6 @@ function DebugRow({ label, value, dim }: DebugRowProps) {
 			</span>
 		</div>
 	);
-}
-
-function Divider() {
-	return <div className="border-t border-neutral-700 my-1" />;
 }
 
 export function DebugHeroStatsCard() {
@@ -89,6 +86,23 @@ export function DebugHeroStatsCard() {
 	const totalAccuracy = GAME_CONFIG.hero.accuracy + bonusStats.accuracy;
 	const totalPiercing = GAME_CONFIG.hero.piercing + bonusStats.piercing;
 
+	// Conditional sections visibility
+	const hasArrowPowers =
+		bonusStats.arrowCount > 0 ||
+		bonusStats.arrowPierce > 0 ||
+		bonusStats.arrowBounce > 0 ||
+		bonusStats.arrowHoming > 0 ||
+		bonusStats.arrowExplosive > 0;
+
+	const hasSwordPowers =
+		bonusStats.swordCleave > 0 ||
+		bonusStats.swordAttackSpeed > 0 ||
+		bonusStats.riposteChance > 0 ||
+		bonusStats.executeThreshold > 0 ||
+		bonusStats.vorpalChance > 0;
+
+	const hasOnHit = bonusStats.lifesteal > 0;
+
 	return (
 		<Card className="px-3 py-2 w-fit self-end border-dashed">
 			<div className="flex flex-col gap-0.5">
@@ -96,186 +110,191 @@ export function DebugHeroStatsCard() {
 					Debug Stats
 				</div>
 
-				{/* Core Stats */}
-				<DebugRow label="Max HP" value={totalMaxHealth} />
-				<DebugRow label="Move Spd" value={totalMoveSpeed} />
-				<DebugRow label="Bow Range" value={`${totalBowRange} tiles`} />
-				<DebugRow label="Luck" value={`${totalLuck}%`} />
-
-				<Divider />
-
-				{/* Base Modifiers */}
-				<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-					Modifiers
-				</div>
-				<DebugRow label="Agi Mod" value={agilityMod.toFixed(4)} dim />
-				<DebugRow label="Str Mod" value={`${strengthMod.toFixed(3)}x`} dim />
-				<DebugRow
-					label="Total Agi"
-					value={`${totalAgility} / ${STAT_CAPS.agility}`}
-					dim
-				/>
-				<DebugRow
-					label="Total Str"
-					value={`${totalStrength} / ${STAT_CAPS.default}`}
-					dim
-				/>
-				<DebugRow label="Crit %" value={`${totalCrit}%`} dim />
-
-				<Divider />
-
-				{/* Offensive Stats */}
-				<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-					Offensive
-				</div>
-				<DebugRow label="Crit Mult" value={`${critMultiplier.toFixed(2)}x`} />
-				<DebugRow
-					label="Dmg Mult"
-					value={`${(damageMultiplier * 100).toFixed(0)}%`}
-				/>
-				<DebugRow label="Accuracy" value={totalAccuracy} />
-				<DebugRow label="Piercing" value={totalPiercing} />
-				<DebugRow
-					label="Armor Pen"
-					value={
-						totalStrength > 100
-							? `${((totalStrength - 100) * 0.1).toFixed(1)}%`
-							: "0%"
-					}
-				/>
-
-				<Divider />
-
-				{/* Defensive Stats */}
-				<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-					Defensive
-				</div>
-				<DebugRow label="Dodge" value={`${totalDodge}%`} />
-				<DebugRow label="Armor" value={`${totalArmor}%`} />
-				<DebugRow
-					label="HP Regen"
-					value={`${bonusStats.hpRegen.toFixed(2)}/s`}
-				/>
-
-				<Divider />
-
-				{/* Bow Stats */}
-				<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-					Bow
-				</div>
-				<DebugRow label="Interval" value={`${Math.round(bowInterval)}ms`} />
-				<DebugRow
-					label="Damage"
-					value={`${bowDamage} (${bowCritDamage} crit)`}
-				/>
-				<DebugRow label="Atk/sec" value={bowAPS.toFixed(1)} />
-				<DebugRow label="DPS" value={Math.round(bowDPS)} />
-
-				<Divider />
-
-				{/* Sword Stats */}
-				<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-					Sword
-				</div>
-				<DebugRow label="Interval" value={`${Math.round(swordInterval)}ms`} />
-				<DebugRow
-					label="Damage"
-					value={`${swordDamage} (${swordCritDamage} crit)`}
-				/>
-				<DebugRow label="Atk/sec" value={swordAPS.toFixed(1)} />
-				<DebugRow label="DPS" value={Math.round(swordDPS)} />
-
-				{/* Arrow Powers */}
-				{(bonusStats.arrowCount > 0 ||
-					bonusStats.arrowPierce > 0 ||
-					bonusStats.arrowBounce > 0 ||
-					bonusStats.arrowHoming > 0 ||
-					bonusStats.arrowExplosive > 0) && (
-					<>
-						<Divider />
-						<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-							Arrow
+				<Accordion allowMultiple={false} defaultOpen={0}>
+					{/* Core Stats */}
+					<AccordionItem title="Core Stats">
+						<div className="flex flex-col gap-0.5">
+							<DebugRow label="Max HP" value={totalMaxHealth} />
+							<DebugRow label="Move Spd" value={totalMoveSpeed} />
+							<DebugRow label="Bow Range" value={`${totalBowRange} tiles`} />
+							<DebugRow label="Luck" value={`${totalLuck}%`} />
 						</div>
-						{bonusStats.arrowCount > 0 && (
-							<DebugRow label="Arrows" value={`${1 + bonusStats.arrowCount}`} />
-						)}
-						{bonusStats.arrowPierce > 0 && (
+					</AccordionItem>
+
+					{/* Modifiers */}
+					<AccordionItem title="Modifiers">
+						<div className="flex flex-col gap-0.5">
+							<DebugRow label="Agi Mod" value={agilityMod.toFixed(4)} dim />
 							<DebugRow
-								label="Pierce"
+								label="Str Mod"
+								value={`${strengthMod.toFixed(3)}x`}
+								dim
+							/>
+							<DebugRow
+								label="Total Agi"
+								value={`${totalAgility} / ${STAT_CAPS.agility}`}
+								dim
+							/>
+							<DebugRow
+								label="Total Str"
+								value={`${totalStrength} / ${STAT_CAPS.default}`}
+								dim
+							/>
+							<DebugRow label="Crit %" value={`${totalCrit}%`} dim />
+						</div>
+					</AccordionItem>
+
+					{/* Offensive Stats */}
+					<AccordionItem title="Offensive">
+						<div className="flex flex-col gap-0.5">
+							<DebugRow
+								label="Crit Mult"
+								value={`${critMultiplier.toFixed(2)}x`}
+							/>
+							<DebugRow
+								label="Dmg Mult"
+								value={`${(damageMultiplier * 100).toFixed(0)}%`}
+							/>
+							<DebugRow label="Accuracy" value={totalAccuracy} />
+							<DebugRow label="Piercing" value={totalPiercing} />
+							<DebugRow
+								label="Armor Pen"
 								value={
-									bonusStats.arrowPierce >= 99 ? "∞" : bonusStats.arrowPierce
+									totalStrength > 100
+										? `${((totalStrength - 100) * 0.1).toFixed(1)}%`
+										: "0%"
 								}
 							/>
-						)}
-						{bonusStats.arrowBounce > 0 && (
-							<DebugRow label="Bounce" value={bonusStats.arrowBounce} />
-						)}
-						{bonusStats.arrowHoming > 0 && (
-							<DebugRow label="Homing" value={bonusStats.arrowHoming} />
-						)}
-						{bonusStats.arrowExplosive > 0 && (
-							<DebugRow
-								label="Explosive"
-								value={`${bonusStats.arrowExplosive}px`}
-							/>
-						)}
-					</>
-				)}
-
-				{/* Sword Powers */}
-				{(bonusStats.swordCleave > 0 ||
-					bonusStats.swordAttackSpeed > 0 ||
-					bonusStats.riposteChance > 0 ||
-					bonusStats.executeThreshold > 0 ||
-					bonusStats.vorpalChance > 0) && (
-					<>
-						<Divider />
-						<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-							Sword Powers
 						</div>
-						{bonusStats.swordCleave > 0 && (
-							<DebugRow label="Cleave" value="On" />
-						)}
-						{bonusStats.swordAttackSpeed > 0 && (
-							<DebugRow
-								label="Atk Spd"
-								value={`+${(bonusStats.swordAttackSpeed * 100).toFixed(0)}%`}
-							/>
-						)}
-						{bonusStats.riposteChance > 0 && (
-							<DebugRow
-								label="Riposte"
-								value={`${(bonusStats.riposteChance * 100).toFixed(0)}%`}
-							/>
-						)}
-						{bonusStats.executeThreshold > 0 && (
-							<DebugRow
-								label="Execute"
-								value={`<${(bonusStats.executeThreshold * 100).toFixed(0)}% HP`}
-							/>
-						)}
-						{bonusStats.vorpalChance > 0 && (
-							<DebugRow
-								label="Vorpal"
-								value={`${(bonusStats.vorpalChance * 100).toFixed(0)}%`}
-							/>
-						)}
-					</>
-				)}
+					</AccordionItem>
 
-				{/* Lifesteal */}
-				{bonusStats.lifesteal > 0 && (
-					<>
-						<Divider />
-						<div className="text-neutral-400 text-[10px] uppercase tracking-wider">
-							On-Hit
+					{/* Defensive Stats */}
+					<AccordionItem title="Defensive">
+						<div className="flex flex-col gap-0.5">
+							<DebugRow label="Dodge" value={`${totalDodge}%`} />
+							<DebugRow label="Armor" value={`${totalArmor}%`} />
+							<DebugRow
+								label="HP Regen"
+								value={`${bonusStats.hpRegen.toFixed(2)}/s`}
+							/>
 						</div>
-						<DebugRow
-							label="Lifesteal"
-							value={`${(bonusStats.lifesteal * 100).toFixed(0)}%`}
-						/>
-					</>
-				)}
+					</AccordionItem>
+
+					{/* Bow Stats */}
+					<AccordionItem title="Bow">
+						<div className="flex flex-col gap-0.5">
+							<DebugRow
+								label="Interval"
+								value={`${Math.round(bowInterval)}ms`}
+							/>
+							<DebugRow
+								label="Damage"
+								value={`${bowDamage} (${bowCritDamage} crit)`}
+							/>
+							<DebugRow label="Atk/sec" value={bowAPS.toFixed(1)} />
+							<DebugRow label="DPS" value={Math.round(bowDPS)} />
+						</div>
+					</AccordionItem>
+
+					{/* Sword Stats */}
+					<AccordionItem title="Sword">
+						<div className="flex flex-col gap-0.5">
+							<DebugRow
+								label="Interval"
+								value={`${Math.round(swordInterval)}ms`}
+							/>
+							<DebugRow
+								label="Damage"
+								value={`${swordDamage} (${swordCritDamage} crit)`}
+							/>
+							<DebugRow label="Atk/sec" value={swordAPS.toFixed(1)} />
+							<DebugRow label="DPS" value={Math.round(swordDPS)} />
+						</div>
+					</AccordionItem>
+
+					{/* Arrow Powers - conditional */}
+					{hasArrowPowers && (
+						<AccordionItem title="Arrow Powers">
+							<div className="flex flex-col gap-0.5">
+								{bonusStats.arrowCount > 0 && (
+									<DebugRow
+										label="Arrows"
+										value={`${1 + bonusStats.arrowCount}`}
+									/>
+								)}
+								{bonusStats.arrowPierce > 0 && (
+									<DebugRow
+										label="Pierce"
+										value={
+											bonusStats.arrowPierce >= 99
+												? "∞"
+												: bonusStats.arrowPierce
+										}
+									/>
+								)}
+								{bonusStats.arrowBounce > 0 && (
+									<DebugRow label="Bounce" value={bonusStats.arrowBounce} />
+								)}
+								{bonusStats.arrowHoming > 0 && (
+									<DebugRow label="Homing" value={bonusStats.arrowHoming} />
+								)}
+								{bonusStats.arrowExplosive > 0 && (
+									<DebugRow
+										label="Explosive"
+										value={`${bonusStats.arrowExplosive}px`}
+									/>
+								)}
+							</div>
+						</AccordionItem>
+					)}
+
+					{/* Sword Powers - conditional */}
+					{hasSwordPowers && (
+						<AccordionItem title="Sword Powers">
+							<div className="flex flex-col gap-0.5">
+								{bonusStats.swordCleave > 0 && (
+									<DebugRow label="Cleave" value="On" />
+								)}
+								{bonusStats.swordAttackSpeed > 0 && (
+									<DebugRow
+										label="Atk Spd"
+										value={`+${(bonusStats.swordAttackSpeed * 100).toFixed(0)}%`}
+									/>
+								)}
+								{bonusStats.riposteChance > 0 && (
+									<DebugRow
+										label="Riposte"
+										value={`${(bonusStats.riposteChance * 100).toFixed(0)}%`}
+									/>
+								)}
+								{bonusStats.executeThreshold > 0 && (
+									<DebugRow
+										label="Execute"
+										value={`<${(bonusStats.executeThreshold * 100).toFixed(0)}% HP`}
+									/>
+								)}
+								{bonusStats.vorpalChance > 0 && (
+									<DebugRow
+										label="Vorpal"
+										value={`${(bonusStats.vorpalChance * 100).toFixed(0)}%`}
+									/>
+								)}
+							</div>
+						</AccordionItem>
+					)}
+
+					{/* On-Hit - conditional */}
+					{hasOnHit && (
+						<AccordionItem title="On-Hit">
+							<div className="flex flex-col gap-0.5">
+								<DebugRow
+									label="Lifesteal"
+									value={`${(bonusStats.lifesteal * 100).toFixed(0)}%`}
+								/>
+							</div>
+						</AccordionItem>
+					)}
+				</Accordion>
 			</div>
 		</Card>
 	);
