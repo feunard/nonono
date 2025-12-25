@@ -21,7 +21,7 @@ The PowersCard component has two UX issues that need to be addressed:
 
 ### Current Implementation Issues
 
-**File:** `/Users/nfo/git/vibe-game-1/src/ui/cards/PowersCard.tsx`
+**File:** `src/ui/cards/PowersCard.tsx`
 
 **Width Issue (lines 152-159):**
 ```tsx
@@ -93,6 +93,6 @@ Option C - Use SVG hexagon with stroke:
 **Recommendation:** Option A is the simplest and maintains the current approach. Just increase the size difference between outer and inner hexagons to make the border more prominent.
 
 ### Related Files
-- `/Users/nfo/git/vibe-game-1/src/ui/cards/PowersCard.tsx` - Main component to modify
-- `/Users/nfo/git/vibe-game-1/src/config/PowersConfig.ts` - Contains `RANK_HEX_COLORS` and `RANK_RING_COLORS`
-- `/Users/nfo/git/vibe-game-1/docs/UI.md` - Update if component behavior changes significantly
+- `src/ui/cards/PowersCard.tsx` - Main component to modify
+- `src/config/PowersConfig.ts` - Contains `RANK_HEX_COLORS` and `RANK_RING_COLORS`
+- `docs/UI.md` - Update if component behavior changes significantly
