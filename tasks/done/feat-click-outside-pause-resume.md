@@ -3,7 +3,7 @@
 **Status:** Done
 **Priority:** High
 **Type:** Feature
-**Agent:** Jack
+**Agent:** Kenny
 
 ## Description
 
@@ -23,6 +23,6 @@ Allow players to resume the game by clicking outside the pause menu card, in add
 
 ## History
 
-### Completed - Jack - Done
+### Completed - Kenny - Done
 
 Added `onClick={onResume}` to Overlay and `stopPropagation` on Card in `src/ui/dialogs/PauseDialog.tsx`.

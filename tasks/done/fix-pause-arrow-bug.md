@@ -3,7 +3,7 @@
 **Status:** Done
 **Priority:** High
 **Type:** Bug
-**Agent:** Jack
+**Agent:** Kenny
 
 ## Description
 
@@ -32,7 +32,7 @@ Investigate and fix issues with pausing the game while arrows are in flight or b
 
 ## History
 
-### Completed - Jack - Done
+### Completed - Kenny - Done
 
 - Arrow.ts already checks `physics.world.isPaused` to freeze movement
 - Added `if (this.isPaused) return;` in GameScene.update to prevent hero updates during pause

@@ -3,7 +3,7 @@
 **Status:** Done
 **Priority:** High
 **Type:** Feature
-**Agent:** Jack
+**Agent:** Kenny
 
 ## Description
 
@@ -38,7 +38,7 @@ Enhance Wave Manager to scale orc difficulty per wave. Each wave increases orc l
 
 ## History
 
-### Completed - Jack - Done
+### Completed - Kenny - Done
 
 - Added `level` property to Orc class (equals wave number)
 - Added level scaling config in GameConfig: +10% HP/damage/speed per level

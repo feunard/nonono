@@ -3,7 +3,7 @@
 **Status:** Done
 **Priority:** High
 **Type:** Refactor
-**Agent:** Francis
+**Agent:** Cartman
 
 ## Description
 
@@ -46,7 +46,7 @@ React + Phaser init together → Phaser BootScene shows loading → Game starts
 
 ## History
 
-### Completed - Francis - Done
+### Completed - Cartman - Done
 
 - Added `isGameReady` state to gameStore with `setGameReady()` action
 - Created `LoadingScreen` component (black & white theme, spinning loader)

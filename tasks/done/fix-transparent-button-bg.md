@@ -3,7 +3,7 @@
 **Status:** Done
 **Priority:** High
 **Type:** Bug
-**Agent:** Jack
+**Agent:** Kenny
 
 ## Description
 
@@ -22,6 +22,6 @@ The SelectPowerCard component has buttons with transparent backgrounds that caus
 
 ## History
 
-### Completed - Jack - Done
+### Completed - Kenny - Done
 
 Replaced transparent cancel button with proper `Button` component using `variant="secondary"` in `src/ui/dialogs/LootSelectionDialog.tsx`.
