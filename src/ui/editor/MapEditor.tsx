@@ -18,7 +18,6 @@ type MapEditorProps = {
 export function MapEditor({ onBack }: MapEditorProps) {
 	const gameRef = useRef<Phaser.Game | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	// Subscribe to store state
 	const {
@@ -31,6 +30,8 @@ export function MapEditor({ onBack }: MapEditorProps) {
 		importError,
 		history,
 		future,
+		fileName,
+		hasUnsavedChanges,
 	} = useEditorStore();
 
 	const canUndo = history.length > 0;
@@ -55,50 +56,8 @@ export function MapEditor({ onBack }: MapEditorProps) {
 		};
 	}, []);
 
-	// Handle file import
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (!file) return;
-
-		const reader = new FileReader();
-		reader.onload = (event) => {
-			try {
-				const content = event.target?.result as string;
-				const data = JSON.parse(content);
-				// Basic validation - check required fields
-				if (!data.tilemap || !data.width || !data.height) {
-					editorStore.setImportError("Invalid map format");
-					return;
-				}
-				editorStore.importMap(data);
-			} catch {
-				editorStore.setImportError("Failed to parse JSON file");
-			}
-		};
-		reader.onerror = () => {
-			editorStore.setImportError("Failed to read file");
-		};
-		reader.readAsText(file);
-
-		// Reset input so same file can be selected again
-		e.target.value = "";
-	};
-
-	const triggerImport = () => {
-		fileInputRef.current?.click();
-	};
-
 	return (
 		<div className="flex flex-col h-screen bg-neutral-900">
-			{/* Hidden file input for import */}
-			<input
-				ref={fileInputRef}
-				type="file"
-				accept=".json"
-				className="hidden"
-				onChange={handleFileChange}
-			/>
-
 			{/* Top toolbar */}
 			<EditorToolbar
 				showGrid={showGrid}
@@ -108,14 +67,17 @@ export function MapEditor({ onBack }: MapEditorProps) {
 				availableMaps={availableMaps}
 				canUndo={canUndo}
 				canRedo={canRedo}
+				fileName={fileName}
+				hasUnsavedChanges={hasUnsavedChanges}
 				onToggleGrid={() => editorStore.toggleGrid()}
 				onClearMap={() => editorStore.clearMap()}
 				onSetMapSize={(size: MapSize) => editorStore.setMapSize(size)}
 				onZoomIn={() => editorStore.zoomIn()}
 				onZoomOut={() => editorStore.zoomOut()}
 				onBack={onBack}
-				onExport={() => editorStore.exportMap()}
-				onImport={triggerImport}
+				onOpenFile={() => editorStore.openFile()}
+				onSaveFile={() => editorStore.saveFile()}
+				onSaveFileAs={() => editorStore.saveFileAs()}
 				onLoadMap={(mapId: string) => editorStore.loadMap(mapId)}
 				onUndo={() => editorStore.undo()}
 				onRedo={() => editorStore.redo()}

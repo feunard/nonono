@@ -45,6 +45,11 @@ type EditorState = {
 	importError: string | null;
 	isReady: boolean;
 
+	// File handle for File System Access API
+	fileHandle: FileSystemFileHandle | null;
+	fileName: string | null;
+	hasUnsavedChanges: boolean;
+
 	// History for undo/redo
 	history: number[][][];
 	future: number[][][];
@@ -63,6 +68,12 @@ type EditorActions = {
 	importMap: (mapData: MapData) => void;
 	loadMap: (mapId: string) => void;
 	exportMap: (mapName?: string) => void;
+
+	// File System Access API operations
+	openFile: () => Promise<void>;
+	saveFile: () => Promise<void>;
+	saveFileAs: () => Promise<void>;
+	markUnsaved: () => void;
 
 	// View operations
 	toggleGrid: () => void;
@@ -104,9 +115,32 @@ const initialState: EditorState = {
 	hoverPosition: null,
 	importError: null,
 	isReady: false,
+	fileHandle: null,
+	fileName: null,
+	hasUnsavedChanges: false,
 	history: [],
 	future: [],
 };
+
+// Check if File System Access API is supported
+function isFileSystemAccessSupported(): boolean {
+	return "showOpenFilePicker" in window && "showSaveFilePicker" in window;
+}
+
+// Create map data JSON from current state
+function createMapJson(state: EditorState): string {
+	const name = state.fileName?.replace(/\.json$/, "") || "Untitled Map";
+	const id = generateMapId(name);
+	const mapData = createMapData(
+		id,
+		name,
+		state.tiles,
+		state.width,
+		state.height,
+		16,
+	);
+	return JSON.stringify(mapData, null, 2);
+}
 
 export const useEditorStore = create<EditorState & EditorActions>(
 	(set, get) => ({
@@ -122,7 +156,7 @@ export const useEditorStore = create<EditorState & EditorActions>(
 					? row.map((tile, colX) => (colX === x ? tileId : tile))
 					: row,
 			);
-			set({ tiles: newTiles });
+			set({ tiles: newTiles, hasUnsavedChanges: true });
 		},
 
 		setTiles: (tiles) => set({ tiles }),
@@ -198,6 +232,113 @@ export const useEditorStore = create<EditorState & EditorActions>(
 			URL.revokeObjectURL(url);
 		},
 
+		openFile: async () => {
+			if (!isFileSystemAccessSupported()) {
+				set({
+					importError: "File System Access API not supported in this browser",
+				});
+				return;
+			}
+
+			try {
+				const [fileHandle] = await window.showOpenFilePicker({
+					types: [
+						{
+							description: "JSON Map Files",
+							accept: { "application/json": [".json"] },
+						},
+					],
+					multiple: false,
+				});
+
+				const file = await fileHandle.getFile();
+				const content = await file.text();
+				const data = JSON.parse(content);
+
+				// Basic validation
+				if (!data.tilemap || !data.width || !data.height) {
+					set({ importError: "Invalid map format" });
+					return;
+				}
+
+				get().importMap(data);
+				set({
+					fileHandle,
+					fileName: file.name,
+					hasUnsavedChanges: false,
+				});
+			} catch (error) {
+				// User cancelled the picker or other error
+				if (error instanceof Error && error.name !== "AbortError") {
+					set({ importError: `Failed to open file: ${error.message}` });
+				}
+			}
+		},
+
+		saveFile: async () => {
+			const state = get();
+
+			// If no file handle, use Save As
+			if (!state.fileHandle) {
+				return get().saveFileAs();
+			}
+
+			if (!isFileSystemAccessSupported()) {
+				set({ importError: "File System Access API not supported" });
+				return;
+			}
+
+			try {
+				const writable = await state.fileHandle.createWritable();
+				await writable.write(createMapJson(state));
+				await writable.close();
+				set({ hasUnsavedChanges: false });
+			} catch (error) {
+				if (error instanceof Error && error.name !== "AbortError") {
+					set({ importError: `Failed to save file: ${error.message}` });
+				}
+			}
+		},
+
+		saveFileAs: async () => {
+			if (!isFileSystemAccessSupported()) {
+				// Fallback to download
+				get().exportMap();
+				return;
+			}
+
+			const state = get();
+			const suggestedName = state.fileName || "map.json";
+
+			try {
+				const fileHandle = await window.showSaveFilePicker({
+					suggestedName,
+					types: [
+						{
+							description: "JSON Map Files",
+							accept: { "application/json": [".json"] },
+						},
+					],
+				});
+
+				const writable = await fileHandle.createWritable();
+				await writable.write(createMapJson(state));
+				await writable.close();
+
+				set({
+					fileHandle,
+					fileName: fileHandle.name,
+					hasUnsavedChanges: false,
+				});
+			} catch (error) {
+				if (error instanceof Error && error.name !== "AbortError") {
+					set({ importError: `Failed to save file: ${error.message}` });
+				}
+			}
+		},
+
+		markUnsaved: () => set({ hasUnsavedChanges: true }),
+
 		toggleGrid: () => set((state) => ({ showGrid: !state.showGrid })),
 
 		zoomIn: () => set((state) => ({ zoom: Math.min(state.zoom + 0.25, 3) })),
@@ -271,6 +412,10 @@ export const editorStore = {
 	importMap: (mapData: MapData) => useEditorStore.getState().importMap(mapData),
 	loadMap: (mapId: string) => useEditorStore.getState().loadMap(mapId),
 	exportMap: (mapName?: string) => useEditorStore.getState().exportMap(mapName),
+	openFile: () => useEditorStore.getState().openFile(),
+	saveFile: () => useEditorStore.getState().saveFile(),
+	saveFileAs: () => useEditorStore.getState().saveFileAs(),
+	markUnsaved: () => useEditorStore.getState().markUnsaved(),
 	toggleGrid: () => useEditorStore.getState().toggleGrid(),
 	zoomIn: () => useEditorStore.getState().zoomIn(),
 	zoomOut: () => useEditorStore.getState().zoomOut(),

@@ -16,14 +16,17 @@ type EditorToolbarProps = {
 	availableMaps: string[];
 	canUndo: boolean;
 	canRedo: boolean;
+	fileName: string | null;
+	hasUnsavedChanges: boolean;
 	onToggleGrid: () => void;
 	onClearMap: () => void;
 	onSetMapSize: (size: MapSize) => void;
 	onZoomIn: () => void;
 	onZoomOut: () => void;
 	onBack: () => void;
-	onExport: () => void;
-	onImport: () => void;
+	onOpenFile: () => void;
+	onSaveFile: () => void;
+	onSaveFileAs: () => void;
 	onLoadMap: (mapId: string) => void;
 	onUndo: () => void;
 	onRedo: () => void;
@@ -38,14 +41,17 @@ export function EditorToolbar({
 	availableMaps,
 	canUndo,
 	canRedo,
+	fileName,
+	hasUnsavedChanges,
 	onToggleGrid,
 	onClearMap,
 	onSetMapSize,
 	onZoomIn,
 	onZoomOut,
 	onBack,
-	onExport,
-	onImport,
+	onOpenFile,
+	onSaveFile,
+	onSaveFileAs,
 	onLoadMap,
 	onUndo,
 	onRedo,
@@ -60,19 +66,22 @@ export function EditorToolbar({
 					<Menu id="file" label="File">
 						<MenuItem onClick={onClearMap}>New Map</MenuItem>
 						<MenuSeparator />
-						<SubMenu label="Open Map">
+						<SubMenu label="Open Built-in">
 							{availableMaps.map((mapId) => (
 								<MenuItem key={mapId} onClick={() => onLoadMap(mapId)}>
 									{mapId}
 								</MenuItem>
 							))}
 						</SubMenu>
-						<MenuItem onClick={onImport} shortcut="Ctrl+O">
-							Import...
+						<MenuItem onClick={onOpenFile} shortcut="Ctrl+O">
+							Open...
 						</MenuItem>
 						<MenuSeparator />
-						<MenuItem onClick={onExport} shortcut="Ctrl+S">
-							Export...
+						<MenuItem onClick={onSaveFile} shortcut="Ctrl+S">
+							Save
+						</MenuItem>
+						<MenuItem onClick={onSaveFileAs} shortcut="Ctrl+Shift+S">
+							Save As...
 						</MenuItem>
 						<MenuSeparator />
 						<MenuItem onClick={onBack}>Exit Editor</MenuItem>
@@ -125,7 +134,16 @@ export function EditorToolbar({
 				<div className="flex-1" />
 
 				{/* Title */}
-				<span className="text-sm text-neutral-400">Map Editor</span>
+				<span className="text-sm text-neutral-400">
+					{fileName ? (
+						<>
+							{fileName}
+							{hasUnsavedChanges && <span className="text-white ml-1">●</span>}
+						</>
+					) : (
+						"Map Editor"
+					)}
+				</span>
 
 				{/* Spacer */}
 				<div className="flex-1" />
