@@ -165,6 +165,11 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
 5. **Validate (ALL must pass):**
    ```bash
    npm run v
+   # or individually:
+   npm run lint
+   npm run typecheck
+   npm run test:run
+   npm run build
    ```
 
 6. **Pull again before commit:**
