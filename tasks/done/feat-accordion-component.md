@@ -1,6 +1,6 @@
 # [feat] Accordion Component
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Feature
 **Agent:** -
@@ -11,15 +11,15 @@ DebugHeroStatsCard is too tall on small screens. Create a reusable Accordion com
 
 ## Acceptance Criteria
 
-- [ ] Create `src/ui/primitives/Accordion.tsx` component
-- [ ] Props: `allowMultiple?: boolean` (default false = only one open at a time)
-- [ ] Props: `defaultOpen?: number | number[]` (index of initially open section)
-- [ ] Smooth expand/collapse animation
-- [ ] Visual indicator for open/closed state (chevron or +/-)
-- [ ] Follows black & white theme
-- [ ] Refactor DebugHeroStatsCard to use Accordion
-- [ ] Set `allowMultiple={false}` for DebugHeroStatsCard
-- [ ] First category (Core Stats) open by default
+- [x] Create `src/ui/primitives/Accordion.tsx` component
+- [x] Props: `allowMultiple?: boolean` (default false = only one open at a time)
+- [x] Props: `defaultOpen?: number | number[]` (index of initially open section)
+- [x] Smooth expand/collapse animation
+- [x] Visual indicator for open/closed state (chevron or +/-)
+- [x] Follows black & white theme
+- [x] Refactor DebugHeroStatsCard to use Accordion
+- [x] Set `allowMultiple={false}` for DebugHeroStatsCard
+- [x] First category (Core Stats) open by default
 
 ## API Design
 
@@ -58,4 +58,4 @@ DebugHeroStatsCard is too tall on small screens. Create a reusable Accordion com
 
 ## History
 
-_No history yet_
+- 2025-12-25: Implemented Accordion component with smooth CSS grid-based expand/collapse animation, chevron indicator, and black & white theme. Refactored DebugHeroStatsCard to use collapsible sections with Core Stats open by default. Updated docs/UI.md with new primitive documentation.
