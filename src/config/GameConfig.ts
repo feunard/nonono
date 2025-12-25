@@ -96,9 +96,9 @@ export const GAME_CONFIG = {
 	},
 	waves: {
 		initialSpawnInterval: 1000,
-		orcsPerWave: 5,
+		orcsPerWave: 10,
 		difficultyMultiplier: 1.4,
-		waveDuration: 30000,
+		waveDuration: 60000,
 	},
 	sprites: {
 		frameWidth: 100,
