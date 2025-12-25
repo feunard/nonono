@@ -21,11 +21,15 @@ export type TileType = {
  * Tile 0 = empty/passable (no render)
  * Tile 1 = wall (collide: true, dark grey) - blocks movement but not arrows
  * Tile 2 = hard wall (collide: true, hardCollide: true, black) - blocks movement and arrows
+ * Tile 3 = hero_spawn - marks hero starting position (passable, no render in game)
+ * Tile 4 = foe_spawn - marks enemy spawn points (passable, no render in game)
  */
 export const TILE_TYPES: Record<number, TileType> = {
 	0: { id: 0, collide: false, hardCollide: false }, // Empty/passable - no render
 	1: { id: 1, collide: true, hardCollide: false, color: "#444444" }, // Dark grey wall - blocks movement
 	2: { id: 2, collide: true, hardCollide: true, color: "#000000" }, // Black hard wall - blocks movement + arrows
+	3: { id: 3, collide: false, hardCollide: false }, // Hero spawn - passable, no render in game
+	4: { id: 4, collide: false, hardCollide: false }, // Foe spawn - passable, no render in game
 };
 
 /**

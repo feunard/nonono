@@ -15,7 +15,7 @@ import { createMapData, generateMapId, type MapData } from "../config/MapData";
 
 const MAX_HISTORY = 50;
 
-export type TileId = 0 | 1 | 2;
+export type TileId = 0 | 1 | 2 | 3 | 4;
 
 export type MapSize = 32 | 64 | 128;
 
@@ -42,6 +42,24 @@ export const TILES = [
 		color: "#000000",
 		collide: true,
 		hardCollide: true,
+	},
+	{
+		id: 3 as const,
+		name: "Hero Spawn",
+		color: "#00ff00", // Green for hero spawn in editor
+		collide: false,
+		hardCollide: false,
+		isSpawn: true,
+		spawnType: "hero" as const,
+	},
+	{
+		id: 4 as const,
+		name: "Foe Spawn",
+		color: "#ff0000", // Red for foe spawn in editor
+		collide: false,
+		hardCollide: false,
+		isSpawn: true,
+		spawnType: "foe" as const,
 	},
 ] as const;
 

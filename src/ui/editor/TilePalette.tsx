@@ -27,14 +27,35 @@ export function TilePalette({ selectedTile, onSelectTile }: TilePaletteProps) {
 			<div className="p-3 border-b border-neutral-700">
 				<div className="flex items-center gap-2 mb-2">
 					<div
-						className="w-6 h-6 rounded border border-neutral-600 flex-shrink-0"
+						className="w-6 h-6 rounded border border-neutral-600 flex-shrink-0 flex items-center justify-center"
 						style={{
 							backgroundColor:
 								selectedTileData?.color === "transparent"
 									? "#ffffff"
 									: selectedTileData?.color,
 						}}
-					/>
+					>
+						{/* Spawn point marker in header */}
+						{selectedTileData &&
+							"isSpawn" in selectedTileData &&
+							selectedTileData.isSpawn && (
+								<span
+									className="text-[10px] font-bold"
+									style={{
+										color:
+											"spawnType" in selectedTileData &&
+											selectedTileData.spawnType === "hero"
+												? "#000000"
+												: "#ffffff",
+									}}
+								>
+									{"spawnType" in selectedTileData &&
+									selectedTileData.spawnType === "hero"
+										? "H"
+										: "F"}
+								</span>
+							)}
+					</div>
 					<div className="flex flex-col min-w-0">
 						<span className="text-xs font-medium text-white truncate">
 							{selectedTileData?.name}
@@ -76,12 +97,29 @@ export function TilePalette({ selectedTile, onSelectTile }: TilePaletteProps) {
 						>
 							{/* Tile preview */}
 							<div
-								className="w-full h-full rounded"
+								className="w-full h-full rounded flex items-center justify-center"
 								style={{
 									backgroundColor:
 										tile.color === "transparent" ? "#ffffff" : tile.color,
 								}}
-							/>
+							>
+								{/* Spawn point markers */}
+								{"isSpawn" in tile && tile.isSpawn && (
+									<span
+										className="text-[10px] font-bold"
+										style={{
+											color:
+												"spawnType" in tile && tile.spawnType === "hero"
+													? "#000000"
+													: "#ffffff",
+										}}
+									>
+										{"spawnType" in tile && tile.spawnType === "hero"
+											? "H"
+											: "F"}
+									</span>
+								)}
+							</div>
 						</button>
 					))}
 				</div>

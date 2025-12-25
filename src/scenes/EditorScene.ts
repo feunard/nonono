@@ -254,6 +254,31 @@ export class EditorScene extends Phaser.Scene {
 					TILE_SIZE,
 					TILE_SIZE,
 				);
+
+				// Draw spawn point markers
+				if (tileData && "isSpawn" in tileData && tileData.isSpawn) {
+					const centerX = x * TILE_SIZE + TILE_SIZE / 2;
+					const centerY = y * TILE_SIZE + TILE_SIZE / 2;
+					const markerSize = TILE_SIZE / 3;
+
+					// Draw a contrasting marker (black for hero spawn, white for foe spawn)
+					const markerColor =
+						"spawnType" in tileData && tileData.spawnType === "hero"
+							? 0x000000
+							: 0xffffff;
+
+					// Draw a small circle or diamond marker
+					this.tileGraphics.fillStyle(markerColor, 1);
+					this.tileGraphics.fillCircle(centerX, centerY, markerSize);
+
+					// Draw border for visibility
+					this.tileGraphics.lineStyle(
+						1,
+						markerColor === 0x000000 ? 0xffffff : 0x000000,
+						1,
+					);
+					this.tileGraphics.strokeCircle(centerX, centerY, markerSize);
+				}
 			}
 		}
 	}
@@ -308,6 +333,21 @@ export class EditorScene extends Phaser.Scene {
 			TILE_SIZE,
 			TILE_SIZE,
 		);
+
+		// Draw spawn point marker preview
+		if (tileData && "isSpawn" in tileData && tileData.isSpawn) {
+			const centerX = tile.x * TILE_SIZE + TILE_SIZE / 2;
+			const centerY = tile.y * TILE_SIZE + TILE_SIZE / 2;
+			const markerSize = TILE_SIZE / 3;
+
+			const markerColor =
+				"spawnType" in tileData && tileData.spawnType === "hero"
+					? 0x000000
+					: 0xffffff;
+
+			this.hoverGraphics.fillStyle(markerColor, 0.5);
+			this.hoverGraphics.fillCircle(centerX, centerY, markerSize);
+		}
 
 		// Draw hover border
 		this.hoverGraphics.lineStyle(2, 0x00ff00, 1);

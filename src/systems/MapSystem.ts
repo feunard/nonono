@@ -60,6 +60,68 @@ export class MapSystem {
 	}
 
 	/**
+	 * Get the hero spawn position from the tilemap.
+	 * Scans for tile ID 3 (hero_spawn) and returns its world position.
+	 * Falls back to map center if no hero_spawn tile exists.
+	 */
+	public getHeroSpawnPosition(): { x: number; y: number } {
+		const { width, height, tileSize, tilemap } = this.mapConfig;
+
+		// Scan tilemap for hero_spawn tile (id: 3)
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
+				if (tilemap[y][x] === 3) {
+					// Return center of the tile in world coordinates
+					return {
+						x: x * tileSize + tileSize / 2,
+						y: y * tileSize + tileSize / 2,
+					};
+				}
+			}
+		}
+
+		// Fallback to map center with warning
+		console.warn(
+			"[MapSystem] No hero_spawn tile found in map. Falling back to map center.",
+		);
+		return {
+			x: (width * tileSize) / 2,
+			y: (height * tileSize) / 2,
+		};
+	}
+
+	/**
+	 * Get all foe spawn positions from the tilemap.
+	 * Scans for tile ID 4 (foe_spawn) and returns all positions.
+	 * Returns empty array if no foe_spawn tiles exist.
+	 */
+	public getFoeSpawnPositions(): { x: number; y: number }[] {
+		const { width, height, tileSize, tilemap } = this.mapConfig;
+		const positions: { x: number; y: number }[] = [];
+
+		// Scan tilemap for foe_spawn tiles (id: 4)
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
+				if (tilemap[y][x] === 4) {
+					// Add center of the tile in world coordinates
+					positions.push({
+						x: x * tileSize + tileSize / 2,
+						y: y * tileSize + tileSize / 2,
+					});
+				}
+			}
+		}
+
+		if (positions.length === 0) {
+			console.warn(
+				"[MapSystem] No foe_spawn tiles found in map. Foes will spawn at map edges.",
+			);
+		}
+
+		return positions;
+	}
+
+	/**
 	 * Get the collision layer for physics.
 	 */
 	public getCollisionLayer(): Phaser.Tilemaps.TilemapLayer | null {

@@ -9,6 +9,7 @@ import { Orc } from "../entities/Orc";
 import { uiStore } from "../stores/uiStore";
 import type { EffectsManager } from "./EffectsManager";
 import { LogSystem } from "./LogSystem";
+import type { MapSystem } from "./MapSystem";
 import type { PathfindingManager } from "./PathfindingManager";
 
 /** Types of foes that can be spawned */
@@ -20,6 +21,8 @@ export class WaveManager {
 	private pathfindingManager: PathfindingManager;
 	private collisionLayer: Phaser.Tilemaps.TilemapLayer;
 	private effectsManager: EffectsManager;
+	private mapSystem: MapSystem | null;
+	private foeSpawnPositions: { x: number; y: number }[] = [];
 	public foes: Phaser.Physics.Arcade.Group;
 	private currentWave: number = 0;
 	private foesToSpawn: number = 0;
@@ -33,13 +36,20 @@ export class WaveManager {
 		pathfindingManager: PathfindingManager,
 		collisionLayer: Phaser.Tilemaps.TilemapLayer,
 		effectsManager: EffectsManager,
+		mapSystem?: MapSystem,
 	) {
 		this.scene = scene;
 		this.hero = hero;
 		this.pathfindingManager = pathfindingManager;
 		this.collisionLayer = collisionLayer;
 		this.effectsManager = effectsManager;
+		this.mapSystem = mapSystem || null;
 		this.spawnInterval = GAME_CONFIG.waves.initialSpawnInterval;
+
+		// Get foe spawn positions from map system if available
+		if (this.mapSystem) {
+			this.foeSpawnPositions = this.mapSystem.getFoeSpawnPositions();
+		}
 
 		this.foes = scene.physics.add.group({
 			classType: Foe,
@@ -112,41 +122,55 @@ export class WaveManager {
 			return;
 		}
 
-		const mapConfig = getMapConfig();
-		const { tileSize } = mapConfig;
-		const mapWidth = mapConfig.width * tileSize;
-		const mapHeight = mapConfig.height * tileSize;
-
-		// Try to find a valid spawn position (not on a collision tile)
 		let x: number;
 		let y: number;
-		let attempts = 0;
-		const maxAttempts = 20;
 
-		do {
-			const edge = Phaser.Math.Between(0, 3);
+		// Use foe spawn positions if available, otherwise fall back to edge spawning
+		if (this.foeSpawnPositions.length > 0) {
+			// Randomly select one of the foe spawn positions
+			const spawnIndex = Phaser.Math.Between(
+				0,
+				this.foeSpawnPositions.length - 1,
+			);
+			const spawnPos = this.foeSpawnPositions[spawnIndex];
+			x = spawnPos.x;
+			y = spawnPos.y;
+		} else {
+			// Fallback: spawn at map edges
+			const mapConfig = getMapConfig();
+			const { tileSize } = mapConfig;
+			const mapWidth = mapConfig.width * tileSize;
+			const mapHeight = mapConfig.height * tileSize;
 
-			switch (edge) {
-				case 0: // Top
-					x = Phaser.Math.Between(tileSize * 2, mapWidth - tileSize * 2);
-					y = tileSize * 2;
-					break;
-				case 1: // Right
-					x = mapWidth - tileSize * 2;
-					y = Phaser.Math.Between(tileSize * 2, mapHeight - tileSize * 2);
-					break;
-				case 2: // Bottom
-					x = Phaser.Math.Between(tileSize * 2, mapWidth - tileSize * 2);
-					y = mapHeight - tileSize * 2;
-					break;
-				default: // Left
-					x = tileSize * 2;
-					y = Phaser.Math.Between(tileSize * 2, mapHeight - tileSize * 2);
-					break;
-			}
+			// Try to find a valid spawn position (not on a collision tile)
+			let attempts = 0;
+			const maxAttempts = 20;
 
-			attempts++;
-		} while (this.isCollisionTile(x, y) && attempts < maxAttempts);
+			do {
+				const edge = Phaser.Math.Between(0, 3);
+
+				switch (edge) {
+					case 0: // Top
+						x = Phaser.Math.Between(tileSize * 2, mapWidth - tileSize * 2);
+						y = tileSize * 2;
+						break;
+					case 1: // Right
+						x = mapWidth - tileSize * 2;
+						y = Phaser.Math.Between(tileSize * 2, mapHeight - tileSize * 2);
+						break;
+					case 2: // Bottom
+						x = Phaser.Math.Between(tileSize * 2, mapWidth - tileSize * 2);
+						y = mapHeight - tileSize * 2;
+						break;
+					default: // Left
+						x = tileSize * 2;
+						y = Phaser.Math.Between(tileSize * 2, mapHeight - tileSize * 2);
+						break;
+				}
+
+				attempts++;
+			} while (this.isCollisionTile(x, y) && attempts < maxAttempts);
+		}
 
 		// Determine foe type and create the appropriate class
 		const foeType = this.selectFoeType();

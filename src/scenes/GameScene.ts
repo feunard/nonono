@@ -291,12 +291,10 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private createHero(): void {
-		// Get map dimensions from map system
-		const mapConfig = this.mapSystem.getMapConfig();
-		const centerX = (mapConfig.width * mapConfig.tileSize) / 2;
-		const centerY = (mapConfig.height * mapConfig.tileSize) / 2;
+		// Get hero spawn position from map system (uses hero_spawn tile or falls back to center)
+		const spawnPos = this.mapSystem.getHeroSpawnPosition();
 
-		this.hero = new Hero(this, centerX, centerY);
+		this.hero = new Hero(this, spawnPos.x, spawnPos.y);
 
 		// Add collision between hero and collision tiles
 		this.physics.add.collider(this.hero, this.collisionLayer);
@@ -321,6 +319,7 @@ export class GameScene extends Phaser.Scene {
 			this.pathfindingManager,
 			this.collisionLayer,
 			this.effectsManager,
+			this.mapSystem,
 		);
 
 		// Enable foe-to-foe collision so foes don't stack on top of each other
