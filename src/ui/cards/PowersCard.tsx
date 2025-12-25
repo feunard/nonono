@@ -28,7 +28,7 @@ import { useMemo } from "react";
 import {
 	type BonusStat,
 	type Power,
-	RANK_RING_COLORS,
+	RANK_BG_COLORS,
 } from "../../config/PowersConfig";
 import { useInventoryStore } from "../../stores/inventoryStore";
 import { Card } from "../primitives/Card";
@@ -98,7 +98,7 @@ const hexagonClipPath =
 
 function PowerOrb({ power, count }: GroupedPower) {
 	const IconComponent = STAT_ICONS[power.effect.stat];
-	const ringColor = RANK_RING_COLORS[power.rank];
+	const bgColor = RANK_BG_COLORS[power.rank];
 
 	return (
 		<Tooltip
@@ -115,12 +115,12 @@ function PowerOrb({ power, count }: GroupedPower) {
 			<div className="relative">
 				{/* Power hexagon with ring effect */}
 				<div
-					className={`w-9 h-10 ${ringColor.replace("ring-", "bg-")} flex items-center justify-center cursor-pointer transition-transform hover:scale-110`}
+					className={`w-9 h-10 ${bgColor} flex items-center justify-center cursor-pointer transition-transform hover:scale-110`}
 					style={{ clipPath: hexagonClipPath }}
 				>
 					{/* Inner hexagon */}
 					<div
-						className="w-7 h-8 bg-neutral-800 flex items-center justify-center"
+						className="w-8 h-9 bg-neutral-800 flex items-center justify-center"
 						style={{ clipPath: hexagonClipPath }}
 					>
 						<IconComponent size={14} className="text-white" />

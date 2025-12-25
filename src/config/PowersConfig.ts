@@ -142,6 +142,15 @@ export const RANK_RING_COLORS: Record<PowerRank, string> = {
 	legendary: "ring-amber-400",
 };
 
+// Rank background colors (for power orb outer ring)
+export const RANK_BG_COLORS: Record<PowerRank, string> = {
+	common: "bg-neutral-500",
+	uncommon: "bg-green-500",
+	rare: "bg-blue-500",
+	epic: "bg-purple-500",
+	legendary: "bg-amber-400",
+};
+
 // All available powers
 export const POWERS: Power[] = [
 	// Strength powers (max 5 stacks each - stat cap will naturally limit)
