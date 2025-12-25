@@ -1,6 +1,6 @@
 # [feat] Launch Screen
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** High
 **Type:** Feature
 **Agent:** Cartman
@@ -18,13 +18,13 @@ Add a React-based launch screen that displays before the game starts. This is th
 
 ## Acceptance Criteria
 
-- [ ] Launch screen displays on app start (pure React, no Phaser yet)
-- [ ] Follows black & white theme (consistent with other UI)
-- [ ] Game title/logo displayed
-- [ ] "Start Game" button prominently visible
-- [ ] Clicking "Start Game" initializes Phaser and shows game
-- [ ] Phaser does NOT initialize until "Start Game" is clicked
-- [ ] Smooth transition from launch screen to game
+- [x] Launch screen displays on app start (pure React, no Phaser yet)
+- [x] Follows black & white theme (consistent with other UI)
+- [x] Game title/logo displayed
+- [x] "Start Game" button prominently visible
+- [x] Clicking "Start Game" initializes Phaser and shows game
+- [x] Phaser does NOT initialize until "Start Game" is clicked
+- [x] Smooth transition from launch screen to game
 
 ## UI Layout
 
@@ -63,4 +63,18 @@ Add a React-based launch screen that displays before the game starts. This is th
 
 ## History
 
-_No history yet_
+### Completed by Cartman
+
+- Added `AppScreen` type (`"menu" | "playing"`) to gameStore
+- Added `appScreen` state initialized to `"menu"`
+- Added `startGame()` action to transition from menu to playing
+- Created `src/ui/screens/LaunchScreen.tsx`:
+  - Full-screen white background with centered content
+  - Game title "SURVIVOR" with subtitle
+  - "Start Game" button using existing Button primitive
+  - Shows Enter key hint via Kbd primitive
+- Updated `App.tsx`:
+  - Shows LaunchScreen when `appScreen === "menu"`
+  - Phaser only initializes when `appScreen === "playing"`
+  - Added Enter key handler to start game from menu
+  - Smooth transition via existing LoadingScreen
