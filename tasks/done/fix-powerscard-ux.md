@@ -1,6 +1,6 @@
 # [fix] PowersCard UX Improvements
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Bug
 
@@ -10,12 +10,12 @@ The PowersCard component has two UX issues that need to be addressed:
 2. The hexagon orbs lack a visible colored border that should match the power's rank color
 
 ## Acceptance Criteria
-- [ ] PowersCard width fits content tightly without unnecessary empty space
-- [ ] Hexagon orbs display a visible colored border matching the power's rank (common=neutral, uncommon=green, rare=blue, epic=purple, legendary=amber)
-- [ ] Layout flows naturally without awkward line breaks
-- [ ] Hover effects still work correctly
-- [ ] Count badges remain visible and positioned correctly
-- [ ] Visual design stays consistent with the black & white theme (colored borders are acceptable for rank indication)
+- [x] PowersCard width fits content tightly without unnecessary empty space
+- [x] Hexagon orbs display a visible colored border matching the power's rank (common=neutral, uncommon=green, rare=blue, epic=purple, legendary=amber)
+- [x] Layout flows naturally without awkward line breaks
+- [x] Hover effects still work correctly
+- [x] Count badges remain visible and positioned correctly
+- [x] Visual design stays consistent with the black & white theme (colored borders are acceptable for rank indication)
 
 ## Context
 
@@ -96,3 +96,6 @@ Option C - Use SVG hexagon with stroke:
 - `src/ui/cards/PowersCard.tsx` - Main component to modify
 - `src/config/PowersConfig.ts` - Contains `RANK_HEX_COLORS` and `RANK_RING_COLORS`
 - `docs/UI.md` - Update if component behavior changes significantly
+
+## History
+- 2025-12-25: Completed. Removed `max-w-[180px]` constraint to let layout flow naturally. Increased outer hexagon size from `w-8 h-9` to `w-9 h-10` to create a more visible 4px colored border matching the power's rank.
