@@ -10,6 +10,7 @@ import {
 	HeroStatsCard,
 	LogsCard,
 	MenuBarCard,
+	MinimapCard,
 	PowersCard,
 	ZoomControlCard,
 } from "./cards";
@@ -58,6 +59,8 @@ export function GameUI({
 		isDebugMode,
 		energy,
 		isSprinting,
+		heroPosition,
+		orcPositions,
 	} = useGameStore();
 
 	return (
@@ -93,7 +96,8 @@ export function GameUI({
 				<ZoomControlCard />
 				<MenuBarCard onPause={onPause} />
 			</div>
-			<div className="absolute bottom-6 left-6 pointer-events-auto">
+			<div className="absolute bottom-6 left-6 pointer-events-auto flex flex-col gap-2 items-start">
+				<MinimapCard heroPosition={heroPosition} orcPositions={orcPositions} />
 				<LogsCard />
 			</div>
 

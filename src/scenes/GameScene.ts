@@ -210,6 +210,12 @@ export class GameScene extends Phaser.Scene {
 		this.time.addEvent({
 			delay: 100,
 			callback: () => {
+				// Collect orc positions for minimap
+				const orcPositions = this.waveManager.orcs.getChildren().map((orc) => {
+					const sprite = orc as Phaser.Physics.Arcade.Sprite;
+					return { x: sprite.x, y: sprite.y };
+				});
+
 				gameStore.batchUpdateUI({
 					health: this.hero.health,
 					maxHealth: this.hero.maxHealth,
@@ -218,6 +224,8 @@ export class GameScene extends Phaser.Scene {
 					orcsAlive: this.waveManager.getOrcCount(),
 					elapsedTime: this.getElapsedTime(),
 					fps: Math.round(this.game.loop.actualFps),
+					heroPosition: { x: this.hero.x, y: this.hero.y },
+					orcPositions,
 				});
 			},
 			loop: true,

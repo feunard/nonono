@@ -87,7 +87,11 @@ type GameState = {
 	isSpawnPaused: boolean; // Debug: whether orc spawning is paused
 	energy: number; // Current energy (0-100)
 	isSprinting: boolean; // Whether sprint is currently active
+	heroPosition: Position; // Hero position for minimap
+	orcPositions: Position[]; // Orc positions for minimap
 };
+
+type Position = { x: number; y: number };
 
 type UIBatchUpdate = {
 	health: number;
@@ -97,6 +101,8 @@ type UIBatchUpdate = {
 	orcsAlive: number;
 	elapsedTime: number;
 	fps: number;
+	heroPosition: Position;
+	orcPositions: Position[];
 };
 
 type GameActions = {
@@ -194,6 +200,8 @@ const initialState: GameState = {
 	isSpawnPaused: false,
 	energy: 100,
 	isSprinting: false,
+	heroPosition: { x: 0, y: 0 },
+	orcPositions: [],
 };
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
@@ -225,6 +233,8 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
 			orcsAlive: updates.orcsAlive,
 			elapsedTime: updates.elapsedTime,
 			fps: updates.fps,
+			heroPosition: updates.heroPosition,
+			orcPositions: updates.orcPositions,
 		}),
 
 	setPaused: (isPaused) => set({ isPaused }),
@@ -355,4 +365,4 @@ export const gameStore = {
 	reset: () => useGameStore.getState().reset(),
 };
 
-export type { GameState, BonusStats, LogEntry };
+export type { GameState, BonusStats, LogEntry, Position };

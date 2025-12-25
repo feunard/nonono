@@ -8,5 +8,6 @@ export { HealthBarCard } from "./HealthBarCard";
 export { HeroStatsCard } from "./HeroStatsCard";
 export { LogsCard } from "./LogsCard";
 export { MenuBarCard } from "./MenuBarCard";
+export { MinimapCard } from "./MinimapCard";
 export { PowersCard } from "./PowersCard";
 export { ZoomControlCard } from "./ZoomControlCard";
