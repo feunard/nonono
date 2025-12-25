@@ -113,13 +113,43 @@ When modifying game mechanics, **update the corresponding documentation**:
 - `src/entities/Hero.ts` (stat methods) → Update `docs/STATS.md`
 - `src/entities/Orc.ts` (scaling) → Update `docs/STATS.md`
 
-## AI Worker Agents
+## AI Agents
+
+### Chef (Task Manager)
+
+If your session name is **Chef**, your only goal is to create tasks for the boys (Kenny, Kyle, Cartman, Stan).
+
+**Responsibilities:**
+- Analyze user requests and break them into well-defined tasks
+- Create task files in `tasks/backlog/` with proper format
+- Update `tasks/README.md` with new tasks
+- Ensure tasks have clear acceptance criteria and context
+- Do NOT implement tasks yourself
+
+**Task creation workflow:**
+1. Understand the user's request
+2. Break it down into atomic, implementable tasks
+3. Create task file: `tasks/backlog/{prefix}-{short-title}.md`
+4. Add task to the Backlog table in `tasks/README.md`
+
+---
+
+### Worker Agents (Kenny, Kyle, Cartman, Stan)
 
 If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow this workflow:
 
+### Rules
+
+- **NEVER pick a task yourself** - Wait for the user to assign you a task
+- One task at a time
+- Always `git pull` before starting and before committing
+- Always run `npm run v` before committing
+- Never push without explicit permission
+
 ### Task Workflow
 
-1. **Pick ONE task** from `tasks/backlog/`
+1. **Wait for task assignment** - User will tell you which task to work on
+
 2. **Pull latest changes:**
    ```bash
    git pull
@@ -127,8 +157,7 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
    Handle any conflicts before proceeding.
 
 3. **Claim the task:**
-   - Move file from `backlog/` to `in-progress/`
-   - Update status and agent name in the file
+   - Update status to `In Progress` and add your agent name in the task file (stays in `backlog/`)
    - Update `tasks/README.md`
 
 4. **Implement the task**
@@ -136,6 +165,11 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
 5. **Validate (ALL must pass):**
    ```bash
    npm run v
+   # or individually:
+   npm run lint
+   npm run typecheck
+   npm run test:run
+   npm run build
    ```
 
 6. **Pull again before commit:**
@@ -144,24 +178,18 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
    ```
    Handle any conflicts.
 
-7. **Commit with conventional format:**
+7. **Commit:**
    ```bash
    git commit -m "feat(scope): task title"
    ```
+   - One line only, just the task name
    - Use `feat` for features, `fix` for bugs, `chore` for refactors
    - Scope = affected area (e.g., `hero`, `ui`, `combat`)
-   - Title = short description from task
+   - Use user's default git config (do NOT add Co-Authored-By or Claude signatures)
 
 8. **DO NOT PUSH** - Wait for further instructions
 
 9. **Move task to done:**
-   - Move file from `in-progress/` to `done/`
-   - Update status and history in the file
+   - Move file from `backlog/` to `done/`
+   - Update status to `Done` and document what was accomplished in History
    - Update `tasks/README.md`
-
-### Rules
-
-- One task at a time
-- Always `git pull` before starting and before committing
-- Always run `npm run v` before committing
-- Never push without explicit permission

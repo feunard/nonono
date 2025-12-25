@@ -6,20 +6,16 @@ Task tracker for AI implementation. Each task is a standalone file with full his
 
 ### Backlog
 
-| Task | Priority | Type |
-|------|----------|------|
-| [feat-minimap](./backlog/feat-minimap.md) | Low | Feature |
-| [feat-dash-sprint-energy](./backlog/feat-dash-sprint-energy.md) | Medium | Feature |
-| [feat-bagcard-visual-feedback](./backlog/feat-bagcard-visual-feedback.md) | Low | Feature |
-| [feat-power-card-list-ux](./backlog/feat-power-card-list-ux.md) | Medium | Feature |
-| [feat-agility-dodge-chance](./backlog/feat-agility-dodge-chance.md) | Medium | Feature |
-| [feat-strength-armor-pen](./backlog/feat-strength-armor-pen.md) | Medium | Feature |
-| [chore-luck-stat-refactoring](./backlog/chore-luck-stat-refactoring.md) | Medium | Refactor |
-| [feat-power-prerequisites](./backlog/feat-power-prerequisites.md) | Medium | Feature |
-
-### In Progress
-
-_No tasks in progress_
+| Task | Priority | Type | Status | Agent |
+|------|----------|------|--------|-------|
+| [feat-minimap](./backlog/feat-minimap.md) | Low | Feature | Backlog | - |
+| [feat-dash-sprint-energy](./backlog/feat-dash-sprint-energy.md) | Medium | Feature | Backlog | - |
+| [feat-bagcard-visual-feedback](./backlog/feat-bagcard-visual-feedback.md) | Low | Feature | Backlog | - |
+| [feat-power-card-list-ux](./backlog/feat-power-card-list-ux.md) | Medium | Feature | Backlog | - |
+| [feat-agility-dodge-chance](./backlog/feat-agility-dodge-chance.md) | Medium | Feature | Backlog | - |
+| [feat-strength-armor-pen](./backlog/feat-strength-armor-pen.md) | Medium | Feature | Backlog | - |
+| [chore-luck-stat-refactoring](./backlog/chore-luck-stat-refactoring.md) | Medium | Refactor | Backlog | - |
+| [feat-power-prerequisites](./backlog/feat-power-prerequisites.md) | Medium | Feature | Backlog | - |
 
 ### Done
 
@@ -41,12 +37,12 @@ _No tasks in progress_
 
 ### Rules
 
-1. **Choose a session name:** At the start of a session, pick a short unique name (e.g., "Atlas", "Nova", "Bolt").
-2. **Check in-progress first:** Before claiming a task, check `in-progress/` folder.
-3. **Claim the task:** Move file from `backlog/` to `in-progress/`, update status and agent in file.
-4. **One task at a time:** Complete your current task before claiming another.
+1. **NEVER pick a task yourself** - Wait for the user to assign you a task.
+2. **Choose a session name:** Pick a short unique name (e.g., "Kenny", "Kyle", "Cartman", "Stan").
+3. **Claim the task:** Update status to `In Progress` and add your agent name in the file (stays in `backlog/`).
+4. **One task at a time:** Complete your current task before taking another.
 5. **Update history:** Add entries to the History section as you work.
-6. **Mark complete:** Move file from `in-progress/` to `done/`, update status, document what was accomplished.
+6. **Mark complete:** Move file from `backlog/` to `done/`, update status, document what was accomplished.
 7. **Update this README:** Keep the Task Index tables in sync.
 
 ### Prefixes
@@ -62,11 +58,6 @@ _No tasks in progress_
 ```
 {prefix}-{short-title}.md
 ```
-
-Examples:
-- `feat-dash-sprint-energy.md`
-- `fix-transparent-button-bg.md`
-- `chore-luck-stat-refactoring.md`
 
 ### Task File Format
 
