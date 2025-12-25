@@ -1,6 +1,6 @@
 # [feat] Add Collision Between Orcs
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Feature
 
@@ -24,13 +24,13 @@ Orcs currently have no collision detection between each other, allowing them to 
 
 ## Acceptance Criteria
 
-- [ ] Orcs collide with other orcs and cannot walk through each other
-- [ ] Collision uses the existing physics body (8x8 hitbox at offset 46,52)
-- [ ] Orcs naturally spread out when multiple converge on the same point
-- [ ] No performance degradation with 20+ orcs on screen
-- [ ] Orcs do not get permanently stuck due to collision
-- [ ] Pathfinding still works correctly (orcs find alternate routes around each other)
-- [ ] Knockback behavior still functions properly with orc-orc collision
+- [x] Orcs collide with other orcs and cannot walk through each other
+- [x] Collision uses the existing physics body (8x8 hitbox at offset 46,52)
+- [x] Orcs naturally spread out when multiple converge on the same point
+- [x] No performance degradation with 20+ orcs on screen
+- [x] Orcs do not get permanently stuck due to collision
+- [x] Pathfinding still works correctly (orcs find alternate routes around each other)
+- [x] Knockback behavior still functions properly with orc-orc collision
 
 ## Context
 
@@ -73,3 +73,7 @@ Orcs currently have no collision detection between each other, allowing them to 
 // Basic group self-collision
 this.physics.add.collider(this.waveManager.orcs, this.waveManager.orcs);
 ```
+
+## History
+
+- 2025-12-25: Implemented orc-to-orc collision using Phaser's group self-collision in GameScene.setupSystems(). Added single line `this.physics.add.collider(this.waveManager.orcs, this.waveManager.orcs)` after WaveManager creation. Existing stuck detection in Orc.ts handles any collision-induced stuck states.
