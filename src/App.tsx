@@ -1,10 +1,10 @@
 import Phaser from "phaser";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getRandomPowers, type Power } from "./config/PowersConfig";
+import { getRandomAvailablePowers, type Power } from "./config/PowersConfig";
 import { BootScene } from "./scenes/BootScene";
 import { GameScene } from "./scenes/GameScene";
 import { gameStore, useGameStore } from "./stores/gameStore";
-import { heroStore } from "./stores/heroStore";
+import { heroStore, useHeroStore } from "./stores/heroStore";
 import { inventoryStore, useInventoryStore } from "./stores/inventoryStore";
 import { useUIStore } from "./stores/uiStore";
 import { LogSystem } from "./systems/LogSystem";
@@ -17,7 +17,9 @@ export function App() {
 	const gameRef = useRef<Phaser.Game | null>(null);
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const { appScreen, isGameReady, isPaused, isGameOver } = useGameStore();
-	const { isLootSelection, lootPowers, bagCount } = useInventoryStore();
+	const { isLootSelection, lootPowers, bagCount, collectedPowers } =
+		useInventoryStore();
+	const { bonusStats } = useHeroStore();
 	const { isDebugPowerOverlay } = useUIStore();
 
 	useEffect(() => {
@@ -140,11 +142,11 @@ export function App() {
 
 	const handleOpenBag = useCallback(() => {
 		if (bagCount > 0) {
-			// Generate 3 random powers and show selection
-			const powers = getRandomPowers(3);
+			// Generate 3 random powers (filtered by prerequisites) and show selection
+			const powers = getRandomAvailablePowers(3, collectedPowers, bonusStats);
 			inventoryStore.showLootSelection(powers);
 		}
-	}, [bagCount]);
+	}, [bagCount, collectedPowers, bonusStats]);
 
 	const handleDebugPowerClose = useCallback(() => {
 		const game = gameRef.current;
