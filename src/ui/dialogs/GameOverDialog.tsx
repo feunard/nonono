@@ -1,4 +1,12 @@
-import { Clock, RotateCcw, Skull, Swords, Trophy } from "lucide-react";
+import {
+	Clock,
+	Download,
+	RotateCcw,
+	Skull,
+	Swords,
+	Trophy,
+} from "lucide-react";
+import { LogSystem } from "../../systems/LogSystem";
 import { Button } from "../primitives/Button";
 import {
 	Card,
@@ -73,13 +81,21 @@ export function GameOverDialog({
 					</div>
 				</CardContent>
 
-				<CardFooter>
+				<CardFooter className="flex-col gap-2">
 					<Button onClick={onRestart} className="w-full justify-between">
 						<span className="flex items-center gap-2">
 							<RotateCcw className="w-4 h-4" />
 							Play Again
 						</span>
 						<Kbd>Enter</Kbd>
+					</Button>
+					<Button
+						onClick={() => LogSystem.downloadLogs()}
+						variant="secondary"
+						className="w-full justify-center"
+					>
+						<Download className="w-4 h-4 mr-2" />
+						Export Logs
 					</Button>
 				</CardFooter>
 			</Card>
