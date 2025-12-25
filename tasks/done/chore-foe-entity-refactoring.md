@@ -1,6 +1,6 @@
 # [chore] Foe Entity System Refactoring
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Refactor
 **Agent:** -
@@ -27,17 +27,17 @@ Refactor the current `Orc` entity into a flexible enemy class hierarchy. The goa
 
 ## Acceptance Criteria
 
-- [ ] Rename current `Orc` class to `Foe` (keep in same file or new `Foe.ts`)
-- [ ] Extract all hardcoded values into a `FoeConfig` interface/type
-- [ ] `Foe` constructor accepts a config object for: sprite keys, animation mappings, base stats, scale
-- [ ] Create new `Orc` class extending `Foe` with orc-specific config
-- [ ] Create `BigOrc` class extending `Foe` (1.5x scale, +50% HP, +25% damage)
-- [ ] Update `WaveManager.spawnOrc()` to support spawning different foe types
-- [ ] Update `GameScene` imports and type references (`Orc` -> `Foe` where appropriate)
-- [ ] Update `GAME_CONFIG` to support per-enemy-type stats (or use config objects)
-- [ ] Ensure logging still works with foe type identification
-- [ ] Run `npm run v` - all checks must pass
-- [ ] Fix any broken tests
+- [x] Rename current `Orc` class to `Foe` (keep in same file or new `Foe.ts`)
+- [x] Extract all hardcoded values into a `FoeConfig` interface/type
+- [x] `Foe` constructor accepts a config object for: sprite keys, animation mappings, base stats, scale
+- [x] Create new `Orc` class extending `Foe` with orc-specific config
+- [x] Create `BigOrc` class extending `Foe` (1.5x scale, +50% HP, +25% damage)
+- [x] Update `WaveManager.spawnOrc()` to support spawning different foe types
+- [x] Update `GameScene` imports and type references (`Orc` -> `Foe` where appropriate)
+- [x] Update `GAME_CONFIG` to support per-enemy-type stats (or use config objects)
+- [x] Ensure logging still works with foe type identification
+- [x] Run `npm run v` - all checks must pass
+- [x] Fix any broken tests
 
 ## Proposed Architecture
 
@@ -78,7 +78,8 @@ interface FoeConfig {
   baseAccuracy: number;
 
   // Stat multipliers (applied on top of base stats)
-  statMultiplier?: number;     // e.g., 1.5 for BigOrc (optional, default 1)
+  healthMultiplier?: number;   // e.g., 1.5 for BigOrc (optional, default 1)
+  damageMultiplier?: number;   // e.g., 1.25 for BigOrc (optional, default 1)
 
   // For logging/identification
   typeName: string;            // e.g., "Orc", "BigOrc"
@@ -140,7 +141,7 @@ private spawnFoe(foeType: 'orc' | 'bigOrc' = 'orc'): void {
   }
 
   foe.setTarget(this.hero);
-  this.orcs.add(foe);  // Consider renaming to `this.foes`
+  this.foes.add(foe);  // Renamed from orcs to foes
 }
 ```
 
@@ -207,11 +208,12 @@ export class Zombie extends Foe {
 
 ## Notes
 
-- Keep `orcId` naming for now (or rename to `foeId` for consistency)
-- Consider renaming `WaveManager.orcs` group to `foes`
-- BigOrc should use same sprites as Orc, just scaled up
-- Logging should include foe type: `"BigOrc L3 #42 dies."` instead of `"Orc L3 #42 dies."`
+- Renamed `orcId` to `foeId` for consistency
+- Renamed `WaveManager.orcs` group to `foes`
+- BigOrc uses same sprites as Orc, just scaled up
+- Logging now includes foe type: `"BigOrc L3 #42 dies."` instead of `"Orc L3 #42 dies."`
+- BigOrcs spawn starting wave 2 with 15% chance, increasing by 5% per wave up to 40% max
 
 ## History
 
-_No history yet_
+- 2025-12-25: Completed refactoring. Created Foe base class, Orc and BigOrc subclasses. Updated WaveManager to spawn different foe types with wave-based probability. Updated LogSystem, CombatSystem, GameScene, and LogFormatter to use foe terminology. All validation passes.
