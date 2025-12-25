@@ -35,6 +35,13 @@ Cards are HUD elements visible during gameplay. They use the Card primitive for 
 - **Why:** Player needs to monitor health to survive
 - **File:** `src/ui/cards/HealthBarCard.tsx`
 
+### EnergyBarCard
+
+- **What:** Displays sprint energy with visual progress bar
+- **How:** Shows current/max energy, pulsing while sprinting, dimmed when below sprint threshold
+- **Why:** Player needs to monitor energy for sprint timing
+- **File:** `src/ui/cards/EnergyBarCard.tsx`
+
 ### GameStatsCard
 
 - **What:** Shows current wave, orcs alive, total kills, and elapsed time
