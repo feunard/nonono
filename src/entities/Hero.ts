@@ -157,6 +157,21 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		return this.cachedBonusStats.vorpalChance;
 	}
 
+	// Get armor penetration chance based on Strength
+	// Formula: (strength - 100) * 0.1% = 0.001 per point above 100
+	// Example: 200 STR = 10% armor pen chance
+	public getArmorPenChance(): number {
+		const strength = this.getTotalStrength();
+		if (strength <= 100) return 0;
+		return (strength - 100) * 0.001; // 0.1% per point = 0.001
+	}
+
+	// Roll for armor penetration
+	public rollArmorPen(): boolean {
+		const chance = this.getArmorPenChance();
+		return chance > 0 && Math.random() < chance;
+	}
+
 	// Advanced arrow power getters
 	public getArrowHoming(): number {
 		return this.cachedBonusStats.arrowHoming;
@@ -470,6 +485,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 						isCritical?: boolean,
 						attackerAccuracy?: number,
 						attackerPiercing?: number,
+						ignoreArmor?: boolean,
 					) => void;
 					health?: number;
 				};
@@ -477,7 +493,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 					// Check vorpal (instant kill chance)
 					const vorpalChance = this.getVorpalChance();
 					if (vorpalChance > 0 && Math.random() < vorpalChance) {
-						orc.takeDamage(99999, true, 100, 100); // Instant kill
+						orc.takeDamage(99999, true, 100, 100, true); // Instant kill
 						this.applyLifesteal(99999);
 						return;
 					}
@@ -489,12 +505,13 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 						orc.health !== undefined &&
 						orc.health / GAME_CONFIG.orc.health < executeThreshold
 					) {
-						orc.takeDamage(99999, true, 100, 100); // Instant kill
+						orc.takeDamage(99999, true, 100, 100, true); // Instant kill
 						this.applyLifesteal(99999);
 						return;
 					}
 
 					const isCritical = this.rollCritical();
+					const isArmorPen = this.rollArmorPen();
 					const baseDamage = Math.floor(
 						GAME_CONFIG.hero.sword.damage *
 							this.getHeroStrengthModifier() *
@@ -507,6 +524,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 						isCritical,
 						this.getAccuracy(),
 						this.getPiercing(),
+						isArmorPen,
 					);
 					// Apply lifesteal
 					this.applyLifesteal(finalDamage);
@@ -561,13 +579,14 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 						isCritical?: boolean,
 						attackerAccuracy?: number,
 						attackerPiercing?: number,
+						ignoreArmor?: boolean,
 					) => void;
 					health?: number;
 				};
 				if (orc.takeDamage) {
 					// Check vorpal (instant kill chance)
 					if (vorpalChance > 0 && Math.random() < vorpalChance) {
-						orc.takeDamage(99999, true, 100, 100);
+						orc.takeDamage(99999, true, 100, 100, true);
 						totalDamageDealt += 99999;
 						continue;
 					}
@@ -578,12 +597,13 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 						orc.health !== undefined &&
 						orc.health / GAME_CONFIG.orc.health < executeThreshold
 					) {
-						orc.takeDamage(99999, true, 100, 100);
+						orc.takeDamage(99999, true, 100, 100, true);
 						totalDamageDealt += 99999;
 						continue;
 					}
 
 					const isCritical = this.rollCritical();
+					const isArmorPen = this.rollArmorPen();
 					const baseDamage = Math.floor(
 						GAME_CONFIG.hero.sword.damage *
 							this.getHeroStrengthModifier() *
@@ -596,6 +616,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 						isCritical,
 						this.getAccuracy(),
 						this.getPiercing(),
+						isArmorPen,
 					);
 					totalDamageDealt += finalDamage;
 				}
@@ -706,6 +727,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		// Fire all arrows
 		for (const angle of angles) {
 			const isCritical = this.rollCritical();
+			const isArmorPen = this.rollArmorPen();
 			const baseDamage = Math.floor(
 				GAME_CONFIG.hero.bow.damage *
 					this.getHeroStrengthModifier() *
@@ -728,6 +750,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 				arrowHoming,
 				arrowExplosive,
 				this._orcsGroup ?? undefined,
+				isArmorPen,
 			);
 			this.arrows.add(arrow);
 		}

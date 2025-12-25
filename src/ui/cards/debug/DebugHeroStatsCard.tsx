@@ -135,6 +135,14 @@ export function DebugHeroStatsCard() {
 				/>
 				<DebugRow label="Accuracy" value={totalAccuracy} />
 				<DebugRow label="Piercing" value={totalPiercing} />
+				<DebugRow
+					label="Armor Pen"
+					value={
+						totalStrength > 100
+							? `${((totalStrength - 100) * 0.1).toFixed(1)}%`
+							: "0%"
+					}
+				/>
 
 				<Divider />
 

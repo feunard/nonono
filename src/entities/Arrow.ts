@@ -10,6 +10,7 @@ export class Arrow extends Phaser.Physics.Arcade.Sprite {
 	public isCritical: boolean;
 	public accuracy: number; // Flat points that reduce target's effective dodge
 	public piercing: number; // Flat points that reduce target's effective armor
+	public ignoreArmor: boolean; // Armor penetration proc - ignores target's armor entirely
 	// Arrow power properties
 	public pierceRemaining: number; // How many more enemies this arrow can pierce
 	public bounceRemaining: number; // How many more times this arrow can bounce
@@ -43,6 +44,7 @@ export class Arrow extends Phaser.Physics.Arcade.Sprite {
 		homingStrength?: number,
 		explosiveRadius?: number,
 		orcsGroup?: Phaser.Physics.Arcade.Group,
+		ignoreArmor?: boolean,
 	) {
 		// Spawn arrow in front of hero
 		const spawnX = x + Math.cos(angle) * GAME_CONFIG.arrow.spawnOffset;
@@ -57,6 +59,7 @@ export class Arrow extends Phaser.Physics.Arcade.Sprite {
 		this.isCritical = isCritical ?? false;
 		this.accuracy = accuracy ?? 0;
 		this.piercing = piercing ?? 0;
+		this.ignoreArmor = ignoreArmor ?? false;
 		this.pierceRemaining = pierceCount ?? 0;
 		this.bounceRemaining = bounceCount ?? 0;
 		this.homingStrength = homingStrength ?? 0;

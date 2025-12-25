@@ -63,6 +63,7 @@ export class CombatSystem {
 			arrowSprite.isCritical,
 			arrowSprite.accuracy,
 			arrowSprite.piercing,
+			arrowSprite.ignoreArmor,
 		);
 
 		// Apply lifesteal

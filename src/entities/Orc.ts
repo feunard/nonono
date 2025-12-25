@@ -359,27 +359,44 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		});
 	}
 
-	private showDamageText(amount: number, isCritical: boolean): void {
+	private showDamageText(
+		amount: number,
+		isCritical: boolean,
+		isArmorPen = false,
+	): void {
 		// Random X offset for variety
 		const offsetX = (Math.random() - 0.5) * 20;
+
+		// Build damage text label
+		let label = `-${amount}`;
+		if (isCritical && isArmorPen) {
+			label = `CRIT! ARMOR PEN! -${amount}`;
+		} else if (isCritical) {
+			label = `CRIT! -${amount}`;
+		} else if (isArmorPen) {
+			label = `ARMOR PEN! -${amount}`;
+		}
+
+		// Armor pen gets special styling (cyan/teal color)
+		const isSpecial = isCritical || isArmorPen;
 		const damageText = this.scene.add.text(
 			this.x + offsetX,
 			this.y - 20,
-			isCritical ? `CRIT! -${amount}` : `-${amount}`,
+			label,
 			{
-				fontSize: isCritical ? "14px" : "10px",
+				fontSize: isSpecial ? "14px" : "10px",
 				fontFamily: "Wotfard, sans-serif",
-				color: isCritical ? "#ffffff" : "#ff0000",
+				color: isArmorPen ? "#00ffff" : isCritical ? "#ffffff" : "#ff0000",
 				fontStyle: "bold",
-				stroke: isCritical ? "#ff0000" : "#000000",
-				strokeThickness: isCritical ? 3 : 2,
+				stroke: isArmorPen ? "#006666" : isCritical ? "#ff0000" : "#000000",
+				strokeThickness: isSpecial ? 3 : 2,
 			},
 		);
 		damageText.setOrigin(0.5, 0.5);
 		damageText.setDepth(999);
 
-		// Critical hits have a scale pop effect
-		if (isCritical) {
+		// Special hits have a scale pop effect
+		if (isSpecial) {
 			damageText.setScale(1.5);
 			this.scene.tweens.add({
 				targets: damageText,
@@ -392,9 +409,9 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		// Fade up animation
 		this.scene.tweens.add({
 			targets: damageText,
-			y: damageText.y - (isCritical ? 40 : 30),
+			y: damageText.y - (isSpecial ? 40 : 30),
 			alpha: 0,
-			duration: isCritical ? 800 : 600,
+			duration: isSpecial ? 800 : 600,
 			ease: "Power2",
 			onComplete: () => {
 				damageText.destroy();
@@ -432,6 +449,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		isCritical = false,
 		attackerAccuracy = 0,
 		attackerPiercing = 0,
+		ignoreArmor = false,
 	): void {
 		if (this.isDead) return;
 
@@ -446,7 +464,10 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		}
 
 		// Calculate effective armor (orc armor - attacker piercing, clamped 0-100)
-		const effectiveArmor = Math.max(0, this.armor - attackerPiercing);
+		// If ignoreArmor is true (armor pen proc), effective armor is 0
+		const effectiveArmor = ignoreArmor
+			? 0
+			: Math.max(0, this.armor - attackerPiercing);
 
 		// Apply armor reduction (armor is % damage reduction)
 		const finalDamage = Math.floor(amount * (1 - effectiveArmor / 100));
@@ -454,14 +475,22 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		this.health -= finalDamage;
 
 		// Combat log (WoW style) - include orc level
-		if (isCritical) {
+		if (ignoreArmor && isCritical) {
+			gameStore.addLog(
+				`You crit Orc L${this.level} for ${finalDamage}! (ARMOR PEN)`,
+			);
+		} else if (ignoreArmor) {
+			gameStore.addLog(
+				`You hit Orc L${this.level} for ${finalDamage}. (ARMOR PEN)`,
+			);
+		} else if (isCritical) {
 			gameStore.addLog(`You crit Orc L${this.level} for ${finalDamage}!`);
 		} else {
 			gameStore.addLog(`You hit Orc L${this.level} for ${finalDamage}.`);
 		}
 
 		// Floating damage text
-		this.showDamageText(finalDamage, isCritical);
+		this.showDamageText(finalDamage, isCritical, ignoreArmor);
 
 		// Hit splatter effect
 		this.effectsManager.hitSplatter(this.x, this.y);

@@ -14,7 +14,6 @@ Task tracker for AI implementation. Each task is a standalone file with full his
 | [feat-power-card-list-ux](./backlog/feat-power-card-list-ux.md) | Medium | Feature |
 | [feat-logging-system](./backlog/feat-logging-system.md) | Medium | Feature |
 | [feat-agility-dodge-chance](./backlog/feat-agility-dodge-chance.md) | Medium | Feature |
-| [feat-strength-armor-pen](./backlog/feat-strength-armor-pen.md) | Medium | Feature |
 | [chore-luck-stat-refactoring](./backlog/chore-luck-stat-refactoring.md) | Medium | Refactor |
 | [feat-power-prerequisites](./backlog/feat-power-prerequisites.md) | Medium | Feature |
 
@@ -26,6 +25,7 @@ _No tasks in progress_
 
 | Task | Priority | Type | Agent |
 |------|----------|------|-------|
+| [feat-strength-armor-pen](./done/feat-strength-armor-pen.md) | Medium | Feature | Kenny |
 | [fix-pause-animations](./done/fix-pause-animations.md) | Medium | Bug | Kenny |
 | [chore-decouple-phaser-react](./done/chore-decouple-phaser-react.md) | High | Refactor | Francis |
 | [fix-transparent-button-bg](./done/fix-transparent-button-bg.md) | High | Bug | Jack |

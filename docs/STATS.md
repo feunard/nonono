@@ -20,6 +20,7 @@ Complete documentation of all stats, formulas, and mechanics.
   - [Accuracy](#accuracy)
   - [Damage Multiplier](#damage-multiplier)
   - [Critical Multiplier](#critical-multiplier)
+  - [Armor Penetration](#armor-penetration)
 - [Movement Stats](#movement-stats)
   - [Move Speed](#move-speed)
 - [Bow Stats](#bow-stats)
@@ -64,22 +65,31 @@ Complete documentation of all stats, formulas, and mechanics.
 ### Strength
 
 **Base Value:** 50
-**Purpose:** Increases all damage dealt
+**Purpose:** Increases all damage dealt and grants armor penetration chance
 
-**Formula:**
+**Damage Formula:**
 ```
 strengthModifier = 1 + ((strength - 1) * 0.495) / 499
 finalDamage = baseDamage * strengthModifier
 ```
 
+**Armor Penetration Formula:**
+```
+armorPenChance = max(0, (strength - 100) * 0.1%)
+```
+
+When armor penetration procs, the attack ignores the target's armor entirely.
+
 **Scaling Examples:**
-| Strength | Damage Multiplier |
-|----------|-------------------|
-| 1 | 1.00x |
-| 50 (base) | 1.05x |
-| 100 | 1.10x |
-| 250 | 1.25x |
-| 500 (cap) | 1.495x (~50% more) |
+| Strength | Damage Multiplier | Armor Pen Chance |
+|----------|-------------------|------------------|
+| 1 | 1.00x | 0% |
+| 50 (base) | 1.05x | 0% |
+| 100 | 1.10x | 0% |
+| 150 | 1.15x | 5% |
+| 200 | 1.20x | 10% |
+| 300 | 1.30x | 20% |
+| 500 (cap) | 1.495x (~50% more) | 40% |
 
 **Affected By:**
 - Minor Strength (+5)
@@ -348,6 +358,40 @@ critDamage = baseDamage * critMultiplier
 
 ---
 
+### Armor Penetration
+
+**Base Value:** 0%
+**Purpose:** Chance to completely ignore target's armor
+
+**Formula:**
+```
+armorPenChance = max(0, (totalStrength - 100) * 0.1%)
+```
+
+**Mechanics:**
+- Derived from Strength stat (not a separate stat)
+- Requires Strength > 100 to have any effect
+- When proc'd, attack deals full damage ignoring armor
+- Rolled separately for each attack (melee and arrow)
+- Does not affect dodge (dodge is rolled first)
+
+**Visual Feedback:**
+- "ARMOR PEN!" text appears in cyan when proc'd
+- Combat log shows "(ARMOR PEN)" suffix
+
+**Scaling Examples:**
+| Strength | Armor Pen Chance |
+|----------|------------------|
+| ≤100 | 0% |
+| 150 | 5% |
+| 200 | 10% |
+| 300 | 20% |
+| 500 (cap) | 40% |
+
+**Note:** Armor penetration is separate from Piercing. Piercing reduces effective armor before the armor pen roll, while armor pen completely bypasses armor when it procs.
+
+---
+
 ## Movement Stats
 
 ### Move Speed
@@ -603,10 +647,14 @@ healAmount = floor(damageDealt * lifesteal)
    - Apply strength modifier
    - Apply damage multiplier
    - Roll for critical, apply crit multiplier
-   - Calculate effective armor: `targetArmor - attackerPiercing`
-   - Apply armor reduction
 
-4. **Post-Damage**
+4. **Armor Resolution**
+   - Roll for armor penetration (if strength > 100)
+   - If armor pen procs: effective armor = 0
+   - Otherwise: effective armor = `targetArmor - attackerPiercing`
+   - Apply armor reduction: `damage * (1 - effectiveArmor / 100)`
+
+5. **Post-Damage**
    - Apply lifesteal
    - Trigger knockback (enemies only)
    - Check for death
@@ -620,7 +668,13 @@ baseDamage *= strengthModifier           // 1.0 to 1.495
 baseDamage *= damageMultiplier           // 1.0 + bonus
 if (isCritical) baseDamage *= critMultiplier
 
-effectiveArmor = max(0, targetArmor - attackerPiercing)
+// Armor resolution
+armorPenChance = max(0, (strength - 100) * 0.001)
+if (random() < armorPenChance)
+    effectiveArmor = 0                    // Armor penetration proc!
+else
+    effectiveArmor = max(0, targetArmor - attackerPiercing)
+
 finalDamage = floor(baseDamage * (1 - effectiveArmor / 100))
 ```
 
