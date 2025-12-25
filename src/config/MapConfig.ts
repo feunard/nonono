@@ -12,17 +12,20 @@ import { type MapData, validateMapData } from "./MapData";
 export type TileType = {
 	id: number;
 	collide: boolean;
+	hardCollide: boolean; // Blocks arrows (line of sight blocking)
 	color?: string; // for rendering (hex color)
 };
 
 /**
  * Tile type definitions.
  * Tile 0 = empty/passable (no render)
- * Tile 1 = solid black wall (collide: true)
+ * Tile 1 = wall (collide: true, dark grey) - blocks movement but not arrows
+ * Tile 2 = hard wall (collide: true, hardCollide: true, black) - blocks movement and arrows
  */
 export const TILE_TYPES: Record<number, TileType> = {
-	0: { id: 0, collide: false }, // Empty/passable - no render
-	1: { id: 1, collide: true, color: "#000000" }, // Black wall
+	0: { id: 0, collide: false, hardCollide: false }, // Empty/passable - no render
+	1: { id: 1, collide: true, hardCollide: false, color: "#444444" }, // Dark grey wall - blocks movement
+	2: { id: 2, collide: true, hardCollide: true, color: "#000000" }, // Black hard wall - blocks movement + arrows
 };
 
 /**
@@ -123,4 +126,30 @@ export function getTileType(tileId: number): TileType {
 		return TILE_TYPES[0];
 	}
 	return tileType;
+}
+
+/**
+ * Check if a world position has a hardCollide tile (blocks arrows).
+ * @param worldX X position in pixels
+ * @param worldY Y position in pixels
+ * @param mapId Optional map ID (defaults to current map)
+ * @returns true if the tile at this position blocks arrows
+ */
+export function isHardCollideAt(
+	worldX: number,
+	worldY: number,
+	mapId?: string,
+): boolean {
+	const map = getMapConfig(mapId);
+	const tileX = Math.floor(worldX / map.tileSize);
+	const tileY = Math.floor(worldY / map.tileSize);
+
+	// Out of bounds check
+	if (tileX < 0 || tileX >= map.width || tileY < 0 || tileY >= map.height) {
+		return false;
+	}
+
+	const tileId = map.tilemap[tileY]?.[tileX] ?? 0;
+	const tileType = getTileType(tileId);
+	return tileType.hardCollide;
 }

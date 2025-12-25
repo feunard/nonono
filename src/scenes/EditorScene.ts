@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { editorStore } from "../stores/editorStore";
+import { editorStore, TILES } from "../stores/editorStore";
 
 const TILE_SIZE = 16;
 
@@ -239,7 +239,13 @@ export class EditorScene extends Phaser.Scene {
 		for (let y = 0; y < height; y++) {
 			for (let x = 0; x < width; x++) {
 				const tileId = tiles[y]?.[x] ?? 0;
-				const color = tileId === 0 ? 0xffffff : 0x000000;
+				// Get color from TILES definition, default to white for empty
+				const tileData = TILES.find((t) => t.id === tileId);
+				const colorStr = tileData?.color ?? "transparent";
+				const color =
+					colorStr === "transparent"
+						? 0xffffff
+						: Number.parseInt(colorStr.replace("#", ""), 16);
 
 				this.tileGraphics.fillStyle(color, 1);
 				this.tileGraphics.fillRect(
@@ -285,12 +291,14 @@ export class EditorScene extends Phaser.Scene {
 		if (!tile) return;
 
 		const state = editorStore.getState();
+		// Get preview color from TILES definition
+		const tileId = state.tool === "erase" ? 0 : state.selectedTile;
+		const tileData = TILES.find((t) => t.id === tileId);
+		const colorStr = tileData?.color ?? "transparent";
 		const previewColor =
-			state.tool === "erase"
+			colorStr === "transparent"
 				? 0xffffff
-				: state.selectedTile === 0
-					? 0xffffff
-					: 0x000000;
+				: Number.parseInt(colorStr.replace("#", ""), 16);
 
 		// Draw semi-transparent preview
 		this.hoverGraphics.fillStyle(previewColor, 0.5);

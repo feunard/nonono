@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
-import { getMapConfig } from "../config/MapConfig";
+import { getMapConfig, isHardCollideAt } from "../config/MapConfig";
 import type { EffectsManager } from "../systems/EffectsManager";
 
 // How often to recalculate homing target (in ms)
@@ -148,6 +148,12 @@ export class Arrow extends Phaser.Physics.Arcade.Sprite {
 		// Move arrow manually
 		this.x += this.velocityX * (delta / 1000);
 		this.y += this.velocityY * (delta / 1000);
+
+		// Check if arrow hit a hard collide tile (blocks arrows)
+		if (isHardCollideAt(this.x, this.y)) {
+			this.destroy();
+			return;
+		}
 
 		this.drawDebugHitboxes();
 

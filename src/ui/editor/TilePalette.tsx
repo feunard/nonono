@@ -27,12 +27,13 @@ export function TilePalette({ selectedTile, onSelectTile }: TilePaletteProps) {
 			<div className="p-3 border-b border-neutral-700">
 				<div className="flex items-center gap-2 mb-2">
 					<div
-						className={cn(
-							"w-6 h-6 rounded border flex-shrink-0",
-							selectedTile === 0
-								? "bg-white border-neutral-400"
-								: "bg-black border-neutral-600",
-						)}
+						className="w-6 h-6 rounded border border-neutral-600 flex-shrink-0"
+						style={{
+							backgroundColor:
+								selectedTileData?.color === "transparent"
+									? "#ffffff"
+									: selectedTileData?.color,
+						}}
 					/>
 					<div className="flex flex-col min-w-0">
 						<span className="text-xs font-medium text-white truncate">
@@ -75,10 +76,11 @@ export function TilePalette({ selectedTile, onSelectTile }: TilePaletteProps) {
 						>
 							{/* Tile preview */}
 							<div
-								className={cn(
-									"w-full h-full rounded",
-									tile.id === 0 ? "bg-white" : "bg-black",
-								)}
+								className="w-full h-full rounded"
+								style={{
+									backgroundColor:
+										tile.color === "transparent" ? "#ffffff" : tile.color,
+								}}
 							/>
 						</button>
 					))}

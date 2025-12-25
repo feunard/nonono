@@ -15,15 +15,34 @@ import { createMapData, generateMapId, type MapData } from "../config/MapData";
 
 const MAX_HISTORY = 50;
 
-export type TileId = 0 | 1;
+export type TileId = 0 | 1 | 2;
 
 export type MapSize = 32 | 64 | 128;
 
 export const MAP_SIZES: MapSize[] = [32, 64, 128];
 
 export const TILES = [
-	{ id: 0 as const, name: "Empty", color: "transparent", collide: false },
-	{ id: 1 as const, name: "Wall", color: "#000000", collide: true },
+	{
+		id: 0 as const,
+		name: "Empty",
+		color: "transparent",
+		collide: false,
+		hardCollide: false,
+	},
+	{
+		id: 1 as const,
+		name: "Wall",
+		color: "#444444",
+		collide: true,
+		hardCollide: false,
+	},
+	{
+		id: 2 as const,
+		name: "Hard Wall",
+		color: "#000000",
+		collide: true,
+		hardCollide: true,
+	},
 ] as const;
 
 type Position = { x: number; y: number };
