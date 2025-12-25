@@ -1,6 +1,6 @@
 # [fix] Energy Bar Part 3
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** High
 **Type:** Bug
 **Agent:** Kenny
@@ -18,12 +18,12 @@ Fix multiple issues with the energy bar UI and animation. The bar behaves incorr
 
 ## Acceptance Criteria
 
-- [ ] HealthBar has fixed width (doesn't shrink when HP drops)
-- [ ] Energy bar inherits fixed width from parent
-- [ ] Reduce energy icon size
-- [ ] Fix animation: energy stops draining immediately when sprint stops
-- [ ] Update GameConfig: energy empties in 2 seconds (`drainPerSecond: 50`)
-- [ ] Update GameConfig: energy fills in 10 seconds (`regenPerSecond: 10`)
+- [x] HealthBar has fixed width (doesn't shrink when HP drops)
+- [x] Energy bar inherits fixed width from parent
+- [x] Reduce energy icon size
+- [x] Fix animation: energy stops draining immediately when sprint stops
+- [x] Update GameConfig: energy empties in 2 seconds (`drainPerSecond: 50`)
+- [x] Update GameConfig: energy fills in 10 seconds (`regenPerSecond: 10`)
 
 ## Balance Values
 
@@ -46,4 +46,9 @@ energy: {
 
 ## History
 
-_No history yet_
+- **Kenny**: Fixed energy bar UI and balance issues
+  - Changed bar container from `flex-1` to `w-48` for fixed width
+  - Reduced energy icon from `w-4 h-4` to `w-3 h-3`
+  - Removed CSS `transition-all duration-150` from energy bar fill to fix animation lag
+  - Updated GameConfig drainRate from 20 to 50 (empties in 2 seconds)
+  - regenRate stays at 10 (fills in 10 seconds)
