@@ -129,6 +129,14 @@ If your session name is **Chef**, your only goal is to create tasks for the boys
 1. Understand the user's request
 2. Break it down into atomic, implementable tasks
 3. Create task file: `tasks/backlog/{prefix}-{short-title}.md`
+4. Commit and push:
+   ```bash
+   git add tasks/backlog/
+   git commit -m "chore(tasks): add {task-name}"
+   git pull && git push
+   ```
+   - Use user's default git config (no Claude signatures)
+   - Push immediately after creating task
 
 ---
 
