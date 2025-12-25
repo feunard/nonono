@@ -1,6 +1,6 @@
 # [feat] Camera Follows Hero Past Map Edges
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Feature
 
@@ -10,21 +10,21 @@ Currently, the camera stops at map edges due to camera bounds being set to the e
 ## Acceptance Criteria
 
 ### Camera Behavior
-- [ ] Camera follows the hero smoothly even when approaching or at map edges
-- [ ] Camera can pan beyond the map boundaries when hero is near edges
-- [ ] Existing camera follow smoothing (0.1, 0.1 lerp) is preserved
-- [ ] Zoom functionality continues to work correctly at map edges
+- [x] Camera follows the hero smoothly even when approaching or at map edges
+- [x] Camera can pan beyond the map boundaries when hero is near edges
+- [x] Existing camera follow smoothing (0.1, 0.1 lerp) is preserved
+- [x] Zoom functionality continues to work correctly at map edges
 
 ### Visual Outside Map
-- [ ] Area outside the map appears as white (using existing Phaser background color `#ffffff`)
-- [ ] A thin black border (1-2px) is drawn around the entire map perimeter
-- [ ] Border clearly distinguishes the playable map from the outside area
-- [ ] Border does not interfere with gameplay or feel obtrusive
+- [x] Area outside the map appears as white (using existing Phaser background color `#ffffff`)
+- [x] A thin black border (1-2px) is drawn around the entire map perimeter
+- [x] Border clearly distinguishes the playable map from the outside area
+- [x] Border does not interfere with gameplay or feel obtrusive
 
 ### Edge Cases
-- [ ] Hero collision with map edge tiles still works correctly
-- [ ] Physics world bounds still constrain hero movement to within the map
-- [ ] Minimap (if present) continues to display correctly
+- [x] Hero collision with map edge tiles still works correctly
+- [x] Physics world bounds still constrain hero movement to within the map
+- [x] Minimap (if present) continues to display correctly
 
 ## Context
 
@@ -105,3 +105,7 @@ The Phaser game config in `App.tsx` already sets `backgroundColor: "#ffffff"`, s
 - Verify black border is visible and clean
 - Test with different zoom levels
 - Verify hero cannot walk outside the map (physics bounds still work)
+
+## History
+
+- 2025-12-25: Implemented feature - removed camera.setBounds() in GameScene.ts to allow camera to follow hero past map edges, added 2px black border around map perimeter in MapSystem.ts renderMap() method. All validation checks pass.
