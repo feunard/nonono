@@ -6,20 +6,16 @@ Task tracker for AI implementation. Each task is a standalone file with full his
 
 ### Backlog
 
-| Task | Priority | Type |
-|------|----------|------|
-| [feat-minimap](./backlog/feat-minimap.md) | Low | Feature |
-| [feat-dash-sprint-energy](./backlog/feat-dash-sprint-energy.md) | Medium | Feature |
-| [feat-bagcard-visual-feedback](./backlog/feat-bagcard-visual-feedback.md) | Low | Feature |
-| [feat-power-card-list-ux](./backlog/feat-power-card-list-ux.md) | Medium | Feature |
-| [feat-logging-system](./backlog/feat-logging-system.md) | Medium | Feature |
-| [feat-agility-dodge-chance](./backlog/feat-agility-dodge-chance.md) | Medium | Feature |
-| [chore-luck-stat-refactoring](./backlog/chore-luck-stat-refactoring.md) | Medium | Refactor |
-| [feat-power-prerequisites](./backlog/feat-power-prerequisites.md) | Medium | Feature |
-
-### In Progress
-
-_No tasks in progress_
+| Task | Priority | Type | Status | Agent |
+|------|----------|------|--------|-------|
+| [feat-minimap](./backlog/feat-minimap.md) | Low | Feature | Backlog | - |
+| [feat-dash-sprint-energy](./backlog/feat-dash-sprint-energy.md) | Medium | Feature | Backlog | - |
+| [feat-bagcard-visual-feedback](./backlog/feat-bagcard-visual-feedback.md) | Low | Feature | Backlog | - |
+| [feat-power-card-list-ux](./backlog/feat-power-card-list-ux.md) | Medium | Feature | Backlog | - |
+| [feat-logging-system](./backlog/feat-logging-system.md) | Medium | Feature | Backlog | - |
+| [feat-agility-dodge-chance](./backlog/feat-agility-dodge-chance.md) | Medium | Feature | Backlog | - |
+| [chore-luck-stat-refactoring](./backlog/chore-luck-stat-refactoring.md) | Medium | Refactor | Backlog | - |
+| [feat-power-prerequisites](./backlog/feat-power-prerequisites.md) | Medium | Feature | Backlog | - |
 
 ### Done
 
