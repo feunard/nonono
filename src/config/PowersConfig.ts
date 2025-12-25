@@ -75,6 +75,18 @@ export type PowerEffect = {
 	value: number;
 };
 
+// Stat requirement for prerequisites
+export type StatRequirement = {
+	stat: BonusStat;
+	minValue: number;
+};
+
+// Prerequisites for unlocking a power
+export type Prerequisites = {
+	stats?: StatRequirement[]; // Minimum stat values required
+	powers?: string[]; // Power IDs that must be owned
+};
+
 export type Power = {
 	id: string;
 	name: string;
@@ -82,6 +94,7 @@ export type Power = {
 	rank: PowerRank;
 	effect: PowerEffect;
 	maxStack: number; // Maximum times this specific power can be collected
+	prerequisites?: Prerequisites; // Optional requirements to unlock this power
 };
 
 // Rank weights for random selection (higher = more common)
@@ -171,6 +184,7 @@ export const POWERS: Power[] = [
 		rank: "legendary",
 		effect: { stat: "strength", value: 50 },
 		maxStack: 5,
+		prerequisites: { stats: [{ stat: "strength", minValue: 50 }] },
 	},
 
 	// Agility powers (max 5 stacks each - stat cap will naturally limit)
@@ -213,6 +227,7 @@ export const POWERS: Power[] = [
 		rank: "legendary",
 		effect: { stat: "agility", value: 50 },
 		maxStack: 5,
+		prerequisites: { stats: [{ stat: "agility", minValue: 50 }] },
 	},
 
 	// Critical powers (max 4 stacks - caps at 100%)
@@ -255,6 +270,7 @@ export const POWERS: Power[] = [
 		rank: "legendary",
 		effect: { stat: "critical", value: 25 },
 		maxStack: 4,
+		prerequisites: { stats: [{ stat: "critical", minValue: 25 }] },
 	},
 
 	// Luck powers (max 5 stacks each)
@@ -469,6 +485,7 @@ export const POWERS: Power[] = [
 		rank: "legendary",
 		effect: { stat: "critMultiplier", value: 2.0 },
 		maxStack: 3,
+		prerequisites: { stats: [{ stat: "critical", minValue: 20 }] },
 	},
 
 	// Piercing powers (max 4 stacks each - flat points that reduce target's effective armor)
@@ -739,6 +756,7 @@ export const POWERS: Power[] = [
 		rank: "legendary",
 		effect: { stat: "arrowCount", value: 4 },
 		maxStack: 1,
+		prerequisites: { powers: ["multishot-1"] },
 	},
 
 	// Arrow Pierce powers (max 1 stack each - values already stack well)
@@ -879,6 +897,7 @@ export const POWERS: Power[] = [
 		rank: "rare",
 		effect: { stat: "riposteChance", value: 0.5 },
 		maxStack: 1,
+		prerequisites: { stats: [{ stat: "dodge", minValue: 10 }] },
 	},
 	{
 		id: "riposte-2",
@@ -887,6 +906,7 @@ export const POWERS: Power[] = [
 		rank: "epic",
 		effect: { stat: "riposteChance", value: 1.0 },
 		maxStack: 1,
+		prerequisites: { powers: ["riposte-1"] },
 	},
 
 	// Execute powers (max 1 stack each - thresholds don't stack meaningfully)
@@ -897,6 +917,7 @@ export const POWERS: Power[] = [
 		rank: "rare",
 		effect: { stat: "executeThreshold", value: 0.1 },
 		maxStack: 1,
+		prerequisites: { stats: [{ stat: "strength", minValue: 20 }] },
 	},
 	{
 		id: "execute-2",
@@ -905,6 +926,7 @@ export const POWERS: Power[] = [
 		rank: "epic",
 		effect: { stat: "executeThreshold", value: 0.2 },
 		maxStack: 1,
+		prerequisites: { powers: ["execute-1"] },
 	},
 	{
 		id: "execute-3",
@@ -913,6 +935,7 @@ export const POWERS: Power[] = [
 		rank: "legendary",
 		effect: { stat: "executeThreshold", value: 0.33 },
 		maxStack: 1,
+		prerequisites: { powers: ["execute-2"] },
 	},
 
 	// Vorpal Blade powers (max 1 stack each - very powerful)
@@ -923,6 +946,7 @@ export const POWERS: Power[] = [
 		rank: "epic",
 		effect: { stat: "vorpalChance", value: 0.01 },
 		maxStack: 1,
+		prerequisites: { stats: [{ stat: "critical", minValue: 15 }] },
 	},
 	{
 		id: "vorpal-2",
@@ -931,6 +955,7 @@ export const POWERS: Power[] = [
 		rank: "legendary",
 		effect: { stat: "vorpalChance", value: 0.03 },
 		maxStack: 1,
+		prerequisites: { powers: ["vorpal-1"] },
 	},
 
 	// ==========================================
@@ -1130,4 +1155,130 @@ export function getRandomAvailablePowers(
 	}
 
 	return powers;
+}
+
+// ==========================================
+// PREREQUISITES HELPERS
+// ==========================================
+
+// Stat names for display
+const STAT_DISPLAY_NAMES: Record<BonusStat, string> = {
+	strength: "Strength",
+	agility: "Agility",
+	critical: "Critical",
+	luck: "Luck",
+	health: "Health",
+	moveSpeed: "Speed",
+	bowRange: "Range",
+	critMultiplier: "Crit Damage",
+	piercing: "Piercing",
+	accuracy: "Accuracy",
+	damageMultiplier: "Damage",
+	dodge: "Dodge",
+	armor: "Armor",
+	hpRegen: "HP Regen",
+	arrowCount: "Arrow Count",
+	arrowPierce: "Arrow Pierce",
+	arrowBounce: "Arrow Bounce",
+	lifesteal: "Lifesteal",
+	swordCleave: "Cleave",
+	swordAttackSpeed: "Sword Speed",
+	riposteChance: "Riposte",
+	executeThreshold: "Execute",
+	vorpalChance: "Vorpal",
+	arrowHoming: "Homing",
+	arrowExplosive: "Explosive",
+};
+
+// Get display name for a stat
+export function getStatDisplayName(stat: BonusStat): string {
+	return STAT_DISPLAY_NAMES[stat];
+}
+
+// Get power by ID
+export function getPowerById(powerId: string): Power | undefined {
+	return POWERS.find((p) => p.id === powerId);
+}
+
+// Result of checking prerequisites
+export type PrerequisiteCheckResult = {
+	met: boolean;
+	missingStats: { stat: BonusStat; required: number; current: number }[];
+	missingPowers: { powerId: string; powerName: string }[];
+};
+
+// Check if prerequisites are met for a power
+export function checkPrerequisites(
+	power: Power,
+	bonusStats: Record<BonusStat, number>,
+	collectedPowers: Power[],
+): PrerequisiteCheckResult {
+	const result: PrerequisiteCheckResult = {
+		met: true,
+		missingStats: [],
+		missingPowers: [],
+	};
+
+	if (!power.prerequisites) {
+		return result;
+	}
+
+	// Check stat requirements
+	if (power.prerequisites.stats) {
+		for (const req of power.prerequisites.stats) {
+			const currentValue = bonusStats[req.stat];
+			if (currentValue < req.minValue) {
+				result.met = false;
+				result.missingStats.push({
+					stat: req.stat,
+					required: req.minValue,
+					current: currentValue,
+				});
+			}
+		}
+	}
+
+	// Check power requirements
+	if (power.prerequisites.powers) {
+		const ownedPowerIds = new Set(collectedPowers.map((p) => p.id));
+		for (const requiredPowerId of power.prerequisites.powers) {
+			if (!ownedPowerIds.has(requiredPowerId)) {
+				result.met = false;
+				const requiredPower = getPowerById(requiredPowerId);
+				result.missingPowers.push({
+					powerId: requiredPowerId,
+					powerName: requiredPower?.name ?? requiredPowerId,
+				});
+			}
+		}
+	}
+
+	return result;
+}
+
+// Check if a power is locked (prerequisites not met)
+export function isPowerLocked(
+	power: Power,
+	bonusStats: Record<BonusStat, number>,
+	collectedPowers: Power[],
+): boolean {
+	return !checkPrerequisites(power, bonusStats, collectedPowers).met;
+}
+
+// Format missing prerequisites as a human-readable string
+export function formatMissingPrerequisites(
+	result: PrerequisiteCheckResult,
+): string {
+	const parts: string[] = [];
+
+	for (const missing of result.missingStats) {
+		const statName = getStatDisplayName(missing.stat);
+		parts.push(`${missing.required}+ ${statName} (${missing.current})`);
+	}
+
+	for (const missing of result.missingPowers) {
+		parts.push(`"${missing.powerName}"`);
+	}
+
+	return parts.join(", ");
 }

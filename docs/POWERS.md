@@ -6,6 +6,7 @@ Powers are collectible upgrades that enhance the hero's combat abilities. They d
 
 - [Rarity System](#rarity-system)
 - [Max Stack System](#max-stack-system)
+- [Prerequisites System](#prerequisites-system)
 - [Core Stats](#core-stats)
 - [Offensive Powers](#offensive-powers)
 - [Defensive Powers](#defensive-powers)
@@ -60,6 +61,49 @@ Each power has a **maximum stack limit** that determines how many times it can b
 - **Collecting different tiers:** You can get Double Shot (x1) AND Triple Shot (x1) for combined effect
 - **When maxed:** Power won't appear in random selections, freeing up slots for other powers
 - **Build diversity:** Encourages trying different power combinations instead of stacking one type
+
+---
+
+## Prerequisites System
+
+Some powerful abilities require certain conditions to be met before they can be selected. Prerequisites add strategic depth to deck building by creating progression paths.
+
+### Prerequisite Types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Stat Requirement** | Minimum bonus stat value from powers | "Requires 50+ Strength" |
+| **Power Requirement** | Must own a specific power | "Requires Double Shot" |
+| **Combined** | Both stat and power requirements | "Requires 20+ Strength and Finishing Blow" |
+
+### UI Indication
+
+- **Locked powers** appear greyed out with a lock icon
+- **Tooltip** shows exactly what's missing (stat name, required value, current value)
+- **Power names** are shown for required power prerequisites
+
+### Powers with Prerequisites
+
+| Power | Rarity | Prerequisite |
+|-------|--------|--------------|
+| **Godlike Strength** | Legendary | 50+ Strength |
+| **Godlike Agility** | Legendary | 50+ Agility |
+| **Godlike Critical** | Legendary | 25+ Critical |
+| **Executioner** | Legendary | 20+ Critical |
+| **Arrow Storm** | Legendary | Requires "Double Shot" |
+| **Riposte** | Rare | 10+ Dodge |
+| **Retribution** | Epic | Requires "Riposte" |
+| **Finishing Blow** | Rare | 20+ Strength |
+| **Execute** | Epic | Requires "Finishing Blow" |
+| **Decapitate** | Legendary | Requires "Execute" |
+| **Vorpal Edge** | Epic | 15+ Critical |
+| **Vorpal Blade** | Legendary | Requires "Vorpal Edge" |
+
+### Build Implications
+
+- **Power chains:** Some abilities form progression chains (Finishing Blow → Execute → Decapitate)
+- **Stat investment:** Higher-tier powers reward investing in related stats
+- **Planning ahead:** Consider prerequisites when choosing early powers
 
 ---
 
