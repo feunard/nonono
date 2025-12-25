@@ -8,7 +8,7 @@ type GameOverStats = {
 };
 
 // App-level state for screen routing (separate from in-game state)
-export type AppScreen = "menu" | "playing";
+export type AppScreen = "menu" | "playing" | "editor";
 
 type LogEntry = {
 	id: number;
@@ -107,6 +107,8 @@ type UIBatchUpdate = {
 
 type GameActions = {
 	startGame: () => void; // Transition from menu to playing
+	openEditor: () => void; // Transition from menu to editor
+	goToMenu: () => void; // Transition back to menu
 	setGameReady: () => void;
 	updateHealth: (health: number, maxHealth: number) => void;
 	updateWave: (wave: number) => void;
@@ -208,6 +210,10 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
 	...initialState,
 
 	startGame: () => set({ appScreen: "playing" }),
+
+	openEditor: () => set({ appScreen: "editor" }),
+
+	goToMenu: () => set({ appScreen: "menu" }),
 
 	setGameReady: () => set({ isGameReady: true }),
 
@@ -325,6 +331,8 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
 export const gameStore = {
 	getState: useGameStore.getState,
 	startGame: () => useGameStore.getState().startGame(),
+	openEditor: () => useGameStore.getState().openEditor(),
+	goToMenu: () => useGameStore.getState().goToMenu(),
 	setGameReady: () => useGameStore.getState().setGameReady(),
 	updateHealth: (health: number, maxHealth: number) =>
 		useGameStore.getState().updateHealth(health, maxHealth),

@@ -5,6 +5,7 @@ import { BootScene } from "./scenes/BootScene";
 import { GameScene } from "./scenes/GameScene";
 import { gameStore, useGameStore } from "./stores/gameStore";
 import { LogSystem } from "./systems/LogSystem";
+import { MapEditor } from "./ui/editor/MapEditor";
 import { GameUI } from "./ui/GameUI";
 import { LoadingScreen } from "./ui/LoadingScreen";
 import { LaunchScreen } from "./ui/screens/LaunchScreen";
@@ -78,6 +79,14 @@ export function App() {
 
 	const handleStartGame = useCallback(() => {
 		gameStore.startGame();
+	}, []);
+
+	const handleOpenEditor = useCallback(() => {
+		gameStore.openEditor();
+	}, []);
+
+	const handleBackToMenu = useCallback(() => {
+		gameStore.goToMenu();
 	}, []);
 
 	const handleRestart = useCallback(() => {
@@ -248,7 +257,19 @@ export function App() {
 	if (appScreen === "menu") {
 		return (
 			<div className="relative w-screen h-screen overflow-hidden">
-				<LaunchScreen onStartGame={handleStartGame} />
+				<LaunchScreen
+					onStartGame={handleStartGame}
+					onOpenEditor={handleOpenEditor}
+				/>
+			</div>
+		);
+	}
+
+	// Show map editor
+	if (appScreen === "editor") {
+		return (
+			<div className="relative w-screen h-screen overflow-hidden">
+				<MapEditor onBack={handleBackToMenu} />
 			</div>
 		);
 	}

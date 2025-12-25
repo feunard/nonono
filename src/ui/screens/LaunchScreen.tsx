@@ -3,9 +3,10 @@ import { Kbd } from "../primitives/Kbd";
 
 type LaunchScreenProps = {
 	onStartGame: () => void;
+	onOpenEditor: () => void;
 };
 
-export function LaunchScreen({ onStartGame }: LaunchScreenProps) {
+export function LaunchScreen({ onStartGame, onOpenEditor }: LaunchScreenProps) {
 	return (
 		<div className="absolute inset-0 z-50 flex items-center justify-center bg-white">
 			<div className="flex flex-col items-center gap-12">
@@ -19,11 +20,24 @@ export function LaunchScreen({ onStartGame }: LaunchScreenProps) {
 					</p>
 				</div>
 
-				{/* Start button */}
-				<Button size="lg" onClick={onStartGame} className="min-w-48">
-					<span>Start Game</span>
-					<Kbd className="px-1.5 py-0.5 text-[10px]">Enter</Kbd>
-				</Button>
+				{/* Buttons */}
+				<div className="flex flex-col gap-3">
+					{/* Start button */}
+					<Button size="lg" onClick={onStartGame} className="min-w-48">
+						<span>Start Game</span>
+						<Kbd className="px-1.5 py-0.5 text-[10px]">Enter</Kbd>
+					</Button>
+
+					{/* Editor button */}
+					<Button
+						variant="secondary"
+						size="lg"
+						onClick={onOpenEditor}
+						className="min-w-48"
+					>
+						<span>Map Editor</span>
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
