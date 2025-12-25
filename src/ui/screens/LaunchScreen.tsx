@@ -30,7 +30,6 @@ export function LaunchScreen({ onStartGame, onOpenEditor }: LaunchScreenProps) {
 
 					{/* Editor button */}
 					<Button
-						variant="secondary"
 						size="lg"
 						onClick={onOpenEditor}
 						className="min-w-48"
