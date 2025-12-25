@@ -20,10 +20,10 @@ export function formatLogEvent(event: GameEvent): string {
 			return `Wave ${event.data.wave} completed`;
 
 		case "foe_spawn":
-			return `${event.data.foeType} #${event.data.foeId} (L${event.data.level}) spawned`;
+			return `${event.data.foeType} spawned`;
 
 		case "foe_kill": {
-			const { foeId, foeType, level, killedBy, finalBlow } = event.data;
+			const { foeType, killedBy, finalBlow } = event.data;
 			const source =
 				killedBy === "hero_arrow"
 					? "arrow"
@@ -33,33 +33,25 @@ export function formatLogEvent(event: GameEvent): string {
 							? "riposte"
 							: "";
 			const critText = finalBlow.isCritical ? " (crit)" : "";
-			return `${foeType} #${foeId} (L${level}) killed${source ? ` by ${source}` : ""}${critText}`;
+			return `${foeType} killed${source ? ` by ${source}` : ""}${critText}`;
 		}
 
 		case "damage_dealt": {
-			const {
-				targetId,
-				targetFoeType,
-				targetLevel,
-				damage,
-				isCritical,
-				source,
-				wasDodged,
-			} = event.data;
+			const { targetFoeType, damage, isCritical, source, wasDodged } =
+				event.data;
 			if (wasDodged) {
-				return `Attack dodged by ${targetFoeType} #${targetId} (L${targetLevel})`;
+				return `Attack dodged by ${targetFoeType}`;
 			}
 			const critText = isCritical ? " crit" : "";
-			return `${damage}${critText} damage to ${targetFoeType} #${targetId} (L${targetLevel}) [${source}]`;
+			return `${damage}${critText} damage to ${targetFoeType} [${source}]`;
 		}
 
 		case "damage_received": {
-			const { sourceId, sourceFoeType, sourceLevel, finalDamage, wasDodged } =
-				event.data;
+			const { sourceFoeType, finalDamage, wasDodged } = event.data;
 			if (wasDodged) {
-				return `Dodged attack from ${sourceFoeType} #${sourceId} (L${sourceLevel})`;
+				return `Dodged attack from ${sourceFoeType}`;
 			}
-			return `Took ${finalDamage} damage from ${sourceFoeType} #${sourceId} (L${sourceLevel})`;
+			return `Took ${finalDamage} damage from ${sourceFoeType}`;
 		}
 
 		case "power_pickup":
@@ -76,7 +68,7 @@ export function formatLogEvent(event: GameEvent): string {
 			return `Level up! Now level ${event.data.newLevel}`;
 
 		case "loot_drop":
-			return `Loot dropped from ${event.data.fromFoeType} #${event.data.fromFoeId} (L${event.data.fromFoeLevel})`;
+			return `Loot dropped from ${event.data.fromFoeType}`;
 
 		case "loot_pickup":
 			return "Picked up loot bag";

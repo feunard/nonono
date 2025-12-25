@@ -2,14 +2,18 @@ import { useEffect, useRef } from "react";
 import { useUIStore } from "../../stores/uiStore";
 import { Card } from "../primitives/Card";
 
-// Highlight numbers and important keywords in white
+// Highlight only damage numbers and special keywords in white
 function formatLogMessage(message: string) {
-	// Split by numbers and special keywords to highlight them
-	const parts = message.split(/(\d+|crit|dies\.?|killed)/gi);
+	// Match damage values (numbers after "for ") and special keywords
+	// Pattern breakdown:
+	// - (for )(\d+) - captures "for " and damage number separately
+	// - (crit|ARMOR PEN) - special combat keywords
+	const parts = message.split(/(for \d+|crit|ARMOR PEN)/gi);
 
 	return parts.map((part) => {
+		// Highlight damage numbers (after "for") and keywords
 		const isHighlight =
-			/^\d+$/.test(part) || /^(crit|dies\.?|killed)$/i.test(part);
+			/^for \d+$/i.test(part) || /^(crit|ARMOR PEN)$/i.test(part);
 		return { text: part, highlight: isHighlight };
 	});
 }

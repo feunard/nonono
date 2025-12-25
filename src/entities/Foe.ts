@@ -553,23 +553,19 @@ export class Foe extends Phaser.Physics.Arcade.Sprite {
 
 		this.health -= finalDamage;
 
-		// Combat log (WoW style) - include foe type, level and ID
+		// Combat log
 		if (ignoreArmor && isCritical) {
 			uiStore.addLog(
-				`You crit ${this.typeName} L${this.level} for ${finalDamage}! (ARMOR PEN)`,
+				`You crit ${this.typeName} for ${finalDamage}! (ARMOR PEN)`,
 			);
 		} else if (ignoreArmor) {
 			uiStore.addLog(
-				`You hit ${this.typeName} L${this.level} for ${finalDamage}. (ARMOR PEN)`,
+				`You hit ${this.typeName} for ${finalDamage}. (ARMOR PEN)`,
 			);
 		} else if (isCritical) {
-			uiStore.addLog(
-				`You crit ${this.typeName} L${this.level} #${this.foeId} for ${finalDamage}!`,
-			);
+			uiStore.addLog(`You crit ${this.typeName} for ${finalDamage}!`);
 		} else {
-			uiStore.addLog(
-				`You hit ${this.typeName} L${this.level} #${this.foeId} for ${finalDamage}.`,
-			);
+			uiStore.addLog(`You hit ${this.typeName} for ${finalDamage}.`);
 		}
 
 		// Floating damage text
@@ -634,8 +630,8 @@ export class Foe extends Phaser.Physics.Arcade.Sprite {
 		this.play(this.animDeath);
 		this.scene.events.emit("foeKilled", this);
 
-		// Combat log (WoW style) - include foe type, level and ID
-		uiStore.addLog(`${this.typeName} L${this.level} #${this.foeId} dies.`);
+		// Combat log
+		uiStore.addLog(`${this.typeName} dies.`);
 
 		if (this.debugGraphics) {
 			this.debugGraphics.destroy();
