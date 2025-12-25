@@ -1,10 +1,5 @@
 import type Phaser from "phaser";
-import {
-	CURRENT_MAP,
-	getMapConfig,
-	getTileType,
-	type MapConfig,
-} from "../config/MapConfig";
+import { getMapConfig, getTileType, type MapConfig } from "../config/MapConfig";
 
 /**
  * MapSystem handles loading, rendering, and collision for tile-based maps.
@@ -18,7 +13,7 @@ export class MapSystem {
 	private collisionLayer: Phaser.Tilemaps.TilemapLayer | null = null;
 	private tilemap: Phaser.Tilemaps.Tilemap | null = null;
 
-	constructor(scene: Phaser.Scene, mapId: string = CURRENT_MAP) {
+	constructor(scene: Phaser.Scene, mapId: string) {
 		this.scene = scene;
 		this.mapConfig = getMapConfig(mapId);
 	}
@@ -237,7 +232,7 @@ export class MapSystem {
  */
 export function createMapSystem(
 	scene: Phaser.Scene,
-	mapId?: string,
+	mapId: string,
 ): {
 	mapSystem: MapSystem;
 	collisionGrid: number[][];

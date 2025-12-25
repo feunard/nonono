@@ -1,7 +1,13 @@
 /**
  * Map Configuration
  * Defines tile types and map definitions for the game.
+ * Maps are loaded from JSON files in src/assets/maps/
  */
+
+import arenaMaze from "../assets/maps/arena-maze.json";
+import arenaPillars from "../assets/maps/arena-pillars.json";
+import arenaSimple from "../assets/maps/arena-simple.json";
+import { type MapData, validateMapData } from "./MapData";
 
 export type TileType = {
 	id: number;
@@ -19,59 +25,90 @@ export const TILE_TYPES: Record<number, TileType> = {
 	1: { id: 1, collide: true, color: "#000000" }, // Black wall
 };
 
-export type MapConfig = {
-	id: string;
-	name: string;
-	width: number; // in tiles
-	height: number; // in tiles
-	tileSize: number;
-	tilemap: number[][]; // 2D array of tile IDs
-};
+/**
+ * MapConfig is the runtime format used by MapSystem.
+ * It's identical to MapData but kept separate for clarity.
+ */
+export type MapConfig = MapData;
 
 /**
- * Helper function to create an empty tilemap filled with a single tile ID.
+ * Load and validate map JSON files.
+ * Each map is validated to ensure it matches the expected schema.
  */
-function createEmptyTilemap(
-	width: number,
-	height: number,
-	fillTile = 0,
-): number[][] {
-	const tilemap: number[][] = [];
-	for (let y = 0; y < height; y++) {
-		tilemap[y] = [];
-		for (let x = 0; x < width; x++) {
-			tilemap[y][x] = fillTile;
+function loadMaps(): Record<string, MapConfig> {
+	const maps: Record<string, MapConfig> = {};
+
+	// Load each map and validate it
+	const rawMaps = [arenaSimple, arenaMaze, arenaPillars];
+
+	for (const rawMap of rawMaps) {
+		try {
+			const validatedMap = validateMapData(rawMap);
+			maps[validatedMap.id] = validatedMap;
+		} catch (error) {
+			console.error("Failed to load map:", error);
 		}
 	}
-	return tilemap;
+
+	return maps;
 }
 
 /**
- * Available maps.
+ * Available maps loaded from JSON files.
  */
-export const MAPS: Record<string, MapConfig> = {
-	default: {
-		id: "default",
-		name: "Empty Arena",
-		width: 64,
-		height: 64,
-		tileSize: 16,
-		tilemap: createEmptyTilemap(64, 64, 0), // All empty/passable
-	},
-};
+export const MAPS: Record<string, MapConfig> = loadMaps();
 
 /**
- * Current map to load.
+ * Currently active map ID (set when game starts).
+ * Defaults to the first available map.
  */
-export const CURRENT_MAP = "default";
+let currentMapId: string = Object.keys(MAPS)[0] || "arena-simple";
+
+/**
+ * Get the current map ID.
+ */
+export function getCurrentMapId(): string {
+	return currentMapId;
+}
+
+/**
+ * Set the current map ID (called when game starts).
+ */
+export function setCurrentMapId(mapId: string): void {
+	if (!MAPS[mapId]) {
+		throw new Error(`Map not found: ${mapId}`);
+	}
+	currentMapId = mapId;
+}
+
+/**
+ * Get list of all available map IDs.
+ */
+export function getAvailableMaps(): string[] {
+	return Object.keys(MAPS);
+}
+
+/**
+ * Get a random map ID from available maps.
+ */
+export function getRandomMapId(): string {
+	const mapIds = getAvailableMaps();
+	if (mapIds.length === 0) {
+		throw new Error("No maps available");
+	}
+	const randomIndex = Math.floor(Math.random() * mapIds.length);
+	return mapIds[randomIndex];
+}
 
 /**
  * Get a map configuration by ID.
+ * If no mapId is provided, returns the current map.
  */
-export function getMapConfig(mapId: string = CURRENT_MAP): MapConfig {
-	const map = MAPS[mapId];
+export function getMapConfig(mapId?: string): MapConfig {
+	const id = mapId ?? currentMapId;
+	const map = MAPS[id];
 	if (!map) {
-		throw new Error(`Map not found: ${mapId}`);
+		throw new Error(`Map not found: ${id}`);
 	}
 	return map;
 }

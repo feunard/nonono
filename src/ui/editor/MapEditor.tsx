@@ -18,12 +18,18 @@ export function MapEditor({ onBack }: MapEditorProps) {
 				showGrid={editor.showGrid}
 				mapSize={editor.width}
 				zoom={editor.zoom}
+				importError={editor.importError}
+				fileInputRef={editor.fileInputRef}
 				onToggleGrid={editor.toggleGrid}
 				onClearMap={editor.clearMap}
 				onSetMapSize={editor.setMapSize}
 				onZoomIn={editor.zoomIn}
 				onZoomOut={editor.zoomOut}
 				onBack={onBack}
+				onExport={() => editor.exportMap()}
+				onImport={editor.triggerImport}
+				onFileChange={editor.handleFileChange}
+				onClearImportError={editor.clearImportError}
 			/>
 
 			{/* Main content area */}

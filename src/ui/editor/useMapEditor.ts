@@ -1,4 +1,11 @@
-import { useCallback, useReducer } from "react";
+import { useCallback, useReducer, useRef } from "react";
+import {
+	createMapData,
+	generateMapId,
+	type MapData,
+	MapValidationError,
+	validateMapData,
+} from "../../config/MapData";
 
 // Tile definitions
 export const TILES = [
@@ -21,6 +28,7 @@ type EditorState = {
 	tool: "paint" | "erase";
 	hoverPosition: { x: number; y: number } | null;
 	zoom: number;
+	importError: string | null;
 };
 
 type EditorAction =
@@ -33,7 +41,9 @@ type EditorAction =
 	| { type: "SET_HOVER"; position: { x: number; y: number } | null }
 	| { type: "ZOOM_IN" }
 	| { type: "ZOOM_OUT" }
-	| { type: "SET_ZOOM"; zoom: number };
+	| { type: "SET_ZOOM"; zoom: number }
+	| { type: "IMPORT_MAP"; mapData: MapData }
+	| { type: "SET_IMPORT_ERROR"; error: string | null };
 
 // Create an empty 2D array of tiles
 function createEmptyTiles(width: number, height: number): number[][] {
@@ -92,6 +102,25 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 			return { ...state, zoom: Math.max(state.zoom - 0.25, 0.5) };
 		case "SET_ZOOM":
 			return { ...state, zoom: Math.max(0.5, Math.min(3, action.zoom)) };
+		case "IMPORT_MAP": {
+			const { mapData } = action;
+			// Ensure width and height are valid MapSize values
+			const width = (
+				[32, 64, 128].includes(mapData.width) ? mapData.width : 64
+			) as MapSize;
+			const height = (
+				[32, 64, 128].includes(mapData.height) ? mapData.height : 64
+			) as MapSize;
+			return {
+				...state,
+				width,
+				height,
+				tiles: mapData.tilemap,
+				importError: null,
+			};
+		}
+		case "SET_IMPORT_ERROR":
+			return { ...state, importError: action.error };
 		default:
 			return state;
 	}
@@ -106,10 +135,12 @@ const initialState: EditorState = {
 	tool: "paint",
 	hoverPosition: null,
 	zoom: 1,
+	importError: null,
 };
 
 export function useMapEditor() {
 	const [state, dispatch] = useReducer(editorReducer, initialState);
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	const setTile = useCallback((x: number, y: number, tileId: number) => {
 		dispatch({ type: "SET_TILE", x, y, tileId });
@@ -159,6 +190,84 @@ export function useMapEditor() {
 		dispatch({ type: "SET_ZOOM", zoom });
 	}, []);
 
+	const exportMap = useCallback(
+		(mapName?: string) => {
+			const name = mapName?.trim() || "Untitled Map";
+			const id = generateMapId(name);
+			const mapData = createMapData(
+				id,
+				name,
+				state.tiles,
+				state.width,
+				state.height,
+				16,
+			);
+
+			const json = JSON.stringify(mapData, null, 2);
+			const blob = new Blob([json], { type: "application/json" });
+			const url = URL.createObjectURL(blob);
+
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `${id}.json`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+		},
+		[state.tiles, state.width, state.height],
+	);
+
+	const importMap = useCallback((file: File) => {
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			try {
+				const content = e.target?.result as string;
+				const data = JSON.parse(content);
+				const validatedMap = validateMapData(data);
+				dispatch({ type: "IMPORT_MAP", mapData: validatedMap });
+			} catch (error) {
+				if (error instanceof MapValidationError) {
+					dispatch({ type: "SET_IMPORT_ERROR", error: error.message });
+				} else if (error instanceof SyntaxError) {
+					dispatch({
+						type: "SET_IMPORT_ERROR",
+						error: "Invalid JSON file",
+					});
+				} else {
+					dispatch({
+						type: "SET_IMPORT_ERROR",
+						error: "Failed to import map",
+					});
+				}
+			}
+		};
+		reader.onerror = () => {
+			dispatch({ type: "SET_IMPORT_ERROR", error: "Failed to read file" });
+		};
+		reader.readAsText(file);
+	}, []);
+
+	const clearImportError = useCallback(() => {
+		dispatch({ type: "SET_IMPORT_ERROR", error: null });
+	}, []);
+
+	const triggerImport = useCallback(() => {
+		fileInputRef.current?.click();
+	}, []);
+
+	const handleFileChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e.target.files?.[0];
+			if (file) {
+				importMap(file);
+			}
+			// Reset input so same file can be selected again
+			e.target.value = "";
+		},
+		[importMap],
+	);
+
 	return {
 		...state,
 		setTile,
@@ -172,6 +281,12 @@ export function useMapEditor() {
 		zoomIn,
 		zoomOut,
 		setZoom,
+		exportMap,
+		importMap,
+		triggerImport,
+		handleFileChange,
+		clearImportError,
+		fileInputRef,
 	};
 }
 

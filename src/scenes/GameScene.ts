@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { CHAT_MESSAGES } from "../config/ChatMessages";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
-import { CURRENT_MAP } from "../config/MapConfig";
+import { getRandomMapId, setCurrentMapId } from "../config/MapConfig";
 import { Hero } from "../entities/Hero";
 import { Loot } from "../entities/Loot";
 import type { Orc } from "../entities/Orc";
@@ -266,10 +266,15 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private createMap(): void {
-		// Create map system using current map from MapConfig
+		// Randomly select a map from available maps and set it as current
+		const selectedMapId = getRandomMapId();
+		setCurrentMapId(selectedMapId);
+		console.log(`[Game] Selected map: ${selectedMapId}`);
+
+		// Create map system using the selected map
 		const { mapSystem, collisionGrid, collisionLayer } = createMapSystem(
 			this,
-			CURRENT_MAP,
+			selectedMapId,
 		);
 
 		this.mapSystem = mapSystem;
