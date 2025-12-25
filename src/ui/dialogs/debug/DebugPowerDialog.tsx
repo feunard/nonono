@@ -1,11 +1,14 @@
-import { X } from "lucide-react";
+import { Lock, X } from "lucide-react";
 import { useState } from "react";
 import type { Power } from "../../../config/PowersConfig";
 import {
+	checkPrerequisites,
 	countPowerStacks,
+	getStatDisplayName,
 	POWERS,
 	RANK_COLORS,
 } from "../../../config/PowersConfig";
+import type { BonusStats } from "../../../stores/gameStore";
 import { useGameStore } from "../../../stores/gameStore";
 import { Button } from "../../primitives/Button";
 import { Card, CardHeader, CardTitle } from "../../primitives/Card";
@@ -102,31 +105,70 @@ const RANK_SHORT: Record<string, string> = {
 function PowerRow({
 	power,
 	currentStacks,
+	bonusStats,
+	collectedPowers,
 	onSelect,
 }: {
 	power: Power;
 	currentStacks: number;
+	bonusStats: BonusStats;
+	collectedPowers: Power[];
 	onSelect: () => void;
 }) {
 	const rankColor = RANK_COLORS[power.rank];
 	const isMaxed = currentStacks >= power.maxStack;
-	const remaining = power.maxStack - currentStacks;
+	const prereqResult = checkPrerequisites(power, bonusStats, collectedPowers);
+	const isLocked = !prereqResult.met;
+	const isDisabled = isMaxed || isLocked;
+
+	// Build tooltip content
+	const tooltipContent = (
+		<>
+			<div className="font-bold text-white">{power.name}</div>
+			<div className="text-neutral-400">{power.description}</div>
+			{isLocked && prereqResult.missingStats.length > 0 && (
+				<div className="text-neutral-500 mt-1 text-xs">
+					<span className="text-neutral-400">Requires: </span>
+					{prereqResult.missingStats.map((m) => (
+						<span key={m.stat}>
+							{m.required}+ {getStatDisplayName(m.stat)} ({m.current})
+						</span>
+					))}
+				</div>
+			)}
+			{isLocked && prereqResult.missingPowers.length > 0 && (
+				<div className="text-neutral-500 mt-1 text-xs">
+					<span className="text-neutral-400">Requires: </span>
+					{prereqResult.missingPowers.map((m) => `"${m.powerName}"`).join(", ")}
+				</div>
+			)}
+		</>
+	);
+
+	// Determine status indicator
+	let statusIndicator: React.ReactNode;
+	if (isLocked) {
+		statusIndicator = <Lock className="w-3 h-3 text-neutral-600" />;
+	} else if (isMaxed) {
+		statusIndicator = (
+			<span className="text-neutral-500 text-[10px] font-bold">MAX</span>
+		);
+	} else {
+		statusIndicator = (
+			<span className="text-neutral-500 text-[10px]">
+				{currentStacks}/{power.maxStack}
+			</span>
+		);
+	}
 
 	return (
-		<Tooltip
-			content={
-				<>
-					<div className="font-bold text-white">{power.name}</div>
-					<div className="text-neutral-400">{power.description}</div>
-				</>
-			}
-		>
+		<Tooltip content={tooltipContent}>
 			<button
 				type="button"
 				onClick={onSelect}
-				disabled={isMaxed}
+				disabled={isDisabled}
 				className={`flex items-center gap-2 px-2 py-1 rounded transition-colors text-left w-full ${
-					isMaxed ? "opacity-40 cursor-not-allowed" : "hover:bg-neutral-800"
+					isDisabled ? "opacity-40 cursor-not-allowed" : "hover:bg-neutral-800"
 				}`}
 			>
 				<span
@@ -136,16 +178,11 @@ function PowerRow({
 					{RANK_SHORT[power.rank]}
 				</span>
 				<span
-					className={`text-xs truncate ${isMaxed ? "text-neutral-500" : "text-white"}`}
+					className={`text-xs truncate flex-1 ${isDisabled ? "text-neutral-500" : "text-white"}`}
 				>
 					{power.name}
 				</span>
-				<span className="text-neutral-600 text-[10px] shrink-0">
-					{currentStacks}/{power.maxStack}
-				</span>
-				<span className="text-neutral-500 text-xs ml-auto shrink-0">
-					{isMaxed ? "MAX" : `+${remaining}`}
-				</span>
+				<span className="shrink-0">{statusIndicator}</span>
 			</button>
 		</Tooltip>
 	);
@@ -154,6 +191,7 @@ function PowerRow({
 export function DebugPowerDialog({ onSelect, onClose }: DebugPowerDialogProps) {
 	const [activeTab, setActiveTab] = useState<TabId>("core");
 	const collectedPowers = useGameStore((state) => state.collectedPowers);
+	const bonusStats = useGameStore((state) => state.bonusStats);
 
 	// Get stats for current tab and group powers
 	const currentStats = STATS_BY_TAB[activeTab];
@@ -221,6 +259,8 @@ export function DebugPowerDialog({ onSelect, onClose }: DebugPowerDialogProps) {
 												power.id,
 												collectedPowers,
 											)}
+											bonusStats={bonusStats}
+											collectedPowers={collectedPowers}
 											onSelect={() => onSelect(power)}
 										/>
 									))}

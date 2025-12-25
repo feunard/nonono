@@ -152,7 +152,7 @@ Modal dialogs that pause gameplay and require player interaction.
 ### DebugPowerDialog
 
 - **What:** Full power browser for testing
-- **How:** Tabbed interface (Core/Offensive/Defensive/Arrow/Sword), shows all powers with current stacks
+- **How:** Tabbed interface (Core/Offensive/Defensive/Arrow/Sword), shows all powers with current stacks, locked powers show lock icon with tooltip explaining requirements
 - **Why:** Quick power testing without loot drops
 - **File:** `src/ui/dialogs/debug/DebugPowerDialog.tsx`
 
