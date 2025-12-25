@@ -6,6 +6,8 @@ import {
 	Swords,
 	Trophy,
 } from "lucide-react";
+import { useEffect } from "react";
+import { useGameStore } from "../../stores/gameStore";
 import { LogSystem } from "../../systems/LogSystem";
 import { Button } from "../primitives/Button";
 import {
@@ -40,6 +42,21 @@ export function GameOverDialog({
 	wave,
 	onRestart,
 }: GameOverDialogProps) {
+	const isDebugMode = useGameStore((state) => state.isDebugMode);
+
+	useEffect(() => {
+		if (!isDebugMode) return;
+
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "l" || e.key === "L") {
+				LogSystem.downloadLogs();
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [isDebugMode]);
+
 	return (
 		<Overlay>
 			<Card className="w-[340px]">
@@ -81,7 +98,7 @@ export function GameOverDialog({
 					</div>
 				</CardContent>
 
-				<CardFooter className="flex-col gap-2">
+				<CardFooter className="flex-col gap-4">
 					<Button onClick={onRestart} className="w-full justify-between">
 						<span className="flex items-center gap-2">
 							<RotateCcw className="w-4 h-4" />
@@ -89,14 +106,19 @@ export function GameOverDialog({
 						</span>
 						<Kbd>Enter</Kbd>
 					</Button>
-					<Button
-						onClick={() => LogSystem.downloadLogs()}
-						variant="secondary"
-						className="w-full justify-center"
-					>
-						<Download className="w-4 h-4 mr-2" />
-						Export Logs
-					</Button>
+					{isDebugMode && (
+						<Button
+							onClick={() => LogSystem.downloadLogs()}
+							variant="ghost"
+							className="w-full justify-between"
+						>
+							<span className="flex items-center gap-2">
+								<Download className="w-4 h-4" />
+								Export Logs
+							</span>
+							<Kbd>L</Kbd>
+						</Button>
+					)}
 				</CardFooter>
 			</Card>
 		</Overlay>
