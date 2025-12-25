@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import { MAP_SIZES, type MapSize } from "../../stores/editorStore";
 import {
 	Menu,
 	MenuBar,
@@ -7,7 +7,6 @@ import {
 	MenuSeparator,
 	SubMenu,
 } from "../primitives/Menu";
-import { MAP_SIZES, type MapSize } from "./useMapEditor";
 
 type EditorToolbarProps = {
 	showGrid: boolean;
@@ -17,7 +16,6 @@ type EditorToolbarProps = {
 	availableMaps: string[];
 	canUndo: boolean;
 	canRedo: boolean;
-	fileInputRef: RefObject<HTMLInputElement | null>;
 	onToggleGrid: () => void;
 	onClearMap: () => void;
 	onSetMapSize: (size: MapSize) => void;
@@ -29,7 +27,6 @@ type EditorToolbarProps = {
 	onLoadMap: (mapId: string) => void;
 	onUndo: () => void;
 	onRedo: () => void;
-	onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onClearImportError: () => void;
 };
 
@@ -41,7 +38,6 @@ export function EditorToolbar({
 	availableMaps,
 	canUndo,
 	canRedo,
-	fileInputRef,
 	onToggleGrid,
 	onClearMap,
 	onSetMapSize,
@@ -53,22 +49,12 @@ export function EditorToolbar({
 	onLoadMap,
 	onUndo,
 	onRedo,
-	onFileChange,
 	onClearImportError,
 }: EditorToolbarProps) {
 	return (
 		<div className="flex flex-col">
 			{/* Menu bar */}
 			<div className="flex items-center gap-2 px-2 py-1 bg-neutral-900 border-b border-neutral-700">
-				{/* Hidden file input for import */}
-				<input
-					ref={fileInputRef}
-					type="file"
-					accept=".json"
-					className="hidden"
-					onChange={onFileChange}
-				/>
-
 				<MenuBar>
 					{/* File Menu */}
 					<Menu id="file" label="File">

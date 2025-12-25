@@ -1,5 +1,7 @@
+import { useState } from "react";
+import { TILES, type TileId } from "../../stores/editorStore";
+import { Input } from "../primitives/Input";
 import { cn } from "../utils";
-import { TILES, type TileId } from "./useMapEditor";
 
 type TilePaletteProps = {
 	selectedTile: TileId;
@@ -7,43 +9,99 @@ type TilePaletteProps = {
 };
 
 export function TilePalette({ selectedTile, onSelectTile }: TilePaletteProps) {
+	const [search, setSearch] = useState("");
+	const [hoveredTile, setHoveredTile] = useState<number | null>(null);
+
+	// Filter tiles by search
+	const filteredTiles = TILES.filter(
+		(tile) =>
+			tile.name.toLowerCase().includes(search.toLowerCase()) ||
+			tile.id.toString().includes(search),
+	);
+
+	const selectedTileData = TILES.find((t) => t.id === selectedTile);
+
 	return (
-		<div className="flex flex-col gap-3 p-4 bg-neutral-900 border-r border-neutral-700">
-			<h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-				Tiles
-			</h3>
-			<div className="flex flex-col gap-2">
-				{TILES.map((tile) => (
-					<button
-						type="button"
-						key={tile.id}
-						onClick={() => onSelectTile(tile.id)}
+		<div className="flex flex-col w-48 bg-neutral-900 border-r border-neutral-700">
+			{/* Header with selected tile info */}
+			<div className="p-3 border-b border-neutral-700">
+				<div className="flex items-center gap-2 mb-2">
+					<div
 						className={cn(
-							"flex items-center gap-3 p-2 rounded cursor-pointer transition-all",
-							"hover:bg-neutral-800",
-							selectedTile === tile.id
-								? "bg-neutral-700 ring-2 ring-white"
-								: "bg-neutral-850",
+							"w-6 h-6 rounded border flex-shrink-0",
+							selectedTile === 0
+								? "bg-white border-neutral-400"
+								: "bg-black border-neutral-600",
 						)}
-					>
-						{/* Tile preview */}
-						<div
+					/>
+					<div className="flex flex-col min-w-0">
+						<span className="text-xs font-medium text-white truncate">
+							{selectedTileData?.name}
+						</span>
+						<span className="text-[10px] text-neutral-500">
+							ID: {selectedTile}
+						</span>
+					</div>
+				</div>
+
+				{/* Search input */}
+				<Input
+					type="text"
+					placeholder="Search tiles..."
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
+					variant="minimal"
+				/>
+			</div>
+
+			{/* Tile grid - scrollable */}
+			<div className="flex-1 overflow-y-auto p-2">
+				<div className="grid grid-cols-4 gap-1">
+					{filteredTiles.map((tile) => (
+						<button
+							type="button"
+							key={tile.id}
+							onClick={() => onSelectTile(tile.id as TileId)}
+							onMouseEnter={() => setHoveredTile(tile.id)}
+							onMouseLeave={() => setHoveredTile(null)}
 							className={cn(
-								"w-8 h-8 rounded border",
-								tile.id === 0
-									? "bg-white border-neutral-400"
-									: "bg-black border-neutral-600",
+								"relative aspect-square rounded cursor-pointer transition-all",
+								"hover:ring-2 hover:ring-neutral-500",
+								selectedTile === tile.id
+									? "ring-2 ring-white"
+									: "ring-1 ring-neutral-700",
 							)}
-						/>
-						{/* Tile info */}
-						<div className="flex flex-col items-start">
-							<span className="text-sm font-medium text-white">
-								{tile.name}
-							</span>
-							<span className="text-xs text-neutral-500">ID: {tile.id}</span>
-						</div>
-					</button>
-				))}
+							title={`${tile.name} (ID: ${tile.id})`}
+						>
+							{/* Tile preview */}
+							<div
+								className={cn(
+									"w-full h-full rounded",
+									tile.id === 0 ? "bg-white" : "bg-black",
+								)}
+							/>
+						</button>
+					))}
+				</div>
+
+				{/* Empty state */}
+				{filteredTiles.length === 0 && (
+					<div className="text-center py-4 text-xs text-neutral-500">
+						No tiles found
+					</div>
+				)}
+			</div>
+
+			{/* Hover tooltip at bottom */}
+			<div className="px-3 py-2 border-t border-neutral-700 h-10">
+				{hoveredTile !== null && (
+					<div className="text-xs text-neutral-400">
+						<span className="text-white">
+							{TILES.find((t) => t.id === hoveredTile)?.name}
+						</span>
+						<span className="text-neutral-500 ml-1">#{hoveredTile}</span>
+					</div>
+				)}
 			</div>
 		</div>
 	);

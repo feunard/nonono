@@ -1,4 +1,4 @@
-import { TILES, type TileId } from "./useMapEditor";
+import { TILES, type TileId } from "../../stores/editorStore";
 
 type EditorStatusBarProps = {
 	mapWidth: number;

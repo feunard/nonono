@@ -5,7 +5,7 @@
  * the game (MapConfig/MapSystem) and the map editor.
  */
 
-import type { MapSize } from "../ui/editor/useMapEditor";
+import type { MapSize } from "../stores/editorStore";
 
 /**
  * MapData is the JSON-serializable format for map files.
