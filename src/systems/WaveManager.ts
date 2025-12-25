@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { CHAT_MESSAGES } from "../config/ChatMessages";
 import { GAME_CONFIG } from "../config/GameConfig";
 import { getMapConfig } from "../config/MapConfig";
 import { BigOrc } from "../entities/BigOrc";
@@ -64,6 +65,11 @@ export class WaveManager {
 
 		// Log wave start event
 		LogSystem.logWaveStart(this.currentWave, this.foesToSpawn);
+
+		// Show chat bubble for wave 2+ (wave 1 is covered by gameStart messages)
+		if (this.currentWave >= 2) {
+			this.hero.showChatBubble(CHAT_MESSAGES.waveStart);
+		}
 
 		this.spawnTimer = this.scene.time.addEvent({
 			delay: this.spawnInterval,

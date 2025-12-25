@@ -38,6 +38,13 @@ export const CHAT_MESSAGES = {
 		"Power up!",
 		"Excellent!",
 	],
+	waveStart: [
+		"Here they come again...",
+		"More orcs? Bring it on!",
+		"They keep coming...",
+		"Another wave approaches...",
+		"Is that all you've got?",
+	],
 } as const;
 
 export type ChatMessageCategory = keyof typeof CHAT_MESSAGES;
