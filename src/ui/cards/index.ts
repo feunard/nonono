@@ -2,7 +2,6 @@
 export { BagCard } from "./BagCard";
 // Debug cards
 export { DebugHeroStatsCard, DebugHotkeysCard } from "./debug";
-export { EnergyBarCard } from "./EnergyBarCard";
 export { FPSCard } from "./FPSCard";
 export { GameStatsCard } from "./GameStatsCard";
 export { HealthBarCard } from "./HealthBarCard";

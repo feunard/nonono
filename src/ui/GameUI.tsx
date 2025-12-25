@@ -4,7 +4,6 @@ import {
 	BagCard,
 	DebugHeroStatsCard,
 	DebugHotkeysCard,
-	EnergyBarCard,
 	FPSCard,
 	GameStatsCard,
 	HealthBarCard,
@@ -66,8 +65,12 @@ export function GameUI({
 			{/* HUD Overlay */}
 			<div className="absolute top-6 left-6 pointer-events-auto flex gap-2 items-start">
 				<div className="flex flex-col gap-2">
-					<HealthBarCard health={health} maxHealth={maxHealth} />
-					<EnergyBarCard energy={energy} isSprinting={isSprinting} />
+					<HealthBarCard
+						health={health}
+						maxHealth={maxHealth}
+						energy={energy}
+						isSprinting={isSprinting}
+					/>
 					{isDebugMode && <DebugHotkeysCard />}
 				</div>
 				<FPSCard fps={fps} />

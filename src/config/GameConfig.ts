@@ -47,13 +47,13 @@ export const GAME_CONFIG = {
 		attackHitboxHeight: 23,
 		attackHitboxOffsetX: 42,
 		attackHitboxOffsetY: 38,
-		// Sprint/Energy system
+		// Sprint/Energy system - "life saver" ability, not spam
 		energy: {
 			max: 100, // Maximum energy
-			drainRate: 25, // Energy drained per second while sprinting
-			regenRate: 15, // Energy regenerated per second when not sprinting
+			drainRate: 20, // Energy drained per second (empty in 5 seconds)
+			regenRate: 10, // Energy regenerated per second (full in 10 seconds)
 			sprintThreshold: 20, // Minimum energy % to start sprinting
-			speedMultiplier: 1.5, // Speed multiplier while sprinting (1.5 = +50%)
+			speedMultiplier: 1.8, // Speed multiplier while sprinting (1.8 = +80%)
 		},
 	},
 	arrow: {

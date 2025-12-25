@@ -1,9 +1,9 @@
 # [feat] Energy System Part 2
 
-**Status:** Backlog
+**Status:** In Progress
 **Priority:** Medium
 **Type:** Feature
-**Agent:** -
+**Agent:** Cartman
 
 ## Description
 
