@@ -1,6 +1,6 @@
 # [feat] Log System Part 2
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** Medium
 **Type:** Feature
 **Agent:** Kenny
@@ -11,11 +11,11 @@ Improve the logging system UI. LogsCard should display user-friendly formatted m
 
 ## Acceptance Criteria
 
-- [ ] LogsCard displays human-readable messages (not raw JSON)
-- [ ] Create a formatter function to convert log events to friendly text
-- [ ] Remove "Export Logs" button from LogsCard
-- [ ] Add "Export Logs" button to GameOverCard
-- [ ] Export still outputs JSON lines format (for replay engine compatibility)
+- [x] LogsCard displays human-readable messages (not raw JSON)
+- [x] Create a formatter function to convert log events to friendly text
+- [x] Remove "Export Logs" button from LogsCard
+- [x] Add "Export Logs" button to GameOverCard
+- [x] Export still outputs JSON lines format (for replay engine compatibility)
 
 ## Message Format Examples
 
@@ -45,4 +45,9 @@ Display: "Took 15 damage"
 
 ## History
 
-_No history yet_
+- **Kenny**: Improved logging system UI
+  - Created `src/systems/LogFormatter.ts` with `formatLogEvent()` function to convert all event types to human-readable text
+  - Removed export button from `LogsCard.tsx`
+  - Added "Export Logs" button to `GameOverDialog.tsx` with secondary button styling
+  - Export still outputs JSON lines via `LogSystem.downloadLogs()`
+  - Note: LogsCard already displayed human-readable messages from gameStore.logs (combat messages)
