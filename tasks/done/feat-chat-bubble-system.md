@@ -1,6 +1,6 @@
 # [feat] Chat Bubble System
 
-**Status:** In Progress
+**Status:** Done
 **Priority:** Low
 **Type:** Feature
 **Agent:** Cartman
@@ -24,12 +24,12 @@ Refactor the chat bubble feature into a generic, reusable system. Currently chat
 
 ## Acceptance Criteria
 
-- [ ] Create `ChatBubbleSystem` or add to existing system
-- [ ] `showChatBubble(messages: string[], duration?: number)` API
-- [ ] Randomly selects one message from the array
-- [ ] Refactor orc kill bubbles to use new system
-- [ ] Add game start bubbles (see examples below)
-- [ ] Messages configurable (not hardcoded in components)
+- [x] Create `ChatBubbleSystem` or add to existing system
+- [x] `showChatBubble(messages: string[], duration?: number)` API
+- [x] Randomly selects one message from the array
+- [x] Refactor orc kill bubbles to use new system
+- [x] Add game start bubbles (see examples below)
+- [x] Messages configurable (not hardcoded in components)
 
 ## Example Messages
 
@@ -77,4 +77,19 @@ const CHAT_MESSAGES = {
 
 ## History
 
-_No history yet_
+### Completed by Cartman
+
+- Created `src/config/ChatMessages.ts` with centralized message definitions:
+  - `CHAT_MESSAGES` object with categories: `gameStart`, `orcKill`, `lowHealth`, `powerPickup`
+  - Helper functions: `getRandomMessage(category)`, `getRandomMessageFromArray(messages)`
+- Refactored `Hero.ts`:
+  - Renamed `showCatchphrase()` to `showChatBubble(messages, options)`
+  - Accepts `messages: readonly string[]` array
+  - Options: `{ force?: boolean, duration?: number }` (default duration 2000ms)
+  - Removed hardcoded `KILL_CATCHPHRASES` constant
+  - Uses `getRandomMessageFromArray()` for random selection
+- Updated `GameScene.ts`:
+  - Imported `CHAT_MESSAGES` config
+  - Updated `onOrcKilled()` to use `showChatBubble(CHAT_MESSAGES.orcKill)`
+  - Updated debug "O" key to use new API
+  - Added game start bubble trigger with 500ms delay after scene creation
