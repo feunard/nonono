@@ -129,14 +129,26 @@ export function App() {
 		heroStore.addBonus(power.effect.stat, power.effect.value);
 		// Consume one bag
 		inventoryStore.consumeBag();
-		// Hide the loot selection UI (game continues running)
-		inventoryStore.hideLootSelection();
+
+		// Check if more bags remain - read fresh state after consumeBag
+		const state = inventoryStore.getState();
+		if (state.bagCount > 0) {
+			// Generate new powers using fresh collectedPowers state and show dialog again
+			const powers = getRandomAvailablePowers(
+				3,
+				state.collectedPowers,
+				heroStore.getState().bonusStats,
+			);
+			inventoryStore.showLootSelection(powers);
+		} else {
+			// No more bags - hide the loot selection UI
+			inventoryStore.hideLootSelection();
+		}
 	}, []);
 
 	const handleLootCancel = useCallback(() => {
-		// Consume one bag without gaining power
-		inventoryStore.consumeBag();
-		// Hide the loot selection UI
+		// Just hide the dialog - don't consume the bag
+		// Player can return later and open bags with E key
 		inventoryStore.hideLootSelection();
 	}, []);
 
