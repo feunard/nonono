@@ -1,6 +1,6 @@
 # [feat] Map Management System
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** High
 **Type:** Feature
 **Agent:** -
@@ -24,15 +24,15 @@ Remove random map generation and implement a proper tile-based map system. Maps 
 
 ## Acceptance Criteria
 
-- [ ] Create `src/config/MapConfig.ts`
-- [ ] Remove random map generation
-- [ ] Map size configurable (64x64 or 128x128)
-- [ ] Tileset definition with tile types
-- [ ] Tile 0 = empty/passable (no render)
-- [ ] Tile 1 = solid black wall (collide: true)
-- [ ] Default map: 64x64 empty (all 0s)
-- [ ] Collision system reads from tilemap
-- [ ] Update GameScene to use new map system
+- [x] Create `src/config/MapConfig.ts`
+- [x] Remove random map generation
+- [x] Map size configurable (64x64 or 128x128)
+- [x] Tileset definition with tile types
+- [x] Tile 0 = empty/passable (no render)
+- [x] Tile 1 = solid black wall (collide: true)
+- [x] Default map: 64x64 empty (all 0s)
+- [x] Collision system reads from tilemap
+- [x] Update GameScene to use new map system
 
 ## Config Structure
 
@@ -90,4 +90,10 @@ export const CURRENT_MAP = 'default';
 
 ## History
 
-_No history yet_
+- 2025-12-25: Implemented tile-based map system
+  - Created `src/config/MapConfig.ts` with tile types and map definitions
+  - Created `src/systems/MapSystem.ts` for map rendering and collision handling
+  - Updated `GameScene.ts` to use new MapSystem instead of procedural generation
+  - Removed old procedural map generation files (MapGenerator.ts, MapRenderer.ts, SimplexNoise.ts)
+  - Updated all files that used GAME_CONFIG.map.widthInTiles/heightInTiles to use MapConfig
+  - Default map is now 64x64 empty arena

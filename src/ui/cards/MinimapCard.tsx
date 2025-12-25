@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { GAME_CONFIG } from "../../config/GameConfig";
+import { getMapConfig } from "../../config/MapConfig";
 import type { Position } from "../../stores/gameStore";
 import { Card } from "../primitives/Card";
 
@@ -14,8 +14,9 @@ export function MinimapCard({ heroPosition, orcPositions }: MinimapCardProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	// Map dimensions from config
-	const mapWidth = GAME_CONFIG.map.widthInTiles * GAME_CONFIG.map.tileSize;
-	const mapHeight = GAME_CONFIG.map.heightInTiles * GAME_CONFIG.map.tileSize;
+	const mapConfig = getMapConfig();
+	const mapWidth = mapConfig.width * mapConfig.tileSize;
+	const mapHeight = mapConfig.height * mapConfig.tileSize;
 
 	// Scale factor: world coords to minimap coords
 	const scale = MINIMAP_SIZE / Math.max(mapWidth, mapHeight);

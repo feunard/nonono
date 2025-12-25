@@ -12,10 +12,9 @@ export const GAME_CONFIG = {
 		showFPS: isDebug,
 	},
 	map: {
-		widthInTiles: 128,
-		heightInTiles: 128,
+		// Note: Map dimensions are now in MapConfig.ts
+		// This tileSize is kept for backward compatibility with entities
 		tileSize: 16,
-		seed: undefined as number | undefined, // Map generation seed (undefined = random)
 	},
 	hero: {
 		health: 100,

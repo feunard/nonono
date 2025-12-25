@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { CHAT_MESSAGES } from "../config/ChatMessages";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
+import { CURRENT_MAP } from "../config/MapConfig";
 import { Hero } from "../entities/Hero";
 import { Loot } from "../entities/Loot";
 import type { Orc } from "../entities/Orc";
@@ -9,7 +10,7 @@ import { CombatSystem } from "../systems/CombatSystem";
 import { calculateDropChance } from "../systems/calculations";
 import { EffectsManager } from "../systems/EffectsManager";
 import { LogSystem } from "../systems/LogSystem";
-import { createProceduralMap } from "../systems/MapRenderer";
+import { createMapSystem, type MapSystem } from "../systems/MapSystem";
 import { PathfindingManager } from "../systems/PathfindingManager";
 import { WaveManager } from "../systems/WaveManager";
 
@@ -22,6 +23,7 @@ export class GameScene extends Phaser.Scene {
 	private combatSystem!: CombatSystem;
 	private pathfindingManager!: PathfindingManager;
 	private effectsManager!: EffectsManager;
+	private mapSystem!: MapSystem;
 	private collisionGrid!: number[][];
 	private collisionLayer!: Phaser.Tilemaps.TilemapLayer;
 	private startTime: number = 0;
@@ -60,8 +62,8 @@ export class GameScene extends Phaser.Scene {
 			this.createFPSDisplay();
 		}
 
-		// Log game start
-		LogSystem.logGameStart(GAME_CONFIG.map.seed);
+		// Log game start (no seed since we use config-based maps now)
+		LogSystem.logGameStart();
 
 		// Show game start chat bubble after a short delay
 		this.time.delayedCall(500, () => {
@@ -86,6 +88,9 @@ export class GameScene extends Phaser.Scene {
 		}
 		if (this.effectsManager) {
 			this.effectsManager.destroy();
+		}
+		if (this.mapSystem) {
+			this.mapSystem.destroy();
 		}
 	}
 
@@ -258,22 +263,19 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private createMap(): void {
-		const { widthInTiles, heightInTiles, tileSize } = GAME_CONFIG.map;
-		const mapWidth = widthInTiles * tileSize;
-		const mapHeight = heightInTiles * tileSize;
-
-		// Generate procedural map with biomes, rivers, forests
-		const seed = GAME_CONFIG.map.seed ?? Math.floor(Math.random() * 1000000);
-		const { collisionGrid, collisionLayer } = createProceduralMap(
+		// Create map system using current map from MapConfig
+		const { mapSystem, collisionGrid, collisionLayer } = createMapSystem(
 			this,
-			widthInTiles,
-			heightInTiles,
-			seed,
+			CURRENT_MAP,
 		);
 
+		this.mapSystem = mapSystem;
 		this.collisionGrid = collisionGrid;
 		this.collisionLayer = collisionLayer;
 
+		// Set physics world bounds based on map size
+		const mapWidth = mapSystem.getWidthInPixels();
+		const mapHeight = mapSystem.getHeightInPixels();
 		this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
 
 		// Initialize pathfinding with collision grid
@@ -281,9 +283,10 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private createHero(): void {
-		const { widthInTiles, heightInTiles, tileSize } = GAME_CONFIG.map;
-		const centerX = (widthInTiles * tileSize) / 2;
-		const centerY = (heightInTiles * tileSize) / 2;
+		// Get map dimensions from map system
+		const mapConfig = this.mapSystem.getMapConfig();
+		const centerX = (mapConfig.width * mapConfig.tileSize) / 2;
+		const centerY = (mapConfig.height * mapConfig.tileSize) / 2;
 
 		this.hero = new Hero(this, centerX, centerY);
 
@@ -334,7 +337,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private setupCamera(): void {
-		const { widthInTiles, heightInTiles, tileSize } = GAME_CONFIG.map;
+		const mapConfig = this.mapSystem.getMapConfig();
 		this.zoomIndex = 2; // Start at max zoom (index 2 = zoom level 4)
 		const targetZoom = ZOOM_LEVELS[this.zoomIndex];
 
@@ -343,8 +346,8 @@ export class GameScene extends Phaser.Scene {
 		this.cameras.main.setBounds(
 			0,
 			0,
-			widthInTiles * tileSize,
-			heightInTiles * tileSize,
+			mapConfig.width * mapConfig.tileSize,
+			mapConfig.height * mapConfig.tileSize,
 		);
 
 		// Scroll wheel zoom control

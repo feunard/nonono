@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
+import { getMapConfig } from "../config/MapConfig";
 import type { EffectsManager } from "../systems/EffectsManager";
 
 // How often to recalculate homing target (in ms)
@@ -162,11 +163,12 @@ export class Arrow extends Phaser.Physics.Arcade.Sprite {
 			return;
 		}
 
+		const mapConfig = getMapConfig();
 		if (
 			this.x < 0 ||
 			this.y < 0 ||
-			this.x > GAME_CONFIG.map.widthInTiles * GAME_CONFIG.map.tileSize ||
-			this.y > GAME_CONFIG.map.heightInTiles * GAME_CONFIG.map.tileSize
+			this.x > mapConfig.width * mapConfig.tileSize ||
+			this.y > mapConfig.height * mapConfig.tileSize
 		) {
 			this.destroy();
 		}

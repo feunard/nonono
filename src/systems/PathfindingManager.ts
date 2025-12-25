@@ -1,5 +1,5 @@
 import EasyStar from "easystarjs";
-import { GAME_CONFIG } from "../config/GameConfig";
+import { getMapConfig } from "../config/MapConfig";
 
 export class PathfindingManager {
 	private easystar: EasyStar.js;
@@ -28,12 +28,12 @@ export class PathfindingManager {
 		endY: number,
 		callback: (path: { x: number; y: number }[] | null) => void,
 	): void {
-		const { widthInTiles, heightInTiles } = GAME_CONFIG.map;
+		const mapConfig = getMapConfig();
 
-		const clampedStartX = Math.max(0, Math.min(startX, widthInTiles - 1));
-		const clampedStartY = Math.max(0, Math.min(startY, heightInTiles - 1));
-		const clampedEndX = Math.max(0, Math.min(endX, widthInTiles - 1));
-		const clampedEndY = Math.max(0, Math.min(endY, heightInTiles - 1));
+		const clampedStartX = Math.max(0, Math.min(startX, mapConfig.width - 1));
+		const clampedStartY = Math.max(0, Math.min(startY, mapConfig.height - 1));
+		const clampedEndX = Math.max(0, Math.min(endX, mapConfig.width - 1));
+		const clampedEndY = Math.max(0, Math.min(endY, mapConfig.height - 1));
 
 		this.easystar.findPath(
 			clampedStartX,

@@ -7,13 +7,15 @@ Object.defineProperty(window, "location", {
 });
 
 const { GAME_CONFIG } = await import("../src/config/GameConfig");
+const { getMapConfig } = await import("../src/config/MapConfig");
 
 describe("GameConfig", () => {
 	describe("map configuration", () => {
 		it("should have valid map dimensions", () => {
-			expect(GAME_CONFIG.map.widthInTiles).toBeGreaterThan(0);
-			expect(GAME_CONFIG.map.heightInTiles).toBeGreaterThan(0);
-			expect(GAME_CONFIG.map.tileSize).toBeGreaterThan(0);
+			const mapConfig = getMapConfig();
+			expect(mapConfig.width).toBeGreaterThan(0);
+			expect(mapConfig.height).toBeGreaterThan(0);
+			expect(mapConfig.tileSize).toBeGreaterThan(0);
 		});
 
 		it("should have power-of-2 friendly tile size", () => {

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { GAME_CONFIG } from "../config/GameConfig";
+import { getMapConfig } from "../config/MapConfig";
 import type { Hero } from "../entities/Hero";
 import { Orc } from "../entities/Orc";
 import { gameStore } from "../stores/gameStore";
@@ -79,9 +80,10 @@ export class WaveManager {
 			return;
 		}
 
-		const { widthInTiles, heightInTiles, tileSize } = GAME_CONFIG.map;
-		const mapWidth = widthInTiles * tileSize;
-		const mapHeight = heightInTiles * tileSize;
+		const mapConfig = getMapConfig();
+		const { tileSize } = mapConfig;
+		const mapWidth = mapConfig.width * tileSize;
+		const mapHeight = mapConfig.height * tileSize;
 
 		// Try to find a valid spawn position (not on a collision tile)
 		let x: number;
