@@ -50,7 +50,7 @@ export const GAME_CONFIG = {
 		// Sprint/Energy system - "life saver" ability, not spam
 		energy: {
 			max: 100, // Maximum energy
-			drainRate: 20, // Energy drained per second (empty in 5 seconds)
+			drainRate: 50, // Energy drained per second (empty in 2 seconds)
 			regenRate: 10, // Energy regenerated per second (full in 10 seconds)
 			sprintThreshold: 20, // Minimum energy % to start sprinting
 			speedMultiplier: 1.8, // Speed multiplier while sprinting (1.8 = +80%)

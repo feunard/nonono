@@ -32,11 +32,11 @@ export function HealthBarCard({
 						<Heart className="w-4 h-4" fill="currentColor" />
 					</IconBox>
 					<IconBox size="sm" className={isSprinting ? "animate-pulse" : ""}>
-						<Zap className="w-4 h-4" fill="currentColor" />
+						<Zap className="w-3 h-3" fill="currentColor" />
 					</IconBox>
 				</div>
 
-				<div className="flex-1">
+				<div className="w-48">
 					{/* Health bar */}
 					<div className="flex justify-between items-center gap-6 mb-1">
 						<span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
@@ -76,7 +76,7 @@ export function HealthBarCard({
 					</div>
 					<div className="h-1.5 bg-black rounded-sm border border-neutral-800 overflow-hidden">
 						<div
-							className={`h-full transition-all duration-150 rounded-sm ${
+							className={`h-full rounded-sm ${
 								isEnergyLow
 									? "bg-neutral-600"
 									: isSprinting

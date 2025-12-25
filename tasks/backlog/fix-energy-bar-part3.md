@@ -1,9 +1,9 @@
 # [fix] Energy Bar Part 3
 
-**Status:** Backlog
+**Status:** In Progress
 **Priority:** High
 **Type:** Bug
-**Agent:** -
+**Agent:** Kenny
 
 ## Description
 
