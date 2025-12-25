@@ -1,6 +1,6 @@
 # [feat] Map Editor
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Feature
 **Agent:** -
@@ -18,17 +18,17 @@ Create a visual map editor for designing tile-based maps. Focus on the editor UI
 
 ## Acceptance Criteria
 
-- [ ] Create `src/ui/editor/` directory structure
-- [ ] MapEditor main component
-- [ ] Tile palette panel (select tile to paint)
-- [ ] Canvas/grid area for painting tiles
-- [ ] Map size selector (32x32, 64x64, 128x128)
-- [ ] Click/drag to paint tiles
-- [ ] Clear map button
-- [ ] Only 2 tiles: ID 0 (empty), ID 1 (black wall)
-- [ ] Grid overlay toggle
-- [ ] Zoom controls (optional)
-- [ ] Internal state with useState/useReducer
+- [x] Create `src/ui/editor/` directory structure
+- [x] MapEditor main component
+- [x] Tile palette panel (select tile to paint)
+- [x] Canvas/grid area for painting tiles
+- [x] Map size selector (32x32, 64x64, 128x128)
+- [x] Click/drag to paint tiles
+- [x] Clear map button
+- [x] Only 2 tiles: ID 0 (empty), ID 1 (black wall)
+- [x] Grid overlay toggle
+- [x] Zoom controls (optional)
+- [x] Internal state with useState/useReducer
 
 ## Editor Layout
 
@@ -102,4 +102,4 @@ type EditorState = {
 
 ## History
 
-_No history yet_
+- 2025-12-25: Implemented visual map editor with all acceptance criteria met. Created 6 new files in src/ui/editor/: MapEditor.tsx (main container), TilePalette.tsx (tile selection), MapCanvas.tsx (grid painting with click/drag), EditorToolbar.tsx (toolbar with back, size selector, zoom, grid toggle, clear), EditorStatusBar.tsx (status info), and useMapEditor.ts (reducer-based state hook). Added "editor" screen to app routing with "Map Editor" button on launch screen.
