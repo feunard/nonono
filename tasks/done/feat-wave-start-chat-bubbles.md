@@ -1,6 +1,6 @@
 # [feat] Add Wave Start Chat Bubble Messages
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Low
 **Type:** Feature
 
@@ -10,21 +10,21 @@ Add hero chat bubble messages that trigger at the beginning of each wave (starti
 ## Acceptance Criteria
 
 ### Chat Messages Configuration
-- [ ] `src/config/ChatMessages.ts` has new `waveStart` category in `CHAT_MESSAGES` object
-- [ ] `waveStart` contains 4-5 thematic messages (e.g., "Wave 2... bring it on!", "More orcs? Wave 3, let's go!")
-- [ ] Messages follow existing RP tone (confident, heroic, slightly sarcastic)
-- [ ] `ChatMessageCategory` type automatically includes `waveStart` via existing `keyof typeof` pattern
+- [x] `src/config/ChatMessages.ts` has new `waveStart` category in `CHAT_MESSAGES` object
+- [x] `waveStart` contains 4-5 thematic messages (e.g., "Wave 2... bring it on!", "More orcs? Wave 3, let's go!")
+- [x] Messages follow existing RP tone (confident, heroic, slightly sarcastic)
+- [x] `ChatMessageCategory` type automatically includes `waveStart` via existing `keyof typeof` pattern
 
 ### Wave Manager Integration
-- [ ] `src/systems/WaveManager.ts` triggers hero chat bubble when a new wave starts
-- [ ] Chat bubble only triggers for wave 2 and beyond (wave 1 is covered by `gameStart` messages)
-- [ ] Chat bubble triggers AFTER wave transition (when `startNextWave()` runs)
-- [ ] Uses `getRandomMessage('waveStart')` pattern consistent with other triggers
+- [x] `src/systems/WaveManager.ts` triggers hero chat bubble when a new wave starts
+- [x] Chat bubble only triggers for wave 2 and beyond (wave 1 is covered by `gameStart` messages)
+- [x] Chat bubble triggers AFTER wave transition (when `startNextWave()` runs)
+- [x] Uses `getRandomMessage('waveStart')` pattern consistent with other triggers
 
 ### Implementation Details
-- [ ] WaveManager needs access to Hero instance to call `showChatBubble()`
-- [ ] WaveManager already has `hero` reference in constructor (line 18)
-- [ ] Chat bubble call placed after `this.scene.events.emit("waveStarted", this.currentWave)` (line 63)
+- [x] WaveManager needs access to Hero instance to call `showChatBubble()`
+- [x] WaveManager already has `hero` reference in constructor (line 18)
+- [x] Chat bubble call placed after `this.scene.events.emit("waveStarted", this.currentWave)` (line 63)
 
 ## Context
 
@@ -81,3 +81,7 @@ this.hero.showChatBubble(CHAT_MESSAGES.orcKill);
 - The `force: true` option may be useful to ensure the message shows even if another bubble is active
 - WaveManager already imports Hero type and has hero reference, so no new dependencies needed
 - Consider whether wave 2 should have slightly different messaging than later waves (optional enhancement)
+
+## History
+
+- 2025-12-25: Implemented wave start chat bubbles. Added 5 thematic messages to `waveStart` category in ChatMessages.ts. Modified WaveManager.ts to trigger chat bubble on wave 2+ after the waveStarted event is emitted.
