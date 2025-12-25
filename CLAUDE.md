@@ -190,6 +190,8 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
    # handle conflicts
    git push
    ```
+   - Always pull before pushing to avoid conflicts
+   - Push without prompting
 
 9. **Move task to done:**
    - Move file from `backlog/` to `done/`
