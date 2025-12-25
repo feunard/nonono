@@ -1,9 +1,9 @@
 # [feat] Launch Screen
 
-**Status:** Backlog
+**Status:** In Progress
 **Priority:** High
 **Type:** Feature
-**Agent:** -
+**Agent:** Cartman
 
 ## Description
 
