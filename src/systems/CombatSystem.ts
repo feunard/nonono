@@ -1,54 +1,54 @@
 import Phaser from "phaser";
 import type { Arrow } from "../entities/Arrow";
+import type { Foe } from "../entities/Foe";
 import type { Hero } from "../entities/Hero";
-import type { Orc } from "../entities/Orc";
 
 export class CombatSystem {
 	private scene: Phaser.Scene;
 	private hero: Hero;
-	private orcs: Phaser.Physics.Arcade.Group;
+	private foes: Phaser.Physics.Arcade.Group;
 	public killCount: number = 0;
 
 	constructor(
 		scene: Phaser.Scene,
 		hero: Hero,
-		orcs: Phaser.Physics.Arcade.Group,
+		foes: Phaser.Physics.Arcade.Group,
 	) {
 		this.scene = scene;
 		this.hero = hero;
-		this.orcs = orcs;
+		this.foes = foes;
 
 		this.setupCollisions();
 
-		this.scene.events.on("orcKilled", this.onOrcKilled, this);
+		this.scene.events.on("foeKilled", this.onFoeKilled, this);
 	}
 
 	private setupCollisions(): void {
 		this.scene.physics.add.overlap(
 			this.hero.arrows,
-			this.orcs,
-			this.onArrowHitOrc as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
+			this.foes,
+			this.onArrowHitFoe as Phaser.Types.Physics.Arcade.ArcadePhysicsCallback,
 			undefined,
 			this,
 		);
 	}
 
-	private onArrowHitOrc(
+	private onArrowHitFoe(
 		arrow: Phaser.GameObjects.GameObject,
-		orc: Phaser.GameObjects.GameObject,
+		foe: Phaser.GameObjects.GameObject,
 	): void {
 		const arrowSprite = arrow as Arrow;
-		const orcSprite = orc as Orc;
+		const foeSprite = foe as Foe;
 
-		if (!orcSprite.isAlive()) return;
+		if (!foeSprite.isAlive()) return;
 
-		// Check if this arrow has already hit this orc (for pierce/bounce)
-		const orcId = orcSprite.body?.gameObject?.name
-			? Number.parseInt(orcSprite.body.gameObject.name, 10)
-			: ((orcSprite as unknown as { __id?: number }).__id ?? 0);
+		// Check if this arrow has already hit this foe (for pierce/bounce)
+		const foeId = foeSprite.body?.gameObject?.name
+			? Number.parseInt(foeSprite.body.gameObject.name, 10)
+			: ((foeSprite as unknown as { __id?: number }).__id ?? 0);
 
 		// Use a unique identifier - fallback to object reference hash
-		const enemyId = orcId || this.getObjectId(orcSprite);
+		const enemyId = foeId || this.getObjectId(foeSprite);
 
 		if (arrowSprite.hasHitEnemy(enemyId)) {
 			return; // Already hit this enemy, skip
@@ -58,7 +58,7 @@ export class CombatSystem {
 		arrowSprite.markEnemyHit(enemyId);
 
 		// Deal damage
-		orcSprite.takeDamage(
+		foeSprite.takeDamage(
 			arrowSprite.damage,
 			arrowSprite.isCritical,
 			arrowSprite.accuracy,
@@ -78,7 +78,7 @@ export class CombatSystem {
 				Math.floor(arrowSprite.damage * 0.5), // 50% damage for splash
 				arrowSprite.accuracy,
 				arrowSprite.piercing,
-				orcSprite, // Exclude the directly hit orc
+				foeSprite, // Exclude the directly hit foe
 			);
 		}
 
@@ -90,7 +90,7 @@ export class CombatSystem {
 
 		// Handle ricochet: if arrow can bounce, find next target
 		if (arrowSprite.bounceRemaining > 0) {
-			const nextTarget = this.findNearestUnhitOrc(arrowSprite, orcSprite);
+			const nextTarget = this.findNearestUnhitFoe(arrowSprite, foeSprite);
 			if (nextTarget) {
 				arrowSprite.bounceRemaining--;
 				arrowSprite.redirectTo(nextTarget.x, nextTarget.y);
@@ -118,36 +118,36 @@ export class CombatSystem {
 	}
 
 	/**
-	 * Find the nearest orc that hasn't been hit by this arrow yet
+	 * Find the nearest foe that hasn't been hit by this arrow yet
 	 */
-	private findNearestUnhitOrc(arrow: Arrow, excludeOrc: Orc): Orc | null {
-		let nearest: Orc | null = null;
+	private findNearestUnhitFoe(arrow: Arrow, excludeFoe: Foe): Foe | null {
+		let nearest: Foe | null = null;
 		let nearestDistance = Infinity;
 
-		const excludeId = this.getObjectId(excludeOrc);
+		const excludeId = this.getObjectId(excludeFoe);
 
-		this.orcs.getChildren().forEach((gameObj) => {
-			const orc = gameObj as Orc;
-			if (!orc.active || !orc.isAlive()) return;
+		this.foes.getChildren().forEach((gameObj) => {
+			const foe = gameObj as Foe;
+			if (!foe.active || !foe.isAlive()) return;
 
-			const orcId = this.getObjectId(orc);
+			const foeId = this.getObjectId(foe);
 
-			// Skip if this arrow already hit this orc
-			if (arrow.hasHitEnemy(orcId)) return;
+			// Skip if this arrow already hit this foe
+			if (arrow.hasHitEnemy(foeId)) return;
 
-			// Skip the orc we just hit
-			if (orcId === excludeId) return;
+			// Skip the foe we just hit
+			if (foeId === excludeId) return;
 
 			const distance = Phaser.Math.Distance.Between(
 				arrow.x,
 				arrow.y,
-				orc.x,
-				orc.y,
+				foe.x,
+				foe.y,
 			);
 
 			if (distance < nearestDistance) {
 				nearestDistance = distance;
-				nearest = orc;
+				nearest = foe;
 			}
 		});
 
@@ -170,21 +170,21 @@ export class CombatSystem {
 		damage: number,
 		accuracy: number,
 		piercing: number,
-		excludeOrc: Orc,
+		excludeFoe: Foe,
 	): void {
-		const excludeId = this.getObjectId(excludeOrc);
+		const excludeId = this.getObjectId(excludeFoe);
 		let totalSplashDamage = 0;
 
-		this.orcs.getChildren().forEach((gameObj) => {
-			const orc = gameObj as Orc;
-			if (!orc.active || !orc.isAlive()) return;
+		this.foes.getChildren().forEach((gameObj) => {
+			const foe = gameObj as Foe;
+			if (!foe.active || !foe.isAlive()) return;
 
-			const orcId = this.getObjectId(orc);
-			if (orcId === excludeId) return; // Skip the directly hit orc
+			const foeId = this.getObjectId(foe);
+			if (foeId === excludeId) return; // Skip the directly hit foe
 
-			const distance = Phaser.Math.Distance.Between(x, y, orc.x, orc.y);
+			const distance = Phaser.Math.Distance.Between(x, y, foe.x, foe.y);
 			if (distance <= radius) {
-				orc.takeDamage(damage, false, accuracy, piercing);
+				foe.takeDamage(damage, false, accuracy, piercing);
 				totalSplashDamage += damage;
 			}
 		});
@@ -195,7 +195,7 @@ export class CombatSystem {
 		}
 	}
 
-	private onOrcKilled(): void {
+	private onFoeKilled(): void {
 		this.killCount++;
 		this.scene.events.emit("killCountUpdated", this.killCount);
 	}
@@ -205,6 +205,6 @@ export class CombatSystem {
 	}
 
 	public destroy(): void {
-		this.scene.events.off("orcKilled", this.onOrcKilled, this);
+		this.scene.events.off("foeKilled", this.onFoeKilled, this);
 	}
 }

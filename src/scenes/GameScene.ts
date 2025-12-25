@@ -2,9 +2,9 @@ import Phaser from "phaser";
 import { CHAT_MESSAGES } from "../config/ChatMessages";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
 import { getRandomMapId, setCurrentMapId } from "../config/MapConfig";
+import type { Foe } from "../entities/Foe";
 import { Hero } from "../entities/Hero";
 import { Loot } from "../entities/Loot";
-import type { Orc } from "../entities/Orc";
 import { gameStore } from "../stores/gameStore";
 import { heroStore } from "../stores/heroStore";
 import { inventoryStore } from "../stores/inventoryStore";
@@ -80,7 +80,7 @@ export class GameScene extends Phaser.Scene {
 	shutdown(): void {
 		// Clean up event listeners
 		this.events.off("heroKilled", this.onGameOver, this);
-		this.events.off("orcKilled", this.onOrcKilled, this);
+		this.events.off("foeKilled", this.onFoeKilled, this);
 
 		// Clean up systems
 		if (this.waveManager) {
@@ -125,12 +125,12 @@ export class GameScene extends Phaser.Scene {
 				}
 			});
 
-		// Debug: "U" key kills all orcs (only in debug mode)
+		// Debug: "U" key kills all foes (only in debug mode)
 		this.input.keyboard
 			?.addKey(Phaser.Input.Keyboard.KeyCodes.U)
 			.on("down", () => {
 				if (GAME_CONFIG.debug.showHitboxes || debugState.showHitboxes) {
-					this.killAllOrcs();
+					this.killAllFoes();
 				}
 			});
 
@@ -155,14 +155,14 @@ export class GameScene extends Phaser.Scene {
 		this.loots.add(loot);
 	}
 
-	private killAllOrcs(): void {
+	private killAllFoes(): void {
 		// Toggle spawn pause state
 		uiStore.toggleSpawnPaused();
 
-		// Kill all current orcs - use slice() to copy array since destroy modifies it
-		const orcs = this.waveManager.orcs.getChildren().slice();
-		for (const orc of orcs) {
-			(orc as Phaser.Physics.Arcade.Sprite).destroy();
+		// Kill all current foes - use slice() to copy array since destroy modifies it
+		const foes = this.waveManager.foes.getChildren().slice();
+		for (const foe of foes) {
+			(foe as Phaser.Physics.Arcade.Sprite).destroy();
 		}
 	}
 
@@ -195,9 +195,9 @@ export class GameScene extends Phaser.Scene {
 			this.hero.anims.pause();
 		}
 
-		// Pause all orc animations
-		this.waveManager.orcs.getChildren().forEach((orc) => {
-			const sprite = orc as Phaser.Physics.Arcade.Sprite;
+		// Pause all foe animations
+		this.waveManager.foes.getChildren().forEach((foe) => {
+			const sprite = foe as Phaser.Physics.Arcade.Sprite;
 			if (sprite.anims) {
 				sprite.anims.pause();
 			}
@@ -210,9 +210,9 @@ export class GameScene extends Phaser.Scene {
 			this.hero.anims.resume();
 		}
 
-		// Resume all orc animations
-		this.waveManager.orcs.getChildren().forEach((orc) => {
-			const sprite = orc as Phaser.Physics.Arcade.Sprite;
+		// Resume all foe animations
+		this.waveManager.foes.getChildren().forEach((foe) => {
+			const sprite = foe as Phaser.Physics.Arcade.Sprite;
 			if (sprite.anims) {
 				sprite.anims.resume();
 			}
@@ -224,9 +224,9 @@ export class GameScene extends Phaser.Scene {
 		this.time.addEvent({
 			delay: 100,
 			callback: () => {
-				// Collect orc positions for minimap
-				const orcPositions = this.waveManager.orcs.getChildren().map((orc) => {
-					const sprite = orc as Phaser.Physics.Arcade.Sprite;
+				// Collect foe positions for minimap
+				const foePositions = this.waveManager.foes.getChildren().map((foe) => {
+					const sprite = foe as Phaser.Physics.Arcade.Sprite;
 					return { x: sprite.x, y: sprite.y };
 				});
 
@@ -235,11 +235,11 @@ export class GameScene extends Phaser.Scene {
 					maxHealth: this.hero.maxHealth,
 					wave: this.waveManager.getCurrentWave(),
 					kills: this.combatSystem.getKillCount(),
-					orcsAlive: this.waveManager.getOrcCount(),
+					orcsAlive: this.waveManager.getFoeCount(),
 					elapsedTime: this.getElapsedTime(),
 					fps: Math.round(this.game.loop.actualFps),
 					heroPosition: { x: this.hero.x, y: this.hero.y },
-					orcPositions,
+					orcPositions: foePositions,
 				});
 			},
 			loop: true,
@@ -323,17 +323,17 @@ export class GameScene extends Phaser.Scene {
 			this.effectsManager,
 		);
 
-		// Enable orc-to-orc collision so orcs don't stack on top of each other
-		this.physics.add.collider(this.waveManager.orcs, this.waveManager.orcs);
+		// Enable foe-to-foe collision so foes don't stack on top of each other
+		this.physics.add.collider(this.waveManager.foes, this.waveManager.foes);
 
 		this.combatSystem = new CombatSystem(
 			this,
 			this.hero,
-			this.waveManager.orcs,
+			this.waveManager.foes,
 		);
 
-		// Give hero access to orcs group for homing arrows
-		this.hero.setOrcsGroup(this.waveManager.orcs);
+		// Give hero access to foes group for homing arrows
+		this.hero.setFoesGroup(this.waveManager.foes);
 
 		// Setup loot group and collision
 		this.loots = this.physics.add.group({
@@ -403,25 +403,32 @@ export class GameScene extends Phaser.Scene {
 
 	private setupEvents(): void {
 		this.events.on("heroKilled", this.onGameOver, this);
-		this.events.on("orcKilled", this.onOrcKilled, this);
+		this.events.on("foeKilled", this.onFoeKilled, this);
 	}
 
-	private onOrcKilled(orc: Phaser.Physics.Arcade.Sprite): void {
+	private onFoeKilled(foe: Phaser.Physics.Arcade.Sprite): void {
 		this.hero.showChatBubble(CHAT_MESSAGES.orcKill);
-		this.effectsManager.deathPoof(orc.x, orc.y);
-		// Cast to Orc to get level and ID for drop chance calculation and logging
-		const orcEntity = orc as Orc;
+		this.effectsManager.deathPoof(foe.x, foe.y);
+		// Cast to Foe to get level, type and ID for drop chance calculation and logging
+		const foeEntity = foe as Foe;
 
-		// Log orc kill event (we don't have specific kill info here, logged in combat)
-		LogSystem.logOrcKill(
-			orcEntity.orcId,
-			orcEntity.level,
+		// Log foe kill event (we don't have specific kill info here, logged in combat)
+		LogSystem.logFoeKill(
+			foeEntity.foeId,
+			foeEntity.typeName,
+			foeEntity.level,
 			"unknown", // Kill source tracked separately in combat
 			0,
 			false,
 		);
 
-		this.trySpawnLoot(orc.x, orc.y, orcEntity.level, orcEntity.orcId);
+		this.trySpawnLoot(
+			foe.x,
+			foe.y,
+			foeEntity.foeId,
+			foeEntity.typeName,
+			foeEntity.level,
+		);
 	}
 
 	private getTotalLuck(): number {
@@ -431,17 +438,18 @@ export class GameScene extends Phaser.Scene {
 	private trySpawnLoot(
 		x: number,
 		y: number,
-		orcLevel: number,
-		orcId: number,
+		foeId: number,
+		foeType: string,
+		foeLevel: number,
 	): void {
 		// Check if max bags on field reached
 		if (this.loots.getLength() >= GAME_CONFIG.loot.maxBagsOnField) return;
 
-		// Calculate drop chance: 10% base + luck% - orcLevel * 2%, minimum 1%
+		// Calculate drop chance: 10% base + luck% - foeLevel * 2%, minimum 1%
 		const totalLuck = this.getTotalLuck();
 		const dropChance = calculateDropChance(
 			totalLuck,
-			orcLevel,
+			foeLevel,
 			GAME_CONFIG.orc.levelDropReduction,
 			GAME_CONFIG.orc.minDropChance,
 		);
@@ -453,7 +461,7 @@ export class GameScene extends Phaser.Scene {
 		this.loots.add(loot);
 
 		// Log loot drop event
-		LogSystem.logLootDrop(x, y, orcId, orcLevel);
+		LogSystem.logLootDrop(x, y, foeId, foeType, foeLevel);
 	}
 
 	private onLootPickup(
@@ -512,8 +520,9 @@ export class GameScene extends Phaser.Scene {
 
 		// Log hero death
 		LogSystem.logHeroDeath(
-			undefined, // We don't track killer orc ID currently
-			undefined,
+			undefined, // We don't track killer foe ID currently
+			undefined, // Killer foe type
+			undefined, // Killer foe level
 			this.hero.health,
 			this.hero.maxHealth,
 			kills,
@@ -541,7 +550,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.isPaused) return;
 
 		if (this.hero?.active) {
-			this.hero.update(this.waveManager.orcs, delta);
+			this.hero.update(this.waveManager.foes, delta);
 		}
 	}
 

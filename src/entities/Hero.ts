@@ -711,11 +711,11 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 
 	private lastBowAnimTime: number = 0;
 
-	// Store orcs reference for arrow homing
-	private _orcsGroup: Phaser.Physics.Arcade.Group | null = null;
+	// Store foes reference for arrow homing
+	private _foesGroup: Phaser.Physics.Arcade.Group | null = null;
 
-	public setOrcsGroup(orcs: Phaser.Physics.Arcade.Group): void {
-		this._orcsGroup = orcs;
+	public setFoesGroup(foes: Phaser.Physics.Arcade.Group): void {
+		this._foesGroup = foes;
 	}
 
 	private shootAt(targetX: number, targetY: number): void {
@@ -803,7 +803,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 				arrowBounce,
 				arrowHoming,
 				arrowExplosive,
-				this._orcsGroup ?? undefined,
+				this._foesGroup ?? undefined,
 				isArmorPen,
 			);
 			this.arrows.add(arrow);

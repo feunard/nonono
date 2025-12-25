@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import { GAME_CONFIG } from "../config/GameConfig";
 import { getMapConfig } from "../config/MapConfig";
+import { BigOrc } from "../entities/BigOrc";
+import { Foe } from "../entities/Foe";
 import type { Hero } from "../entities/Hero";
 import { Orc } from "../entities/Orc";
 import { uiStore } from "../stores/uiStore";
@@ -8,15 +10,18 @@ import type { EffectsManager } from "./EffectsManager";
 import { LogSystem } from "./LogSystem";
 import type { PathfindingManager } from "./PathfindingManager";
 
+/** Types of foes that can be spawned */
+export type FoeType = "orc" | "bigOrc";
+
 export class WaveManager {
 	private scene: Phaser.Scene;
 	private hero: Hero;
 	private pathfindingManager: PathfindingManager;
 	private collisionLayer: Phaser.Tilemaps.TilemapLayer;
 	private effectsManager: EffectsManager;
-	public orcs: Phaser.Physics.Arcade.Group;
+	public foes: Phaser.Physics.Arcade.Group;
 	private currentWave: number = 0;
-	private orcsToSpawn: number = 0;
+	private foesToSpawn: number = 0;
 	private spawnTimer: Phaser.Time.TimerEvent | null = null;
 	private waveTimer: Phaser.Time.TimerEvent | null = null;
 	private spawnInterval: number;
@@ -35,8 +40,8 @@ export class WaveManager {
 		this.effectsManager = effectsManager;
 		this.spawnInterval = GAME_CONFIG.waves.initialSpawnInterval;
 
-		this.orcs = scene.physics.add.group({
-			classType: Orc,
+		this.foes = scene.physics.add.group({
+			classType: Foe,
 			runChildUpdate: true,
 		});
 
@@ -45,10 +50,10 @@ export class WaveManager {
 
 	private startNextWave(): void {
 		this.currentWave++;
-		const baseOrcs = GAME_CONFIG.waves.orcsPerWave;
+		const baseFoes = GAME_CONFIG.waves.orcsPerWave;
 		const multiplier =
 			GAME_CONFIG.waves.difficultyMultiplier ** (this.currentWave - 1);
-		this.orcsToSpawn = Math.floor(baseOrcs * multiplier);
+		this.foesToSpawn = Math.floor(baseFoes * multiplier);
 
 		this.spawnInterval = Math.max(
 			1000,
@@ -58,13 +63,13 @@ export class WaveManager {
 		this.scene.events.emit("waveStarted", this.currentWave);
 
 		// Log wave start event
-		LogSystem.logWaveStart(this.currentWave, this.orcsToSpawn);
+		LogSystem.logWaveStart(this.currentWave, this.foesToSpawn);
 
 		this.spawnTimer = this.scene.time.addEvent({
 			delay: this.spawnInterval,
-			callback: this.spawnOrc,
+			callback: this.spawnFoe,
 			callbackScope: this,
-			repeat: this.orcsToSpawn - 1,
+			repeat: this.foesToSpawn - 1,
 		});
 
 		this.waveTimer = this.scene.time.addEvent({
@@ -74,7 +79,28 @@ export class WaveManager {
 		});
 	}
 
-	private spawnOrc(): void {
+	/**
+	 * Determines which foe type to spawn based on wave and randomness.
+	 * BigOrcs have a chance to spawn starting from wave 2.
+	 */
+	private selectFoeType(): FoeType {
+		// No BigOrcs in wave 1
+		if (this.currentWave < 2) {
+			return "orc";
+		}
+
+		// 15% chance for BigOrc starting wave 2, increasing by 5% per wave
+		const bigOrcChance = 15 + (this.currentWave - 2) * 5;
+		const clampedChance = Math.min(bigOrcChance, 40); // Cap at 40%
+
+		if (Math.random() * 100 < clampedChance) {
+			return "bigOrc";
+		}
+
+		return "orc";
+	}
+
+	private spawnFoe(): void {
 		// Skip spawning if debug spawn pause is active
 		if (uiStore.getState().isSpawnPaused) {
 			return;
@@ -116,28 +142,49 @@ export class WaveManager {
 			attempts++;
 		} while (this.isCollisionTile(x, y) && attempts < maxAttempts);
 
-		const orc = new Orc(
-			this.scene,
-			x,
-			y,
-			this.pathfindingManager,
-			this.collisionLayer,
-			this.effectsManager,
-			this.currentWave,
-		);
-		orc.setTarget(this.hero);
-		this.orcs.add(orc);
+		// Determine foe type and create the appropriate class
+		const foeType = this.selectFoeType();
+		let foe: Foe;
 
-		// Log orc spawn event
-		LogSystem.logOrcSpawn(
-			orc.orcId,
-			orc.level,
-			orc.health,
-			orc.maxHealth,
-			orc.damage,
-			orc.armor,
-			orc.dodge,
-			0, // Speed is private, we can't access it - not critical for logging
+		switch (foeType) {
+			case "bigOrc":
+				foe = new BigOrc(
+					this.scene,
+					x,
+					y,
+					this.pathfindingManager,
+					this.collisionLayer,
+					this.effectsManager,
+					this.currentWave,
+				);
+				break;
+			default:
+				foe = new Orc(
+					this.scene,
+					x,
+					y,
+					this.pathfindingManager,
+					this.collisionLayer,
+					this.effectsManager,
+					this.currentWave,
+				);
+				break;
+		}
+
+		foe.setTarget(this.hero);
+		this.foes.add(foe);
+
+		// Log foe spawn event
+		LogSystem.logFoeSpawn(
+			foe.foeId,
+			foe.typeName,
+			foe.level,
+			foe.health,
+			foe.maxHealth,
+			foe.damage,
+			foe.armor,
+			foe.dodge,
+			0, // Speed is protected, we can't access it - not critical for logging
 			x,
 			y,
 		);
@@ -158,8 +205,15 @@ export class WaveManager {
 		return this.currentWave;
 	}
 
+	public getFoeCount(): number {
+		return this.foes.countActive(true);
+	}
+
+	/**
+	 * @deprecated Use getFoeCount() instead
+	 */
 	public getOrcCount(): number {
-		return this.orcs.countActive(true);
+		return this.getFoeCount();
 	}
 
 	public destroy(): void {

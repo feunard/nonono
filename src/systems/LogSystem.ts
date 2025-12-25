@@ -36,10 +36,11 @@ type WaveEndEvent = BaseEvent & {
 	};
 };
 
-type OrcSpawnEvent = BaseEvent & {
-	type: "orc_spawn";
+type FoeSpawnEvent = BaseEvent & {
+	type: "foe_spawn";
 	data: {
-		orcId: number;
+		foeId: number;
+		foeType: string;
 		level: number;
 		health: number;
 		maxHealth: number;
@@ -52,10 +53,11 @@ type OrcSpawnEvent = BaseEvent & {
 	};
 };
 
-type OrcKillEvent = BaseEvent & {
-	type: "orc_kill";
+type FoeKillEvent = BaseEvent & {
+	type: "foe_kill";
 	data: {
-		orcId: number;
+		foeId: number;
+		foeType: string;
 		level: number;
 		killedBy: "hero_melee" | "hero_arrow" | "hero_riposte" | "unknown";
 		finalBlow: {
@@ -68,8 +70,9 @@ type OrcKillEvent = BaseEvent & {
 type DamageDealtEvent = BaseEvent & {
 	type: "damage_dealt";
 	data: {
-		targetType: "orc";
+		targetType: "foe";
 		targetId: number;
+		targetFoeType: string;
 		targetLevel: number;
 		damage: number;
 		isCritical: boolean;
@@ -81,8 +84,9 @@ type DamageDealtEvent = BaseEvent & {
 type DamageReceivedEvent = BaseEvent & {
 	type: "damage_received";
 	data: {
-		sourceType: "orc";
+		sourceType: "foe";
 		sourceId: number;
+		sourceFoeType: string;
 		sourceLevel: number;
 		rawDamage: number;
 		finalDamage: number;
@@ -105,9 +109,10 @@ type PowerPickupEvent = BaseEvent & {
 type HeroDeathEvent = BaseEvent & {
 	type: "hero_death";
 	data: {
-		cause: "orc_melee";
-		killerOrcId?: number;
-		killerOrcLevel?: number;
+		cause: "foe_melee";
+		killerFoeId?: number;
+		killerFoeType?: string;
+		killerFoeLevel?: number;
 		finalStats: {
 			health: number;
 			maxHealth: number;
@@ -133,8 +138,9 @@ type LootDropEvent = BaseEvent & {
 	data: {
 		x: number;
 		y: number;
-		fromOrcId: number;
-		fromOrcLevel: number;
+		fromFoeId: number;
+		fromFoeType: string;
+		fromFoeLevel: number;
 	};
 };
 
@@ -150,8 +156,8 @@ type GameEvent =
 	| GameStartEvent
 	| WaveStartEvent
 	| WaveEndEvent
-	| OrcSpawnEvent
-	| OrcKillEvent
+	| FoeSpawnEvent
+	| FoeKillEvent
 	| DamageDealtEvent
 	| DamageReceivedEvent
 	| PowerPickupEvent
@@ -168,19 +174,19 @@ class LogSystemClass {
 	private events: GameEvent[] = [];
 	private eventIdCounter = 0;
 	private gameStartTime = 0;
-	private static orcIdCounter = 0;
+	private static foeIdCounter = 0;
 
 	// Reset for new game
 	reset(): void {
 		this.events = [];
 		this.eventIdCounter = 0;
 		this.gameStartTime = Date.now();
-		LogSystemClass.orcIdCounter = 0;
+		LogSystemClass.foeIdCounter = 0;
 	}
 
-	// Get next unique orc ID
-	getNextOrcId(): number {
-		return ++LogSystemClass.orcIdCounter;
+	// Get next unique foe ID
+	getNextFoeId(): number {
+		return ++LogSystemClass.foeIdCounter;
 	}
 
 	// Get current game time in ms
@@ -228,8 +234,9 @@ class LogSystemClass {
 		this.events.push(event);
 	}
 
-	logOrcSpawn(
-		orcId: number,
+	logFoeSpawn(
+		foeId: number,
+		foeType: string,
 		level: number,
 		health: number,
 		maxHealth: number,
@@ -240,11 +247,12 @@ class LogSystemClass {
 		x: number,
 		y: number,
 	): void {
-		const event: OrcSpawnEvent = {
+		const event: FoeSpawnEvent = {
 			...this.createBaseEvent(),
-			type: "orc_spawn",
+			type: "foe_spawn",
 			data: {
-				orcId,
+				foeId,
+				foeType,
 				level,
 				health,
 				maxHealth,
@@ -259,18 +267,20 @@ class LogSystemClass {
 		this.events.push(event);
 	}
 
-	logOrcKill(
-		orcId: number,
+	logFoeKill(
+		foeId: number,
+		foeType: string,
 		level: number,
 		killedBy: "hero_melee" | "hero_arrow" | "hero_riposte" | "unknown",
 		damage: number,
 		isCritical: boolean,
 	): void {
-		const event: OrcKillEvent = {
+		const event: FoeKillEvent = {
 			...this.createBaseEvent(),
-			type: "orc_kill",
+			type: "foe_kill",
 			data: {
-				orcId,
+				foeId,
+				foeType,
 				level,
 				killedBy,
 				finalBlow: { damage, isCritical },
@@ -281,6 +291,7 @@ class LogSystemClass {
 
 	logDamageDealt(
 		targetId: number,
+		targetFoeType: string,
 		targetLevel: number,
 		damage: number,
 		isCritical: boolean,
@@ -291,8 +302,9 @@ class LogSystemClass {
 			...this.createBaseEvent(),
 			type: "damage_dealt",
 			data: {
-				targetType: "orc",
+				targetType: "foe",
 				targetId,
+				targetFoeType,
 				targetLevel,
 				damage,
 				isCritical,
@@ -305,6 +317,7 @@ class LogSystemClass {
 
 	logDamageReceived(
 		sourceId: number,
+		sourceFoeType: string,
 		sourceLevel: number,
 		rawDamage: number,
 		finalDamage: number,
@@ -315,8 +328,9 @@ class LogSystemClass {
 			...this.createBaseEvent(),
 			type: "damage_received",
 			data: {
-				sourceType: "orc",
+				sourceType: "foe",
 				sourceId,
+				sourceFoeType,
 				sourceLevel,
 				rawDamage,
 				finalDamage,
@@ -343,8 +357,9 @@ class LogSystemClass {
 	}
 
 	logHeroDeath(
-		killerOrcId: number | undefined,
-		killerOrcLevel: number | undefined,
+		killerFoeId: number | undefined,
+		killerFoeType: string | undefined,
+		killerFoeLevel: number | undefined,
 		health: number,
 		maxHealth: number,
 		kills: number,
@@ -357,9 +372,10 @@ class LogSystemClass {
 			...this.createBaseEvent(),
 			type: "hero_death",
 			data: {
-				cause: "orc_melee",
-				killerOrcId,
-				killerOrcLevel,
+				cause: "foe_melee",
+				killerFoeId,
+				killerFoeType,
+				killerFoeLevel,
 				finalStats: {
 					health,
 					maxHealth,
@@ -377,8 +393,9 @@ class LogSystemClass {
 	logLootDrop(
 		x: number,
 		y: number,
-		fromOrcId: number,
-		fromOrcLevel: number,
+		fromFoeId: number,
+		fromFoeType: string,
+		fromFoeLevel: number,
 	): void {
 		const event: LootDropEvent = {
 			...this.createBaseEvent(),
@@ -386,8 +403,9 @@ class LogSystemClass {
 			data: {
 				x: Math.round(x),
 				y: Math.round(y),
-				fromOrcId,
-				fromOrcLevel,
+				fromFoeId,
+				fromFoeType,
+				fromFoeLevel,
 			},
 		};
 		this.events.push(event);
@@ -443,4 +461,4 @@ class LogSystemClass {
 export const LogSystem = new LogSystemClass();
 
 // Export types for use elsewhere
-export type { GameEvent, OrcSpawnEvent, OrcKillEvent, DamageDealtEvent };
+export type { GameEvent, FoeSpawnEvent, FoeKillEvent, DamageDealtEvent };

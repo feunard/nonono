@@ -4,10 +4,11 @@ import type { PathfindingManager } from "../systems/PathfindingManager";
 import { Foe, type FoeConfig } from "./Foe";
 
 /**
- * Default Orc configuration.
- * Standard enemy with base stats from GAME_CONFIG.
+ * BigOrc configuration.
+ * Larger, tankier variant with 1.5x scale, +50% HP, and +25% damage.
+ * Uses the same sprites as Orc, just scaled up.
  */
-const ORC_CONFIG: FoeConfig = {
+const BIG_ORC_CONFIG: FoeConfig = {
 	spriteKey: "orc-idle",
 	animations: {
 		idle: "orc-idle",
@@ -15,7 +16,7 @@ const ORC_CONFIG: FoeConfig = {
 		attack: "orc-attack",
 		death: "orc-death",
 	},
-	scale: 1,
+	scale: 1.5,
 	bodySize: {
 		width: GAME_CONFIG.orc.hitboxWidth,
 		height: GAME_CONFIG.orc.hitboxHeight,
@@ -30,14 +31,21 @@ const ORC_CONFIG: FoeConfig = {
 	baseArmor: GAME_CONFIG.orc.armor,
 	baseDodge: GAME_CONFIG.orc.dodge,
 	baseAccuracy: GAME_CONFIG.orc.accuracy,
-	typeName: "Orc",
+	// BigOrc stat multipliers
+	healthMultiplier: 1.5, // +50% HP
+	damageMultiplier: 1.25, // +25% damage
+	typeName: "BigOrc",
 };
 
 /**
- * Standard Orc enemy.
- * Uses base stats from GAME_CONFIG with standard scale.
+ * BigOrc enemy.
+ * A larger, tankier variant of the standard Orc.
+ * - 1.5x visual scale
+ * - +50% health
+ * - +25% damage
+ * - Same speed as regular Orc
  */
-export class Orc extends Foe {
+export class BigOrc extends Foe {
 	constructor(
 		scene: Phaser.Scene,
 		x: number,
@@ -55,7 +63,7 @@ export class Orc extends Foe {
 			collisionLayer,
 			effectsManager,
 			wave,
-			ORC_CONFIG,
+			BIG_ORC_CONFIG,
 		);
 	}
 }
