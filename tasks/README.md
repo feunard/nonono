@@ -9,15 +9,13 @@ ls tasks/backlog    # Available tasks
 ls tasks/done       # Completed tasks
 ```
 
----
+## Agents
 
-## AI Session Rules
+Use `/planner` to create tasks, `/worker` to implement them.
 
-> **Why these rules?** Multiple AI sessions may work in parallel on different tasks. Session names prevent conflicts, track ownership, and ensure no two sessions work on the same task simultaneously.
+See `.claude/agents/` for agent workflows.
 
-See `CLAUDE.md` for full agent workflow.
-
-### Prefixes
+## Prefixes
 
 | Prefix | Type |
 |--------|------|
@@ -36,10 +34,9 @@ See `CLAUDE.md` for full agent workflow.
 ```markdown
 # [prefix] Title
 
-**Status:** Backlog | In Progress | Done
+**Status:** Backlog | Done
 **Priority:** High | Medium | Low
 **Type:** Feature | Bug | Refactor
-**Agent:** - (or session name when claimed)
 
 ## Description
 ...
@@ -53,7 +50,7 @@ See `CLAUDE.md` for full agent workflow.
 
 ## History
 
-### YYYY-MM-DD - [Agent] - Status Change
+### YYYY-MM-DD - Done
 Notes about what was done...
 ```
 

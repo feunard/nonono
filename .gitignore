@@ -1,5 +1,5 @@
 node_modules
-.claude
+.claude/settings.local.json
 .idea
 dist
 .DS_Store
