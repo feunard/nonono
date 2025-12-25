@@ -1,14 +1,14 @@
-import { GAME_CONFIG } from "../../../config/GameConfig";
-import { useHeroStore } from "../../../stores/heroStore";
+import { GAME_CONFIG } from "../../../../config/GameConfig";
+import { useHeroStore } from "../../../../stores/heroStore";
 import {
 	calculateAttacksPerSecond,
 	calculateDPS,
 	getAgilityModifier,
 	getStrengthModifier,
 	STAT_CAPS,
-} from "../../../systems/calculations";
-import { Accordion, AccordionItem } from "../../primitives/Accordion";
-import { Card } from "../../primitives/Card";
+} from "../../../../systems/calculations";
+import { Accordion, AccordionItem } from "../../../shared/primitives/Accordion";
+import { Card } from "../../../shared/primitives/Card";
 
 type DebugRowProps = {
 	label: string;

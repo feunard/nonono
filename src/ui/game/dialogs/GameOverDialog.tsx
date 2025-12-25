@@ -7,9 +7,9 @@ import {
 	Trophy,
 } from "lucide-react";
 import { useEffect } from "react";
-import { useUIStore } from "../../stores/uiStore";
-import { LogSystem } from "../../systems/LogSystem";
-import { Button } from "../primitives/Button";
+import { useUIStore } from "../../../stores/uiStore";
+import { LogSystem } from "../../../systems/LogSystem";
+import { Button } from "../../shared/primitives/Button";
 import {
 	Card,
 	CardContent,
@@ -17,11 +17,11 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "../primitives/Card";
-import { IconBox } from "../primitives/IconBox";
-import { Kbd } from "../primitives/Kbd";
-import { Overlay } from "../primitives/Overlay";
-import { Stat, StatDivider } from "../primitives/Stat";
+} from "../../shared/primitives/Card";
+import { IconBox } from "../../shared/primitives/IconBox";
+import { Kbd } from "../../shared/primitives/Kbd";
+import { Overlay } from "../../shared/primitives/Overlay";
+import { Stat, StatDivider } from "../../shared/primitives/Stat";
 
 type GameOverDialogProps = {
 	survivalTime: number;

@@ -29,10 +29,10 @@ import {
 	type BonusStat,
 	type Power,
 	RANK_BG_COLORS,
-} from "../../config/PowersConfig";
-import { useInventoryStore } from "../../stores/inventoryStore";
-import { Card } from "../primitives/Card";
-import { Tooltip } from "../primitives/Tooltip";
+} from "../../../config/PowersConfig";
+import { useInventoryStore } from "../../../stores/inventoryStore";
+import { Card } from "../../shared/primitives/Card";
+import { Tooltip } from "../../shared/primitives/Tooltip";
 
 // Map stat types to lucide-react icon components
 const STAT_ICONS: Record<
@@ -150,7 +150,7 @@ export function PowersCard() {
 	}
 
 	return (
-		<Card className="p-2 w-fit" style={{maxWidth: "266px"}}>
+		<Card className="p-2 w-fit" style={{ maxWidth: "266px" }}>
 			<div className="flex flex-wrap gap-1.5">
 				{groupedPowers.map((gp) => (
 					<PowerOrb key={gp.power.id} power={gp.power} count={gp.count} />

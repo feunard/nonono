@@ -1,5 +1,5 @@
-import { useUIStore } from "../../../stores/uiStore";
-import { Card, Kbd } from "../../primitives";
+import { useUIStore } from "../../../../stores/uiStore";
+import { Card, Kbd } from "../../../shared/primitives";
 
 export function DebugHotkeysCard() {
 	const isSpawnPaused = useUIStore((state) => state.isSpawnPaused);

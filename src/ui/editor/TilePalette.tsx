@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TILES, type TileId } from "../../stores/editorStore";
-import { Input } from "../primitives/Input";
-import { cn } from "../utils";
+import { Input } from "../shared/primitives/Input";
+import { cn } from "../shared/utils";
 
 type TilePaletteProps = {
 	selectedTile: TileId;

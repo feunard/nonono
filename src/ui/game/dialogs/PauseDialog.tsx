@@ -1,9 +1,9 @@
 import { Pause, Play } from "lucide-react";
-import { Button } from "../primitives/Button";
-import { Card } from "../primitives/Card";
-import { IconBox } from "../primitives/IconBox";
-import { Kbd } from "../primitives/Kbd";
-import { Overlay } from "../primitives/Overlay";
+import { Button } from "../../shared/primitives/Button";
+import { Card } from "../../shared/primitives/Card";
+import { IconBox } from "../../shared/primitives/IconBox";
+import { Kbd } from "../../shared/primitives/Kbd";
+import { Overlay } from "../../shared/primitives/Overlay";
 
 type PauseDialogProps = {
 	onResume: () => void;

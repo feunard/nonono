@@ -1,14 +1,14 @@
 import { Sparkles } from "lucide-react";
-import type { Power } from "../../config/PowersConfig";
-import { RANK_BORDER_COLORS, RANK_COLORS } from "../../config/PowersConfig";
-import { Button } from "../primitives/Button";
+import type { Power } from "../../../config/PowersConfig";
+import { RANK_BORDER_COLORS, RANK_COLORS } from "../../../config/PowersConfig";
+import { Button } from "../../shared/primitives/Button";
 import {
 	Card,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "../primitives/Card";
-import { Kbd } from "../primitives/Kbd";
+} from "../../shared/primitives/Card";
+import { Kbd } from "../../shared/primitives/Kbd";
 
 type LootSelectionDialogProps = {
 	powers: Power[];

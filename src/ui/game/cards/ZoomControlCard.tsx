@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
-import { useUIStore } from "../../stores/uiStore";
-import { Card } from "../primitives/Card";
+import { useUIStore } from "../../../stores/uiStore";
+import { Card } from "../../shared/primitives/Card";
 
 // Icon sizes for each zoom level (smallest = zoomed out, largest = zoomed in)
 const ICON_SIZES = [10, 12, 14];

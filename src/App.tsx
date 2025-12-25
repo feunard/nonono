@@ -9,9 +9,9 @@ import { inventoryStore, useInventoryStore } from "./stores/inventoryStore";
 import { useUIStore } from "./stores/uiStore";
 import { LogSystem } from "./systems/LogSystem";
 import { MapEditor } from "./ui/editor/MapEditor";
-import { GameUI } from "./ui/GameUI";
-import { LoadingScreen } from "./ui/LoadingScreen";
-import { LaunchScreen } from "./ui/screens/LaunchScreen";
+import { GameUI } from "./ui/game/GameUI";
+import { LoadingScreen } from "./ui/game/LoadingScreen";
+import { LaunchScreen } from "./ui/game/screens/LaunchScreen";
 
 export function App() {
 	const gameRef = useRef<Phaser.Game | null>(null);

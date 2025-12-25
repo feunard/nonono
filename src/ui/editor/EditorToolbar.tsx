@@ -22,7 +22,7 @@ import {
 	MenuItem,
 	MenuSeparator,
 	SubMenu,
-} from "../primitives/Menu";
+} from "../shared/primitives/Menu";
 
 type EditorToolbarProps = {
 	showGrid: boolean;

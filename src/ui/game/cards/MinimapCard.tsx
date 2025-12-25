@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { getMapConfig } from "../../config/MapConfig";
-import type { Position } from "../../stores/gameStore";
-import { Card } from "../primitives/Card";
+import { getMapConfig } from "../../../config/MapConfig";
+import type { Position } from "../../../stores/gameStore";
+import { Card } from "../../shared/primitives/Card";
 
 type MinimapCardProps = {
 	heroPosition: Position;

@@ -1,8 +1,8 @@
-import type { Power } from "../config/PowersConfig";
-import { useGameStore } from "../stores/gameStore";
-import { useHeroStore } from "../stores/heroStore";
-import { useInventoryStore } from "../stores/inventoryStore";
-import { useUIStore } from "../stores/uiStore";
+import type { Power } from "../../config/PowersConfig";
+import { useGameStore } from "../../stores/gameStore";
+import { useHeroStore } from "../../stores/heroStore";
+import { useInventoryStore } from "../../stores/inventoryStore";
+import { useUIStore } from "../../stores/uiStore";
 import {
 	BagCard,
 	DebugHeroStatsCard,

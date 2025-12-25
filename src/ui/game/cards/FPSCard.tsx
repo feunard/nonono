@@ -1,6 +1,6 @@
 import { Activity } from "lucide-react";
-import { Card } from "../primitives/Card";
-import { IconBox } from "../primitives/IconBox";
+import { Card } from "../../shared/primitives/Card";
+import { IconBox } from "../../shared/primitives/IconBox";
 
 type FPSCardProps = {
 	fps: number;

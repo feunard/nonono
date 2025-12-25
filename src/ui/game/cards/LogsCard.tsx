@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useUIStore } from "../../stores/uiStore";
-import { Card } from "../primitives/Card";
+import { useUIStore } from "../../../stores/uiStore";
+import { Card } from "../../shared/primitives/Card";
 
 // Highlight only damage numbers and special keywords in white
 function formatLogMessage(message: string) {

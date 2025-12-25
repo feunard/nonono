@@ -1,20 +1,20 @@
 import { Lock, X } from "lucide-react";
 import { useState } from "react";
-import type { Power } from "../../../config/PowersConfig";
+import type { Power } from "../../../../config/PowersConfig";
 import {
 	checkPrerequisites,
 	countPowerStacks,
 	getStatDisplayName,
 	POWERS,
 	RANK_COLORS,
-} from "../../../config/PowersConfig";
-import { type BonusStats, useHeroStore } from "../../../stores/heroStore";
-import { useInventoryStore } from "../../../stores/inventoryStore";
-import { Button } from "../../primitives/Button";
-import { Card, CardHeader, CardTitle } from "../../primitives/Card";
-import { Kbd } from "../../primitives/Kbd";
-import { Overlay } from "../../primitives/Overlay";
-import { Tooltip } from "../../primitives/Tooltip";
+} from "../../../../config/PowersConfig";
+import { type BonusStats, useHeroStore } from "../../../../stores/heroStore";
+import { useInventoryStore } from "../../../../stores/inventoryStore";
+import { Button } from "../../../shared/primitives/Button";
+import { Card, CardHeader, CardTitle } from "../../../shared/primitives/Card";
+import { Kbd } from "../../../shared/primitives/Kbd";
+import { Overlay } from "../../../shared/primitives/Overlay";
+import { Tooltip } from "../../../shared/primitives/Tooltip";
 
 type DebugPowerDialogProps = {
 	onSelect: (power: Power) => void;

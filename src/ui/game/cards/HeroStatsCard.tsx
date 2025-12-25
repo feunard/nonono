@@ -9,10 +9,10 @@ import {
 	Wind,
 	Zap,
 } from "lucide-react";
-import { GAME_CONFIG } from "../../config/GameConfig";
-import { useHeroStore } from "../../stores/heroStore";
-import { calculateAgilityDodge } from "../../systems/calculations";
-import { Card } from "../primitives/Card";
+import { GAME_CONFIG } from "../../../config/GameConfig";
+import { useHeroStore } from "../../../stores/heroStore";
+import { calculateAgilityDodge } from "../../../systems/calculations";
+import { Card } from "../../shared/primitives/Card";
 
 type StatRowProps = {
 	icon: React.ReactNode;

@@ -1,9 +1,9 @@
 import { Package } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { GAME_CONFIG } from "../../config/GameConfig";
-import { useInventoryStore } from "../../stores/inventoryStore";
-import { Card } from "../primitives/Card";
-import { Kbd } from "../primitives/Kbd";
+import { GAME_CONFIG } from "../../../config/GameConfig";
+import { useInventoryStore } from "../../../stores/inventoryStore";
+import { Card } from "../../shared/primitives/Card";
+import { Kbd } from "../../shared/primitives/Kbd";
 
 type BagCardProps = {
 	onOpen: () => void;

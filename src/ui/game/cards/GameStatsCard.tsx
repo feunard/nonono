@@ -1,8 +1,8 @@
 import { Clock, Skull, Swords, Users } from "lucide-react";
-import { GAME_CONFIG } from "../../config/GameConfig";
-import { Card } from "../primitives/Card";
-import { Stat, StatDivider } from "../primitives/Stat";
-import { Tooltip } from "../primitives/Tooltip";
+import { GAME_CONFIG } from "../../../config/GameConfig";
+import { Card } from "../../shared/primitives/Card";
+import { Stat, StatDivider } from "../../shared/primitives/Stat";
+import { Tooltip } from "../../shared/primitives/Tooltip";
 
 type GameStatsCardProps = {
 	wave: number;

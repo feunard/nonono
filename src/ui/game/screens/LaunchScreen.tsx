@@ -1,5 +1,5 @@
-import { Button } from "../primitives/Button";
-import { Kbd } from "../primitives/Kbd";
+import { Button } from "../../shared/primitives/Button";
+import { Kbd } from "../../shared/primitives/Kbd";
 
 type LaunchScreenProps = {
 	onStartGame: () => void;
@@ -13,7 +13,7 @@ export function LaunchScreen({ onStartGame, onOpenEditor }: LaunchScreenProps) {
 				{/* Game title */}
 				<div className="flex flex-col items-center gap-2">
 					<h1 className="text-6xl font-bold text-black tracking-tight">
-						SURVIVOR
+						NONONO
 					</h1>
 					<p className="text-neutral-500 text-sm tracking-wider uppercase">
 						A 2D Survival Game

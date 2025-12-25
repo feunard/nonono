@@ -1,8 +1,8 @@
 import { Heart, Zap } from "lucide-react";
-import { GAME_CONFIG } from "../../config/GameConfig";
-import { Card } from "../primitives/Card";
-import { IconBox } from "../primitives/IconBox";
-import { Kbd } from "../primitives/Kbd";
+import { GAME_CONFIG } from "../../../config/GameConfig";
+import { Card } from "../../shared/primitives/Card";
+import { IconBox } from "../../shared/primitives/IconBox";
+import { Kbd } from "../../shared/primitives/Kbd";
 
 type HealthBarCardProps = {
 	health: number;

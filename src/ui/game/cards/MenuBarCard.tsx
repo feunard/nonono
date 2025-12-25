@@ -1,8 +1,8 @@
 import { Pause, Play } from "lucide-react";
-import { useGameStore } from "../../stores/gameStore";
-import { Button } from "../primitives/Button";
-import { Card } from "../primitives/Card";
-import { Kbd } from "../primitives/Kbd";
+import { useGameStore } from "../../../stores/gameStore";
+import { Button } from "../../shared/primitives/Button";
+import { Card } from "../../shared/primitives/Card";
+import { Kbd } from "../../shared/primitives/Kbd";
 
 type MenuBarCardProps = {
 	onPause: () => void;
