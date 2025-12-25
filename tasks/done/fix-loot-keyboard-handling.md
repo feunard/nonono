@@ -1,6 +1,6 @@
 # [fix] Loot Power Selection Keyboard Handling
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Bug
 
@@ -10,12 +10,12 @@ The keyboard handling for loot power selection in `App.tsx` uses `e.key` with `p
 The fix is to use `e.code` which returns the physical key pressed (e.g., "Digit1", "Digit2", "Digit3") regardless of keyboard layout.
 
 ## Acceptance Criteria
-- [ ] Loot power selection uses `e.code` instead of `e.key` for number key detection
-- [ ] "Digit1" selects the first power option
-- [ ] "Digit2" selects the second power option (if available)
-- [ ] "Digit3" selects the third power option (if available)
-- [ ] Each digit code check verifies the corresponding power exists in `lootPowers` array
-- [ ] Validation passes (`npm run v`)
+- [x] Loot power selection uses `e.code` instead of `e.key` for number key detection
+- [x] "Digit1" selects the first power option
+- [x] "Digit2" selects the second power option (if available)
+- [x] "Digit3" selects the third power option (if available)
+- [x] Each digit code check verifies the corresponding power exists in `lootPowers` array
+- [x] Validation passes (`npm run v`)
 
 ## Context
 
@@ -57,3 +57,6 @@ if (isLootSelection && lootPowers.length > 0) {
 - `e.key` returns the character the key produces, which varies by layout
 - `e.code` returns the physical key location, which is consistent
 - "Digit1", "Digit2", "Digit3" correspond to the number row keys regardless of what character they produce
+
+## History
+- 2025-12-25: Fixed keyboard handling to use `e.code` instead of `e.key` for reliable cross-layout support
