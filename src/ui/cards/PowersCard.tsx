@@ -115,7 +115,7 @@ function PowerOrb({ power, count }: GroupedPower) {
 			<div className="relative">
 				{/* Power hexagon with ring effect */}
 				<div
-					className={`w-8 h-9 ${ringColor.replace("ring-", "bg-")} flex items-center justify-center cursor-pointer transition-transform hover:scale-110`}
+					className={`w-9 h-10 ${ringColor.replace("ring-", "bg-")} flex items-center justify-center cursor-pointer transition-transform hover:scale-110`}
 					style={{ clipPath: hexagonClipPath }}
 				>
 					{/* Inner hexagon */}
@@ -151,7 +151,7 @@ export function PowersCard() {
 
 	return (
 		<Card className="p-2 w-fit">
-			<div className="flex flex-wrap gap-1.5 max-w-[180px]">
+			<div className="flex flex-wrap gap-1.5">
 				{groupedPowers.map((gp) => (
 					<PowerOrb key={gp.power.id} power={gp.power} count={gp.count} />
 				))}
