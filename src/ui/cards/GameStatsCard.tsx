@@ -1,6 +1,8 @@
 import { Clock, Skull, Swords, Users } from "lucide-react";
+import { GAME_CONFIG } from "../../config/GameConfig";
 import { Card } from "../primitives/Card";
 import { Stat, StatDivider } from "../primitives/Stat";
+import { Tooltip } from "../primitives/Tooltip";
 
 type GameStatsCardProps = {
 	wave: number;
@@ -15,6 +17,48 @@ function formatTime(seconds: number): string {
 	return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
+function getWaveScalingInfo(wave: number) {
+	const { orc } = GAME_CONFIG;
+	const levelBonus = wave - 1;
+
+	const hpBonus = Math.round(levelBonus * orc.levelHpMultiplier * 100);
+	const damageBonus = Math.round(levelBonus * orc.levelDamageMultiplier * 100);
+	const speedBonus = Math.round(levelBonus * orc.levelSpeedMultiplier * 100);
+	const flatSpeed = levelBonus * orc.speedPerWave;
+	const dodgeBonus = levelBonus * orc.dodgePerWave;
+	const armorBonus = levelBonus * orc.armorPerWave;
+
+	return {
+		hpBonus,
+		damageBonus,
+		speedBonus,
+		flatSpeed,
+		dodgeBonus,
+		armorBonus,
+	};
+}
+
+function WaveTooltipContent({ wave }: { wave: number }) {
+	const scaling = getWaveScalingInfo(wave);
+
+	if (wave === 1) {
+		return <span className="text-neutral-400">Base enemy stats</span>;
+	}
+
+	return (
+		<div className="flex flex-col gap-0.5">
+			<span className="text-neutral-400 font-medium mb-1">Enemy Scaling</span>
+			<span>HP: +{scaling.hpBonus}%</span>
+			<span>Damage: +{scaling.damageBonus}%</span>
+			<span>
+				Speed: +{scaling.speedBonus}% +{scaling.flatSpeed}
+			</span>
+			<span>Dodge: +{scaling.dodgeBonus}%</span>
+			<span>Armor: +{scaling.armorBonus}%</span>
+		</div>
+	);
+}
+
 export function GameStatsCard({
 	wave,
 	kills,
@@ -24,7 +68,13 @@ export function GameStatsCard({
 	return (
 		<Card className="px-4 py-3">
 			<div className="flex items-center gap-4">
-				<Stat icon={<Swords className="w-4 h-4" />} label="Wave" value={wave} />
+				<Tooltip content={<WaveTooltipContent wave={wave} />} position="bottom">
+					<Stat
+						icon={<Swords className="w-4 h-4" />}
+						label="Wave"
+						value={wave}
+					/>
+				</Tooltip>
 				<StatDivider />
 				<Stat
 					icon={<Users className="w-4 h-4" />}
