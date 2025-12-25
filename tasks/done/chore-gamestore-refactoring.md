@@ -1,9 +1,9 @@
 # [chore] GameStore Refactoring
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** Medium
 **Type:** Refactor
-**Agent:** -
+**Agent:** task-worker
 
 ## Description
 
@@ -25,12 +25,12 @@ Refactor the monolithic gameStore into multiple focused stores based on logic. R
 
 ## Acceptance Criteria
 
-- [ ] Audit current gameStore for unused keys
-- [ ] Remove all unused state and actions
-- [ ] Split into logical stores (see suggested structure)
-- [ ] Update all imports across codebase
-- [ ] Run `npm run v` - all checks must pass
-- [ ] Fix any broken tests
+- [x] Audit current gameStore for unused keys
+- [x] Remove all unused state and actions
+- [x] Split into logical stores (see suggested structure)
+- [x] Update all imports across codebase
+- [x] Run `npm run v` - all checks must pass
+- [x] Fix any broken tests
 
 ## Suggested Store Structure
 
@@ -84,4 +84,12 @@ src/stores/
 
 ## History
 
-_No history yet_
+- 2025-12-25: Completed refactoring. Split gameStore into:
+  - `heroStore.ts`: Health, energy, position, bonusStats, cooldowns
+  - `gameStore.ts`: App screen, game state, wave, kills, time, fps, orc positions
+  - `uiStore.ts`: Debug mode, logs, zoom, spawn pause
+  - `inventoryStore.ts`: Collected powers, bags, loot selection
+  - `index.ts`: Re-exports all stores
+  - Updated all imports across 20+ files
+  - Rewrote tests to cover all stores
+  - All validation passes (lint, typecheck, test, build)
