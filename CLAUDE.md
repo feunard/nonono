@@ -178,13 +178,14 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
    ```
    Handle any conflicts.
 
-7. **Commit with conventional format:**
+7. **Commit:**
    ```bash
    git commit -m "feat(scope): task title"
    ```
+   - One line only, just the task name
    - Use `feat` for features, `fix` for bugs, `chore` for refactors
    - Scope = affected area (e.g., `hero`, `ui`, `combat`)
-   - Title = short description from task
+   - Use user's default git config (do NOT add Co-Authored-By or Claude signatures)
 
 8. **DO NOT PUSH** - Wait for further instructions
 
