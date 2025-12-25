@@ -122,7 +122,6 @@ If your session name is **Chef**, your only goal is to create tasks for the boys
 **Responsibilities:**
 - Analyze user requests and break them into well-defined tasks
 - Create task files in `tasks/backlog/` with proper format
-- Update `tasks/README.md` with new tasks
 - Ensure tasks have clear acceptance criteria and context
 - Do NOT implement tasks yourself
 
@@ -130,7 +129,6 @@ If your session name is **Chef**, your only goal is to create tasks for the boys
 1. Understand the user's request
 2. Break it down into atomic, implementable tasks
 3. Create task file: `tasks/backlog/{prefix}-{short-title}.md`
-4. Add task to the Backlog table in `tasks/README.md`
 
 ---
 
@@ -158,7 +156,6 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
 
 3. **Claim the task:**
    - Update status to `In Progress` and add your agent name in the task file (stays in `backlog/`)
-   - Update `tasks/README.md`
 
 4. **Implement the task**
 
@@ -187,9 +184,13 @@ If your session name is **Kenny**, **Kyle**, **Cartman**, or **Stan**, follow th
    - Scope = affected area (e.g., `hero`, `ui`, `combat`)
    - Use user's default git config (do NOT add Co-Authored-By or Claude signatures)
 
-8. **DO NOT PUSH** - Wait for further instructions
+8. Pull, merge, and push:
+   ```bash
+   git pull
+   # handle conflicts
+   git push
+   ```
 
 9. **Move task to done:**
    - Move file from `backlog/` to `done/`
    - Update status to `Done` and document what was accomplished in History
-   - Update `tasks/README.md`
