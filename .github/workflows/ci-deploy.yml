@@ -40,7 +40,7 @@ jobs:
         run: npm run test:run
 
       - name: Build
-        run: npm run build
+        run: npm run build -- --base=/nonono/
 
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
