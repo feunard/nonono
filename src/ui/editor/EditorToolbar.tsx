@@ -1,3 +1,19 @@
+import {
+	ArrowLeft,
+	Eraser,
+	File,
+	FilePlus,
+	FolderOpen,
+	Grid3X3,
+	Maximize2,
+	Redo2,
+	Save,
+	SaveAll,
+	Search,
+	Undo2,
+	ZoomIn,
+	ZoomOut,
+} from "lucide-react";
 import { MAP_SIZES, type MapSize } from "../../stores/editorStore";
 import {
 	Menu,
@@ -64,29 +80,45 @@ export function EditorToolbar({
 				<MenuBar>
 					{/* File Menu */}
 					<Menu id="file" label="File">
-						<MenuItem icon="□" onClick={onClearMap}>
+						<MenuItem icon={<FilePlus size={14} />} onClick={onClearMap}>
 							New Map
 						</MenuItem>
 						<MenuSeparator />
-						<SubMenu icon="▤" label="Open Built-in">
+						<SubMenu icon={<FolderOpen size={14} />} label="Open Built-in">
 							{availableMaps.map((mapId) => (
-								<MenuItem icon="▫" key={mapId} onClick={() => onLoadMap(mapId)}>
+								<MenuItem
+									icon={<File size={14} />}
+									key={mapId}
+									onClick={() => onLoadMap(mapId)}
+								>
 									{mapId}
 								</MenuItem>
 							))}
 						</SubMenu>
-						<MenuItem icon="📂" onClick={onOpenFile} shortcut="Ctrl+O">
+						<MenuItem
+							icon={<FolderOpen size={14} />}
+							onClick={onOpenFile}
+							shortcut="Ctrl+O"
+						>
 							Open...
 						</MenuItem>
 						<MenuSeparator />
-						<MenuItem icon="💾" onClick={onSaveFile} shortcut="Ctrl+S">
+						<MenuItem
+							icon={<Save size={14} />}
+							onClick={onSaveFile}
+							shortcut="Ctrl+S"
+						>
 							Save
 						</MenuItem>
-						<MenuItem icon="📄" onClick={onSaveFileAs} shortcut="Ctrl+Shift+S">
+						<MenuItem
+							icon={<SaveAll size={14} />}
+							onClick={onSaveFileAs}
+							shortcut="Ctrl+Shift+S"
+						>
 							Save As...
 						</MenuItem>
 						<MenuSeparator />
-						<MenuItem icon="←" onClick={onBack}>
+						<MenuItem icon={<ArrowLeft size={14} />} onClick={onBack}>
 							Exit Editor
 						</MenuItem>
 					</Menu>
@@ -94,7 +126,7 @@ export function EditorToolbar({
 					{/* Edit Menu */}
 					<Menu id="edit" label="Edit">
 						<MenuItem
-							icon="↶"
+							icon={<Undo2 size={14} />}
 							onClick={onUndo}
 							disabled={!canUndo}
 							shortcut="Ctrl+Z"
@@ -102,7 +134,7 @@ export function EditorToolbar({
 							Undo
 						</MenuItem>
 						<MenuItem
-							icon="↷"
+							icon={<Redo2 size={14} />}
 							onClick={onRedo}
 							disabled={!canRedo}
 							shortcut="Ctrl+Y"
@@ -110,34 +142,45 @@ export function EditorToolbar({
 							Redo
 						</MenuItem>
 						<MenuSeparator />
-						<MenuItem icon="⌫" onClick={onClearMap}>
+						<MenuItem icon={<Eraser size={14} />} onClick={onClearMap}>
 							Clear All
 						</MenuItem>
 					</Menu>
 
 					{/* View Menu */}
 					<Menu id="view" label="View">
-						<MenuCheckbox icon="#" checked={showGrid} onChange={onToggleGrid}>
+						<MenuCheckbox
+							icon={<Grid3X3 size={14} />}
+							checked={showGrid}
+							onChange={onToggleGrid}
+						>
 							Show Grid
 						</MenuCheckbox>
 						<MenuSeparator />
-						<MenuItem icon="+" onClick={onZoomIn} shortcut="Ctrl++">
+						<MenuItem
+							icon={<ZoomIn size={14} />}
+							onClick={onZoomIn}
+							shortcut="Ctrl++"
+						>
 							Zoom In
 						</MenuItem>
-						<MenuItem icon="−" onClick={onZoomOut} shortcut="Ctrl+-">
+						<MenuItem
+							icon={<ZoomOut size={14} />}
+							onClick={onZoomOut}
+							shortcut="Ctrl+-"
+						>
 							Zoom Out
 						</MenuItem>
-						<MenuItem icon="◎" disabled>
+						<MenuItem icon={<Search size={14} />} disabled>
 							Zoom: {Math.round(zoom * 100)}%
 						</MenuItem>
 					</Menu>
 
 					{/* Map Menu */}
 					<Menu id="map" label="Map">
-						<SubMenu icon="⤢" label="Resize">
+						<SubMenu icon={<Maximize2 size={14} />} label="Resize">
 							{MAP_SIZES.map((size) => (
 								<MenuItem
-									icon="▫"
 									key={size}
 									onClick={() => onSetMapSize(size)}
 									shortcut={mapSize === size ? "●" : ""}

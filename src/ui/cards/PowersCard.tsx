@@ -150,7 +150,7 @@ export function PowersCard() {
 	}
 
 	return (
-		<Card className="p-2 w-fit">
+		<Card className="p-2 w-fit" style={{maxWidth: "266px"}}>
 			<div className="flex flex-wrap gap-1.5">
 				{groupedPowers.map((gp) => (
 					<PowerOrb key={gp.power.id} power={gp.power} count={gp.count} />
