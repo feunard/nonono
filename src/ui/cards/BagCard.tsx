@@ -1,7 +1,7 @@
 import { Package } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GAME_CONFIG } from "../../config/GameConfig";
-import { useGameStore } from "../../stores/gameStore";
+import { useInventoryStore } from "../../stores/inventoryStore";
 import { Card } from "../primitives/Card";
 import { Kbd } from "../primitives/Kbd";
 
@@ -10,7 +10,7 @@ type BagCardProps = {
 };
 
 export function BagCard({ onOpen }: BagCardProps) {
-	const bagCount = useGameStore((state) => state.bagCount);
+	const bagCount = useInventoryStore((state) => state.bagCount);
 	const prevBagCount = useRef(0);
 	const [animationClass, setAnimationClass] = useState("");
 

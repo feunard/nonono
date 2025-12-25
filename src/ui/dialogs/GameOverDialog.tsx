@@ -7,7 +7,7 @@ import {
 	Trophy,
 } from "lucide-react";
 import { useEffect } from "react";
-import { useGameStore } from "../../stores/gameStore";
+import { useUIStore } from "../../stores/uiStore";
 import { LogSystem } from "../../systems/LogSystem";
 import { Button } from "../primitives/Button";
 import {
@@ -42,7 +42,7 @@ export function GameOverDialog({
 	wave,
 	onRestart,
 }: GameOverDialogProps) {
-	const isDebugMode = useGameStore((state) => state.isDebugMode);
+	const isDebugMode = useUIStore((state) => state.isDebugMode);
 
 	useEffect(() => {
 		if (!isDebugMode) return;

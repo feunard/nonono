@@ -1,5 +1,8 @@
 import type { Power } from "../config/PowersConfig";
 import { useGameStore } from "../stores/gameStore";
+import { useHeroStore } from "../stores/heroStore";
+import { useInventoryStore } from "../stores/inventoryStore";
+import { useUIStore } from "../stores/uiStore";
 import {
 	BagCard,
 	DebugHeroStatsCard,
@@ -43,8 +46,6 @@ export function GameUI({
 	onDebugPowerClose,
 }: GameUIProps) {
 	const {
-		health,
-		maxHealth,
 		wave,
 		kills,
 		orcsAlive,
@@ -53,15 +54,12 @@ export function GameUI({
 		isPaused,
 		isGameOver,
 		gameOverStats,
-		isLootSelection,
-		lootPowers,
-		isDebugPowerOverlay,
-		isDebugMode,
-		energy,
-		isSprinting,
-		heroPosition,
 		orcPositions,
 	} = useGameStore();
+	const { health, maxHealth, energy, isSprinting, heroPosition } =
+		useHeroStore();
+	const { isLootSelection, lootPowers } = useInventoryStore();
+	const { isDebugPowerOverlay, isDebugMode } = useUIStore();
 
 	return (
 		<div className="relative w-screen h-screen">

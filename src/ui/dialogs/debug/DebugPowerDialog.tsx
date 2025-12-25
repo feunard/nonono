@@ -8,8 +8,8 @@ import {
 	POWERS,
 	RANK_COLORS,
 } from "../../../config/PowersConfig";
-import type { BonusStats } from "../../../stores/gameStore";
-import { useGameStore } from "../../../stores/gameStore";
+import { type BonusStats, useHeroStore } from "../../../stores/heroStore";
+import { useInventoryStore } from "../../../stores/inventoryStore";
 import { Button } from "../../primitives/Button";
 import { Card, CardHeader, CardTitle } from "../../primitives/Card";
 import { Kbd } from "../../primitives/Kbd";
@@ -190,8 +190,8 @@ function PowerRow({
 
 export function DebugPowerDialog({ onSelect, onClose }: DebugPowerDialogProps) {
 	const [activeTab, setActiveTab] = useState<TabId>("core");
-	const collectedPowers = useGameStore((state) => state.collectedPowers);
-	const bonusStats = useGameStore((state) => state.bonusStats);
+	const collectedPowers = useInventoryStore((state) => state.collectedPowers);
+	const bonusStats = useHeroStore((state) => state.bonusStats);
 
 	// Get stats for current tab and group powers
 	const currentStats = STATS_BY_TAB[activeTab];

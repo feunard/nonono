@@ -1,8 +1,8 @@
-import { useGameStore } from "../../../stores/gameStore";
+import { useUIStore } from "../../../stores/uiStore";
 import { Card, Kbd } from "../../primitives";
 
 export function DebugHotkeysCard() {
-	const isSpawnPaused = useGameStore((state) => state.isSpawnPaused);
+	const isSpawnPaused = useUIStore((state) => state.isSpawnPaused);
 
 	return (
 		<Card className="p-2 text-xs">

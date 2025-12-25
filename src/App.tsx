@@ -4,6 +4,9 @@ import { getRandomPowers, type Power } from "./config/PowersConfig";
 import { BootScene } from "./scenes/BootScene";
 import { GameScene } from "./scenes/GameScene";
 import { gameStore, useGameStore } from "./stores/gameStore";
+import { heroStore } from "./stores/heroStore";
+import { inventoryStore, useInventoryStore } from "./stores/inventoryStore";
+import { useUIStore } from "./stores/uiStore";
 import { LogSystem } from "./systems/LogSystem";
 import { MapEditor } from "./ui/editor/MapEditor";
 import { GameUI } from "./ui/GameUI";
@@ -13,16 +16,9 @@ import { LaunchScreen } from "./ui/screens/LaunchScreen";
 export function App() {
 	const gameRef = useRef<Phaser.Game | null>(null);
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const {
-		appScreen,
-		isGameReady,
-		isPaused,
-		isGameOver,
-		isLootSelection,
-		lootPowers,
-		isDebugPowerOverlay,
-		bagCount,
-	} = useGameStore();
+	const { appScreen, isGameReady, isPaused, isGameOver } = useGameStore();
+	const { isLootSelection, lootPowers, bagCount } = useInventoryStore();
+	const { isDebugPowerOverlay } = useUIStore();
 
 	useEffect(() => {
 		const updateDimensions = () => {
@@ -126,26 +122,27 @@ export function App() {
 	const handleLootSelect = useCallback((power: Power) => {
 		// Log power pickup
 		LogSystem.logPowerPickup(power);
-		// Apply the selected power to bonus stats
-		gameStore.applyPower(power);
+		// Apply the selected power to bonus stats (both inventory and hero)
+		inventoryStore.applyPower(power);
+		heroStore.addBonus(power.effect.stat, power.effect.value);
 		// Consume one bag
-		gameStore.consumeBag();
+		inventoryStore.consumeBag();
 		// Hide the loot selection UI (game continues running)
-		gameStore.hideLootSelection();
+		inventoryStore.hideLootSelection();
 	}, []);
 
 	const handleLootCancel = useCallback(() => {
 		// Consume one bag without gaining power
-		gameStore.consumeBag();
+		inventoryStore.consumeBag();
 		// Hide the loot selection UI
-		gameStore.hideLootSelection();
+		inventoryStore.hideLootSelection();
 	}, []);
 
 	const handleOpenBag = useCallback(() => {
 		if (bagCount > 0) {
 			// Generate 3 random powers and show selection
 			const powers = getRandomPowers(3);
-			gameStore.showLootSelection(powers);
+			inventoryStore.showLootSelection(powers);
 		}
 	}, [bagCount]);
 
@@ -161,7 +158,8 @@ export function App() {
 
 	const handleDebugPowerSelect = useCallback((power: Power) => {
 		// Apply the selected power (cheat) - keep overlay open for more selections
-		gameStore.applyPower(power);
+		inventoryStore.applyPower(power);
+		heroStore.addBonus(power.effect.stat, power.effect.value);
 	}, []);
 
 	// Global keyboard shortcuts

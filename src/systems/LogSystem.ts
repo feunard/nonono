@@ -2,7 +2,7 @@
 // Logs are stored as JSON lines for easy parsing
 
 import type { Power } from "../config/PowersConfig";
-import type { BonusStats } from "../stores/gameStore";
+import type { BonusStats } from "../stores/heroStore";
 
 // ==========================================
 // Event Types

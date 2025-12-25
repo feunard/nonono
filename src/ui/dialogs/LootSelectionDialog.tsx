@@ -7,7 +7,8 @@ import {
 	RANK_BORDER_COLORS,
 	RANK_COLORS,
 } from "../../config/PowersConfig";
-import { useGameStore } from "../../stores/gameStore";
+import { useHeroStore } from "../../stores/heroStore";
+import { useInventoryStore } from "../../stores/inventoryStore";
 import { Button } from "../primitives/Button";
 import {
 	Card,
@@ -122,8 +123,8 @@ export function LootSelectionDialog({
 	onSelect,
 	onCancel,
 }: LootSelectionDialogProps) {
-	const bonusStats = useGameStore((state) => state.bonusStats);
-	const collectedPowers = useGameStore((state) => state.collectedPowers);
+	const bonusStats = useHeroStore((state) => state.bonusStats);
+	const collectedPowers = useInventoryStore((state) => state.collectedPowers);
 
 	return (
 		<div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-auto">

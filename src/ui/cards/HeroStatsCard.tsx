@@ -10,7 +10,7 @@ import {
 	Zap,
 } from "lucide-react";
 import { GAME_CONFIG } from "../../config/GameConfig";
-import { useGameStore } from "../../stores/gameStore";
+import { useHeroStore } from "../../stores/heroStore";
 import { calculateAgilityDodge } from "../../systems/calculations";
 import { Card } from "../primitives/Card";
 
@@ -36,7 +36,7 @@ function StatRow({ icon, label, base, bonus }: StatRowProps) {
 
 export function HeroStatsCard() {
 	const { hero } = GAME_CONFIG;
-	const bonusStats = useGameStore((state) => state.bonusStats);
+	const bonusStats = useHeroStore((state) => state.bonusStats);
 
 	// Calculate total agility and agility-based dodge bonus
 	const totalAgility = hero.agility + bonusStats.agility;

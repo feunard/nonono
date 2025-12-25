@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useGameStore } from "../../stores/gameStore";
+import { useUIStore } from "../../stores/uiStore";
 import { Card } from "../primitives/Card";
 
 // Highlight numbers and important keywords in white
@@ -34,7 +34,7 @@ function LogMessage({ message }: { message: string }) {
 }
 
 export function LogsCard() {
-	const logs = useGameStore((state) => state.logs);
+	const logs = useUIStore((state) => state.logs);
 	const scrollRef = useRef<HTMLDivElement>(null);
 
 	// Auto-scroll to bottom when new logs are added

@@ -6,6 +6,9 @@ import { Hero } from "../entities/Hero";
 import { Loot } from "../entities/Loot";
 import type { Orc } from "../entities/Orc";
 import { gameStore } from "../stores/gameStore";
+import { heroStore } from "../stores/heroStore";
+import { inventoryStore } from "../stores/inventoryStore";
+import { uiStore } from "../stores/uiStore";
 import { CombatSystem } from "../systems/CombatSystem";
 import { calculateDropChance } from "../systems/calculations";
 import { EffectsManager } from "../systems/EffectsManager";
@@ -154,7 +157,7 @@ export class GameScene extends Phaser.Scene {
 
 	private killAllOrcs(): void {
 		// Toggle spawn pause state
-		gameStore.toggleSpawnPaused();
+		uiStore.toggleSpawnPaused();
 
 		// Kill all current orcs - use slice() to copy array since destroy modifies it
 		const orcs = this.waveManager.orcs.getChildren().slice();
@@ -165,7 +168,7 @@ export class GameScene extends Phaser.Scene {
 
 	private toggleDebug(): void {
 		debugState.showHitboxes = !debugState.showHitboxes;
-		gameStore.toggleDebugMode();
+		uiStore.toggleDebugMode();
 	}
 
 	private togglePause(): void {
@@ -372,7 +375,7 @@ export class GameScene extends Phaser.Scene {
 		}
 
 		// Sync to store and apply zoom
-		gameStore.setZoomLevel(this.zoomIndex);
+		uiStore.setZoomLevel(this.zoomIndex);
 		this.applyZoom();
 	}
 
@@ -382,7 +385,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private checkZoomFromStore(): void {
-		const storeZoom = gameStore.getState().zoomLevel;
+		const storeZoom = uiStore.getState().zoomLevel;
 		if (storeZoom !== this.zoomIndex) {
 			this.zoomIndex = storeZoom;
 			this.applyZoom();
@@ -413,7 +416,7 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private getTotalLuck(): number {
-		return GAME_CONFIG.hero.luck + gameStore.getState().bonusStats.luck;
+		return GAME_CONFIG.hero.luck + heroStore.getState().bonusStats.luck;
 	}
 
 	private trySpawnLoot(
@@ -449,7 +452,9 @@ export class GameScene extends Phaser.Scene {
 		loot: Phaser.GameObjects.GameObject,
 	): void {
 		// Check if hero's bag inventory is full
-		if (gameStore.getState().bagCount >= GAME_CONFIG.loot.maxBagsInventory) {
+		if (
+			inventoryStore.getState().bagCount >= GAME_CONFIG.loot.maxBagsInventory
+		) {
 			return; // Don't pick up, leave bag on ground
 		}
 
@@ -462,7 +467,7 @@ export class GameScene extends Phaser.Scene {
 		lootSprite.destroy();
 
 		// Add to bag inventory - no pause, player opens bag when ready
-		gameStore.addBag();
+		inventoryStore.addBag();
 	}
 
 	private openDebugPowerOverlay(): void {
@@ -474,12 +479,12 @@ export class GameScene extends Phaser.Scene {
 		this.pauseAllAnimations();
 
 		// Show debug power overlay
-		gameStore.showDebugPowerOverlay();
+		uiStore.showDebugPowerOverlay();
 	}
 
 	public closeDebugPowerOverlay(): void {
 		// Hide UI
-		gameStore.hideDebugPowerOverlay();
+		uiStore.hideDebugPowerOverlay();
 
 		// Resume game
 		this.totalPausedTime += Date.now() - this.pausedAt;
@@ -493,7 +498,8 @@ export class GameScene extends Phaser.Scene {
 		const survivalTime = this.getElapsedTime();
 		const kills = this.combatSystem.getKillCount();
 		const wave = this.waveManager.getCurrentWave();
-		const state = gameStore.getState();
+		const heroState = heroStore.getState();
+		const inventoryState = inventoryStore.getState();
 
 		// Log hero death
 		LogSystem.logHeroDeath(
@@ -504,8 +510,8 @@ export class GameScene extends Phaser.Scene {
 			kills,
 			wave,
 			survivalTime,
-			state.bonusStats,
-			state.collectedPowers.length,
+			heroState.bonusStats,
+			inventoryState.collectedPowers.length,
 		);
 
 		this.physics.pause();

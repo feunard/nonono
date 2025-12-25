@@ -1,12 +1,12 @@
 import { Search } from "lucide-react";
-import { useGameStore } from "../../stores/gameStore";
+import { useUIStore } from "../../stores/uiStore";
 import { Card } from "../primitives/Card";
 
 // Icon sizes for each zoom level (smallest = zoomed out, largest = zoomed in)
 const ICON_SIZES = [10, 12, 14];
 
 export function ZoomControlCard() {
-	const { zoomLevel, setZoomLevel } = useGameStore();
+	const { zoomLevel, setZoomLevel } = useUIStore();
 
 	return (
 		<Card className="p-1.5">

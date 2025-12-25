@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
-import { gameStore } from "../stores/gameStore";
+import { uiStore } from "../stores/uiStore";
 import type { EffectsManager } from "../systems/EffectsManager";
 import { LogSystem } from "../systems/LogSystem";
 import type { PathfindingManager } from "../systems/PathfindingManager";
@@ -479,19 +479,19 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 
 		// Combat log (WoW style) - include orc level and ID
 		if (ignoreArmor && isCritical) {
-			gameStore.addLog(
+			uiStore.addLog(
 				`You crit Orc L${this.level} for ${finalDamage}! (ARMOR PEN)`,
 			);
 		} else if (ignoreArmor) {
-			gameStore.addLog(
+			uiStore.addLog(
 				`You hit Orc L${this.level} for ${finalDamage}. (ARMOR PEN)`,
 			);
 		} else if (isCritical) {
-			gameStore.addLog(
+			uiStore.addLog(
 				`You crit Orc L${this.level} #${this.orcId} for ${finalDamage}!`,
 			);
 		} else {
-			gameStore.addLog(
+			uiStore.addLog(
 				`You hit Orc L${this.level} #${this.orcId} for ${finalDamage}.`,
 			);
 		}
@@ -559,7 +559,7 @@ export class Orc extends Phaser.Physics.Arcade.Sprite {
 		this.scene.events.emit("orcKilled", this);
 
 		// Combat log (WoW style) - include orc level and ID
-		gameStore.addLog(`Orc L${this.level} #${this.orcId} dies.`);
+		uiStore.addLog(`Orc L${this.level} #${this.orcId} dies.`);
 
 		if (this.debugGraphics) {
 			this.debugGraphics.destroy();

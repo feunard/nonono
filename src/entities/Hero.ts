@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { getRandomMessageFromArray } from "../config/ChatMessages";
 import { debugState, GAME_CONFIG } from "../config/GameConfig";
-import { gameStore } from "../stores/gameStore";
+import { heroStore } from "../stores/heroStore";
 import {
 	calculateAgilityDodge,
 	getAgilityModifier,
@@ -12,7 +12,7 @@ import type { EffectsManager } from "../systems/EffectsManager";
 import { Arrow } from "./Arrow";
 
 // Cached bonus stats type for performance
-type CachedBonusStats = ReturnType<typeof gameStore.getState>["bonusStats"];
+type CachedBonusStats = ReturnType<typeof heroStore.getState>["bonusStats"];
 
 export class Hero extends Phaser.Physics.Arcade.Sprite {
 	public health: number;
@@ -45,7 +45,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 	private isCatchphraseActive: boolean = false;
 	private footstepCounter: number = 0;
 	// Cached bonus stats - refreshed once per frame to avoid repeated store access
-	private cachedBonusStats: CachedBonusStats = gameStore.getState().bonusStats;
+	private cachedBonusStats: CachedBonusStats = heroStore.getState().bonusStats;
 	public static readonly ATTACK_HITBOX = {
 		width: GAME_CONFIG.hero.attackHitboxWidth,
 		height: GAME_CONFIG.hero.attackHitboxHeight,
@@ -341,7 +341,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		if (this.isDead) return;
 
 		// Refresh cached bonus stats once per frame
-		this.cachedBonusStats = gameStore.getState().bonusStats;
+		this.cachedBonusStats = heroStore.getState().bonusStats;
 
 		this.checkBonusHealthChange();
 		this.handleHpRegen(delta);
@@ -456,13 +456,13 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 
 			if (!this.isSprinting) {
 				this.isSprinting = true;
-				gameStore.setIsSprinting(true);
+				heroStore.setIsSprinting(true);
 			}
 
 			// Stop sprinting if energy depleted
 			if (this.energy <= 0) {
 				this.isSprinting = false;
-				gameStore.setIsSprinting(false);
+				heroStore.setIsSprinting(false);
 			}
 		} else {
 			// Regenerate energy when not sprinting
@@ -475,12 +475,12 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 
 			if (this.isSprinting) {
 				this.isSprinting = false;
-				gameStore.setIsSprinting(false);
+				heroStore.setIsSprinting(false);
 			}
 		}
 
 		// Update store with current energy
-		gameStore.updateEnergy(this.energy);
+		heroStore.updateEnergy(this.energy);
 	}
 
 	private handleMeleeAttack(orcData: {
@@ -518,7 +518,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 			(GAME_CONFIG.hero.sword.interval * this.getHeroAgilityModifier()) /
 			this.meleeSpeed /
 			(1 + this.getSwordAttackSpeed());
-		gameStore.triggerMeleeCooldown(swordCooldown);
+		heroStore.triggerMeleeCooldown(swordCooldown);
 
 		const facingLeft = target.x < this.x;
 		if (facingLeft) {
@@ -604,7 +604,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 			(GAME_CONFIG.hero.sword.interval * this.getHeroAgilityModifier()) /
 			this.meleeSpeed /
 			(1 + this.getSwordAttackSpeed());
-		gameStore.triggerMeleeCooldown(swordCooldown);
+		heroStore.triggerMeleeCooldown(swordCooldown);
 
 		const facingLeft = primary.x < this.x;
 		if (facingLeft) {
@@ -741,7 +741,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 		}
 
 		// Trigger cooldown UI
-		gameStore.triggerArrowCooldown(bowInterval);
+		heroStore.triggerArrowCooldown(bowInterval);
 
 		const baseAngle = Phaser.Math.Angle.Between(
 			this.x,

@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { useGameStore } from "../src/stores/gameStore";
+import { useHeroStore } from "../src/stores/heroStore";
+import { useInventoryStore } from "../src/stores/inventoryStore";
 
 describe("gameStore", () => {
 	beforeEach(() => {
@@ -11,12 +13,6 @@ describe("gameStore", () => {
 	});
 
 	describe("initial state", () => {
-		it("should have default health values", () => {
-			const state = useGameStore.getState();
-			expect(state.health).toBe(100);
-			expect(state.maxHealth).toBe(100);
-		});
-
 		it("should start at wave 1", () => {
 			expect(useGameStore.getState().wave).toBe(1);
 		});
@@ -40,25 +36,6 @@ describe("gameStore", () => {
 		it("should not be game over initially", () => {
 			expect(useGameStore.getState().isGameOver).toBe(false);
 			expect(useGameStore.getState().gameOverStats).toBe(null);
-		});
-	});
-
-	describe("updateHealth", () => {
-		it("should update health and maxHealth", () => {
-			useGameStore.getState().updateHealth(50, 100);
-			const state = useGameStore.getState();
-			expect(state.health).toBe(50);
-			expect(state.maxHealth).toBe(100);
-		});
-
-		it("should handle full health", () => {
-			useGameStore.getState().updateHealth(100, 100);
-			expect(useGameStore.getState().health).toBe(100);
-		});
-
-		it("should handle zero health", () => {
-			useGameStore.getState().updateHealth(0, 100);
-			expect(useGameStore.getState().health).toBe(0);
 		});
 	});
 
@@ -119,30 +96,9 @@ describe("gameStore", () => {
 		});
 	});
 
-	describe("cooldowns", () => {
-		it("should trigger arrow cooldown", () => {
-			const before = Date.now();
-			useGameStore.getState().triggerArrowCooldown(500);
-			const state = useGameStore.getState();
-
-			expect(state.arrowCooldown.duration).toBe(500);
-			expect(state.arrowCooldown.lastUsed).toBeGreaterThanOrEqual(before);
-		});
-
-		it("should trigger melee cooldown", () => {
-			const before = Date.now();
-			useGameStore.getState().triggerMeleeCooldown(1000);
-			const state = useGameStore.getState();
-
-			expect(state.meleeCooldown.duration).toBe(1000);
-			expect(state.meleeCooldown.lastUsed).toBeGreaterThanOrEqual(before);
-		});
-	});
-
 	describe("reset", () => {
-		it("should reset all state to initial values", () => {
-			// Modify all state
-			useGameStore.getState().updateHealth(25, 50);
+		it("should reset game state to initial values", () => {
+			// Modify game state
 			useGameStore.getState().updateWave(10);
 			useGameStore.getState().updateKills(100);
 			useGameStore.getState().updateOrcsAlive(20);
@@ -155,8 +111,6 @@ describe("gameStore", () => {
 
 			// Verify reset
 			const state = useGameStore.getState();
-			expect(state.health).toBe(100);
-			expect(state.maxHealth).toBe(100);
 			expect(state.wave).toBe(1);
 			expect(state.kills).toBe(0);
 			expect(state.orcsAlive).toBe(0);
@@ -166,60 +120,197 @@ describe("gameStore", () => {
 			expect(state.gameOverStats).toBe(null);
 		});
 	});
+});
+
+describe("heroStore", () => {
+	beforeEach(() => {
+		useHeroStore.getState().reset();
+	});
+
+	afterEach(() => {
+		useHeroStore.getState().reset();
+	});
+
+	describe("initial state", () => {
+		it("should have default health values", () => {
+			const state = useHeroStore.getState();
+			expect(state.health).toBe(100);
+			expect(state.maxHealth).toBe(100);
+		});
+
+		it("should have default energy", () => {
+			expect(useHeroStore.getState().energy).toBe(100);
+		});
+
+		it("should not be sprinting initially", () => {
+			expect(useHeroStore.getState().isSprinting).toBe(false);
+		});
+	});
+
+	describe("updateHealth", () => {
+		it("should update health and maxHealth", () => {
+			useHeroStore.getState().updateHealth(50, 100);
+			const state = useHeroStore.getState();
+			expect(state.health).toBe(50);
+			expect(state.maxHealth).toBe(100);
+		});
+
+		it("should handle full health", () => {
+			useHeroStore.getState().updateHealth(100, 100);
+			expect(useHeroStore.getState().health).toBe(100);
+		});
+
+		it("should handle zero health", () => {
+			useHeroStore.getState().updateHealth(0, 100);
+			expect(useHeroStore.getState().health).toBe(0);
+		});
+	});
+
+	describe("updateEnergy", () => {
+		it("should update energy", () => {
+			useHeroStore.getState().updateEnergy(50);
+			expect(useHeroStore.getState().energy).toBe(50);
+		});
+
+		it("should clamp energy to 0-100 range", () => {
+			useHeroStore.getState().updateEnergy(-10);
+			expect(useHeroStore.getState().energy).toBe(0);
+
+			useHeroStore.getState().updateEnergy(150);
+			expect(useHeroStore.getState().energy).toBe(100);
+		});
+	});
+
+	describe("cooldowns", () => {
+		it("should trigger arrow cooldown", () => {
+			const before = Date.now();
+			useHeroStore.getState().triggerArrowCooldown(500);
+			const state = useHeroStore.getState();
+
+			expect(state.arrowCooldown.duration).toBe(500);
+			expect(state.arrowCooldown.lastUsed).toBeGreaterThanOrEqual(before);
+		});
+
+		it("should trigger melee cooldown", () => {
+			const before = Date.now();
+			useHeroStore.getState().triggerMeleeCooldown(1000);
+			const state = useHeroStore.getState();
+
+			expect(state.meleeCooldown.duration).toBe(1000);
+			expect(state.meleeCooldown.lastUsed).toBeGreaterThanOrEqual(before);
+		});
+	});
+
+	describe("reset", () => {
+		it("should reset hero state to initial values", () => {
+			// Modify hero state
+			useHeroStore.getState().updateHealth(25, 50);
+			useHeroStore.getState().updateEnergy(25);
+			useHeroStore.getState().setIsSprinting(true);
+
+			// Reset
+			useHeroStore.getState().reset();
+
+			// Verify reset
+			const state = useHeroStore.getState();
+			expect(state.health).toBe(100);
+			expect(state.maxHealth).toBe(100);
+			expect(state.energy).toBe(100);
+			expect(state.isSprinting).toBe(false);
+		});
+	});
+});
+
+describe("inventoryStore", () => {
+	beforeEach(() => {
+		useInventoryStore.getState().reset();
+	});
+
+	afterEach(() => {
+		useInventoryStore.getState().reset();
+	});
 
 	describe("bag inventory", () => {
 		it("should start with 0 bags", () => {
-			expect(useGameStore.getState().bagCount).toBe(0);
+			expect(useInventoryStore.getState().bagCount).toBe(0);
 		});
 
 		it("should add bags with addBag()", () => {
-			useGameStore.getState().addBag();
-			expect(useGameStore.getState().bagCount).toBe(1);
+			useInventoryStore.getState().addBag();
+			expect(useInventoryStore.getState().bagCount).toBe(1);
 
-			useGameStore.getState().addBag();
-			expect(useGameStore.getState().bagCount).toBe(2);
+			useInventoryStore.getState().addBag();
+			expect(useInventoryStore.getState().bagCount).toBe(2);
 		});
 
 		it("should remove bags with consumeBag()", () => {
-			useGameStore.getState().addBag();
-			useGameStore.getState().addBag();
-			useGameStore.getState().addBag();
-			expect(useGameStore.getState().bagCount).toBe(3);
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().addBag();
+			expect(useInventoryStore.getState().bagCount).toBe(3);
 
-			useGameStore.getState().consumeBag();
-			expect(useGameStore.getState().bagCount).toBe(2);
+			useInventoryStore.getState().consumeBag();
+			expect(useInventoryStore.getState().bagCount).toBe(2);
 		});
 
 		it("should not go below 0 when consuming bags", () => {
-			expect(useGameStore.getState().bagCount).toBe(0);
+			expect(useInventoryStore.getState().bagCount).toBe(0);
 
-			useGameStore.getState().consumeBag();
-			expect(useGameStore.getState().bagCount).toBe(0);
+			useInventoryStore.getState().consumeBag();
+			expect(useInventoryStore.getState().bagCount).toBe(0);
 
-			useGameStore.getState().consumeBag();
-			expect(useGameStore.getState().bagCount).toBe(0);
+			useInventoryStore.getState().consumeBag();
+			expect(useInventoryStore.getState().bagCount).toBe(0);
 		});
 
 		it("should handle multiple add/consume cycles", () => {
-			useGameStore.getState().addBag();
-			useGameStore.getState().addBag();
-			useGameStore.getState().consumeBag();
-			useGameStore.getState().addBag();
-			useGameStore.getState().addBag();
-			useGameStore.getState().consumeBag();
-			useGameStore.getState().consumeBag();
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().consumeBag();
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().consumeBag();
+			useInventoryStore.getState().consumeBag();
 
-			expect(useGameStore.getState().bagCount).toBe(1);
+			expect(useInventoryStore.getState().bagCount).toBe(1);
 		});
 
-		it("should reset bagCount on game reset", () => {
-			useGameStore.getState().addBag();
-			useGameStore.getState().addBag();
-			useGameStore.getState().addBag();
-			expect(useGameStore.getState().bagCount).toBe(3);
+		it("should reset bagCount on reset", () => {
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().addBag();
+			useInventoryStore.getState().addBag();
+			expect(useInventoryStore.getState().bagCount).toBe(3);
 
-			useGameStore.getState().reset();
-			expect(useGameStore.getState().bagCount).toBe(0);
+			useInventoryStore.getState().reset();
+			expect(useInventoryStore.getState().bagCount).toBe(0);
+		});
+	});
+
+	describe("loot selection", () => {
+		it("should start with no loot selection", () => {
+			expect(useInventoryStore.getState().isLootSelection).toBe(false);
+			expect(useInventoryStore.getState().lootPowers).toEqual([]);
+		});
+
+		it("should show loot selection with powers", () => {
+			const mockPowers = [
+				{ id: "test1", name: "Test", rank: "common" as const, description: "Test", maxStack: 1, effect: { stat: "strength" as const, value: 1 } },
+			];
+			useInventoryStore.getState().showLootSelection(mockPowers);
+
+			expect(useInventoryStore.getState().isLootSelection).toBe(true);
+			expect(useInventoryStore.getState().lootPowers).toEqual(mockPowers);
+		});
+
+		it("should hide loot selection", () => {
+			const mockPowers = [
+				{ id: "test1", name: "Test", rank: "common" as const, description: "Test", maxStack: 1, effect: { stat: "strength" as const, value: 1 } },
+			];
+			useInventoryStore.getState().showLootSelection(mockPowers);
+			useInventoryStore.getState().hideLootSelection();
+
+			expect(useInventoryStore.getState().isLootSelection).toBe(false);
+			expect(useInventoryStore.getState().lootPowers).toEqual([]);
 		});
 	});
 });

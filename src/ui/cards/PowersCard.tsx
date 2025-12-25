@@ -30,7 +30,7 @@ import {
 	type Power,
 	RANK_RING_COLORS,
 } from "../../config/PowersConfig";
-import { useGameStore } from "../../stores/gameStore";
+import { useInventoryStore } from "../../stores/inventoryStore";
 import { Card } from "../primitives/Card";
 import { Tooltip } from "../primitives/Tooltip";
 
@@ -138,7 +138,7 @@ function PowerOrb({ power, count }: GroupedPower) {
 }
 
 export function PowersCard() {
-	const collectedPowers = useGameStore((state) => state.collectedPowers);
+	const collectedPowers = useInventoryStore((state) => state.collectedPowers);
 	// Memoize grouped powers to avoid O(n) computation on every render
 	const groupedPowers = useMemo(
 		() => groupPowers(collectedPowers),

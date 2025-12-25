@@ -3,7 +3,7 @@ import { GAME_CONFIG } from "../config/GameConfig";
 import { getMapConfig } from "../config/MapConfig";
 import type { Hero } from "../entities/Hero";
 import { Orc } from "../entities/Orc";
-import { gameStore } from "../stores/gameStore";
+import { uiStore } from "../stores/uiStore";
 import type { EffectsManager } from "./EffectsManager";
 import { LogSystem } from "./LogSystem";
 import type { PathfindingManager } from "./PathfindingManager";
@@ -76,7 +76,7 @@ export class WaveManager {
 
 	private spawnOrc(): void {
 		// Skip spawning if debug spawn pause is active
-		if (gameStore.getState().isSpawnPaused) {
+		if (uiStore.getState().isSpawnPaused) {
 			return;
 		}
 

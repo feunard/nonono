@@ -1,5 +1,5 @@
 import { GAME_CONFIG } from "../../../config/GameConfig";
-import { useGameStore } from "../../../stores/gameStore";
+import { useHeroStore } from "../../../stores/heroStore";
 import {
 	calculateAttacksPerSecond,
 	calculateDPS,
@@ -30,7 +30,7 @@ function DebugRow({ label, value, dim }: DebugRowProps) {
 }
 
 export function DebugHeroStatsCard() {
-	const bonusStats = useGameStore((state) => state.bonusStats);
+	const bonusStats = useHeroStore((state) => state.bonusStats);
 
 	// Total stats (capped)
 	const totalAgility = Math.min(
