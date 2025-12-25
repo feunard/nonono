@@ -1,3 +1,4 @@
+import { Check, ChevronRight } from "lucide-react";
 import {
 	createContext,
 	type ReactNode,
@@ -98,7 +99,7 @@ export function Menu({ id, label, children }: MenuProps) {
 				{label}
 			</button>
 			{isOpen && (
-				<div className="absolute top-full left-0 mt-1 min-w-48 bg-neutral-800 border border-neutral-700 rounded shadow-xl z-50">
+				<div className="absolute top-full left-0 mt-1 min-w-64 bg-neutral-800 border border-neutral-700 rounded shadow-xl z-50">
 					{children}
 				</div>
 			)}
@@ -194,10 +195,10 @@ export function SubMenu({ label, icon, children }: SubMenuProps) {
 					{icon && <span className="w-4 text-center opacity-70">{icon}</span>}
 					{label}
 				</span>
-				<span className="text-neutral-500">▶</span>
+				<ChevronRight size={14} className="text-neutral-500" />
 			</div>
 			{isOpen && (
-				<div className="absolute top-0 left-full ml-1 min-w-48 bg-neutral-800 border border-neutral-700 rounded shadow-xl z-50">
+				<div className="absolute top-0 left-full ml-1 min-w-64 bg-neutral-800 border border-neutral-700 rounded shadow-xl z-50">
 					{children}
 				</div>
 			)}
@@ -240,7 +241,9 @@ export function MenuCheckbox({
 			className="w-full flex items-center justify-between px-3 py-2 text-sm text-left text-neutral-200 hover:bg-neutral-700 cursor-pointer transition-colors"
 		>
 			<span className="flex items-center gap-2">
-				<span className="w-4 text-center">{checked ? "✓" : ""}</span>
+				<span className="w-4 flex justify-center">
+					{checked && <Check size={14} />}
+				</span>
 				{icon && <span className="w-4 text-center opacity-70">{icon}</span>}
 				{children}
 			</span>
