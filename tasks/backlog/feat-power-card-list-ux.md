@@ -1,9 +1,9 @@
 # [feat] Improve Power Card list UX
 
-**Status:** Backlog
+**Status:** In Progress
 **Priority:** Medium
 **Type:** Feature
-**Agent:** -
+**Agent:** Kenny
 
 ## Description
 

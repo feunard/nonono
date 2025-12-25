@@ -92,6 +92,10 @@ function groupPowers(powers: Power[]): GroupedPower[] {
 	return Array.from(grouped.values());
 }
 
+// Hexagon clip-path for power orbs
+const hexagonClipPath =
+	"polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)";
+
 function PowerOrb({ power, count }: GroupedPower) {
 	const IconComponent = STAT_ICONS[power.effect.stat];
 	const ringColor = RANK_RING_COLORS[power.rank];
@@ -109,11 +113,18 @@ function PowerOrb({ power, count }: GroupedPower) {
 			}
 		>
 			<div className="relative">
-				{/* Power circle */}
+				{/* Power hexagon with ring effect */}
 				<div
-					className={`w-8 h-8 rounded-full bg-neutral-800 ring-2 ${ringColor} flex items-center justify-center cursor-pointer transition-transform hover:scale-110 outline-none`}
+					className={`w-8 h-9 ${ringColor.replace("ring-", "bg-")} flex items-center justify-center cursor-pointer transition-transform hover:scale-110`}
+					style={{ clipPath: hexagonClipPath }}
 				>
-					<IconComponent size={14} className="text-white" />
+					{/* Inner hexagon */}
+					<div
+						className="w-7 h-8 bg-neutral-800 flex items-center justify-center"
+						style={{ clipPath: hexagonClipPath }}
+					>
+						<IconComponent size={14} className="text-white" />
+					</div>
 				</div>
 				{/* Count badge */}
 				{count > 1 && (
@@ -140,7 +151,7 @@ export function PowersCard() {
 
 	return (
 		<Card className="p-2 w-fit">
-			<div className="flex flex-wrap gap-1.5 max-w-[120px]">
+			<div className="flex flex-wrap gap-1.5 max-w-[180px]">
 				{groupedPowers.map((gp) => (
 					<PowerOrb key={gp.power.id} power={gp.power} count={gp.count} />
 				))}
