@@ -212,9 +212,16 @@ export function App() {
 
 			// 1, 2, 3 - Select loot power
 			if (isLootSelection && lootPowers.length > 0) {
-				const keyNum = Number.parseInt(e.key, 10);
-				if (keyNum >= 1 && keyNum <= lootPowers.length) {
-					handleLootSelect(lootPowers[keyNum - 1]);
+				if (e.code === "Digit1" && lootPowers.length >= 1) {
+					handleLootSelect(lootPowers[0]);
+					return;
+				}
+				if (e.code === "Digit2" && lootPowers.length >= 2) {
+					handleLootSelect(lootPowers[1]);
+					return;
+				}
+				if (e.code === "Digit3" && lootPowers.length >= 3) {
+					handleLootSelect(lootPowers[2]);
 					return;
 				}
 			}
