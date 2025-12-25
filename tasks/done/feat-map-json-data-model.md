@@ -1,6 +1,6 @@
 # [feat] Map Editor Step 2 - JSON Data Model and Loading System
 
-**Status:** Backlog
+**Status:** Done
 **Priority:** High
 **Type:** Feature
 
@@ -18,37 +18,37 @@ Create a shared JSON data model for maps that works seamlessly between the game 
 ## Acceptance Criteria
 
 ### JSON Schema and Data Model
-- [ ] Define TypeScript type `MapData` (JSON-serializable version of MapConfig)
-- [ ] Schema includes: id, name, width, height, tileSize, tilemap (2D array)
-- [ ] Create validation function `validateMapData(data: unknown): MapData`
-- [ ] Export schema/types from a shared location accessible by both game and editor
+- [x] Define TypeScript type `MapData` (JSON-serializable version of MapConfig)
+- [x] Schema includes: id, name, width, height, tileSize, tilemap (2D array)
+- [x] Create validation function `validateMapData(data: unknown): MapData`
+- [x] Export schema/types from a shared location accessible by both game and editor
 
 ### Map Files
-- [ ] Create `src/assets/maps/` directory
-- [ ] Create 3 sample map JSON files with different layouts:
+- [x] Create `src/assets/maps/` directory
+- [x] Create 3 sample map JSON files with different layouts:
   - `arena-simple.json` - Open arena with minimal walls
   - `arena-maze.json` - Maze-like layout with corridors
   - `arena-pillars.json` - Open area with scattered pillar obstacles
-- [ ] Each map is 64x64 tiles, uses only tile 0 (empty) and 1 (wall)
-- [ ] Maps have interesting but playable layouts (hero can navigate, orcs can path)
+- [x] Each map is 64x64 tiles, uses only tile 0 (empty) and 1 (wall)
+- [x] Maps have interesting but playable layouts (hero can navigate, orcs can path)
 
 ### MapConfig Updates
-- [ ] Update `src/config/MapConfig.ts` to load maps from JSON files
-- [ ] Create `getAvailableMaps(): string[]` function returning list of map IDs
-- [ ] Create `getRandomMapId(): string` function for random selection
-- [ ] Maintain backward compatibility with existing `getMapConfig(mapId)` API
+- [x] Update `src/config/MapConfig.ts` to load maps from JSON files
+- [x] Create `getAvailableMaps(): string[]` function returning list of map IDs
+- [x] Create `getRandomMapId(): string` function for random selection
+- [x] Maintain backward compatibility with existing `getMapConfig(mapId)` API
 
 ### Game Integration
-- [ ] Update game startup to randomly select from available maps
-- [ ] Selected map ID is used when creating MapSystem
-- [ ] Log which map was selected to console for debugging
+- [x] Update game startup to randomly select from available maps
+- [x] Selected map ID is used when creating MapSystem
+- [x] Log which map was selected to console for debugging
 
 ### Editor Import/Export
-- [ ] Add "Export" button to EditorToolbar - downloads current map as JSON
-- [ ] Add "Import" button to EditorToolbar - loads JSON file into editor
-- [ ] Export uses map name input or generates default name
-- [ ] Import validates JSON structure before loading
-- [ ] Show error toast/message if import fails validation
+- [x] Add "Export" button to EditorToolbar - downloads current map as JSON
+- [x] Add "Import" button to EditorToolbar - loads JSON file into editor
+- [x] Export uses map name input or generates default name
+- [x] Import validates JSON structure before loading
+- [x] Show error toast/message if import fails validation
 
 ## Context
 
@@ -151,3 +151,13 @@ From `src/systems/MapSystem.ts`:
 - Test editor export produces valid JSON
 - Test editor import loads exported maps correctly
 - Test import rejects invalid JSON gracefully
+
+## History
+
+- 2025-12-25: Completed implementation
+  - Created `src/config/MapData.ts` with MapData type and validateMapData function
+  - Created 3 sample maps in `src/assets/maps/`: arena-simple.json, arena-maze.json, arena-pillars.json
+  - Updated MapConfig.ts to load maps from JSON with getAvailableMaps(), getRandomMapId(), setCurrentMapId(), getCurrentMapId()
+  - Updated GameScene.ts to randomly select map on startup with console logging
+  - Added Import/Export functionality to EditorToolbar with error handling
+  - All validation checks pass (lint, typecheck, tests, build)
