@@ -7,6 +7,9 @@ type GameOverStats = {
 	wave: number;
 };
 
+// App-level state for screen routing (separate from in-game state)
+export type AppScreen = "menu" | "playing";
+
 type LogEntry = {
 	id: number;
 	message: string;
@@ -57,6 +60,7 @@ const urlDebugMode =
 	new URLSearchParams(window.location.search).get("debug") === "true";
 
 type GameState = {
+	appScreen: AppScreen; // Which screen is currently displayed
 	isGameReady: boolean; // True when Phaser has fully loaded and GameScene is ready
 	health: number;
 	maxHealth: number;
@@ -94,6 +98,7 @@ type UIBatchUpdate = {
 };
 
 type GameActions = {
+	startGame: () => void; // Transition from menu to playing
 	setGameReady: () => void;
 	updateHealth: (health: number, maxHealth: number) => void;
 	updateWave: (wave: number) => void;
@@ -158,6 +163,7 @@ const initialBonusStats: BonusStats = {
 const MAX_LOGS = 1000;
 
 const initialState: GameState = {
+	appScreen: "menu",
 	isGameReady: false,
 	health: 100,
 	maxHealth: 100,
@@ -186,6 +192,8 @@ const initialState: GameState = {
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
 	...initialState,
+
+	startGame: () => set({ appScreen: "playing" }),
 
 	setGameReady: () => set({ isGameReady: true }),
 
@@ -296,6 +304,7 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
 // For use outside React components (e.g., in Phaser)
 export const gameStore = {
 	getState: useGameStore.getState,
+	startGame: () => useGameStore.getState().startGame(),
 	setGameReady: () => useGameStore.getState().setGameReady(),
 	updateHealth: (health: number, maxHealth: number) =>
 		useGameStore.getState().updateHealth(health, maxHealth),

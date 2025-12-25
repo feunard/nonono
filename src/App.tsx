@@ -7,11 +7,13 @@ import { gameStore, useGameStore } from "./stores/gameStore";
 import { LogSystem } from "./systems/LogSystem";
 import { GameUI } from "./ui/GameUI";
 import { LoadingScreen } from "./ui/LoadingScreen";
+import { LaunchScreen } from "./ui/screens/LaunchScreen";
 
 export function App() {
 	const gameRef = useRef<Phaser.Game | null>(null);
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const {
+		appScreen,
 		isGameReady,
 		isPaused,
 		isGameOver,
@@ -34,8 +36,14 @@ export function App() {
 		return () => window.removeEventListener("resize", updateDimensions);
 	}, []);
 
+	// Only initialize Phaser when transitioning to playing state
 	useEffect(() => {
-		if (gameRef.current || dimensions.width === 0 || dimensions.height === 0)
+		if (
+			appScreen !== "playing" ||
+			gameRef.current ||
+			dimensions.width === 0 ||
+			dimensions.height === 0
+		)
 			return;
 
 		const config: Phaser.Types.Core.GameConfig = {
@@ -66,7 +74,11 @@ export function App() {
 			gameRef.current?.destroy(true);
 			gameRef.current = null;
 		};
-	}, [dimensions]);
+	}, [appScreen, dimensions]);
+
+	const handleStartGame = useCallback(() => {
+		gameStore.startGame();
+	}, []);
 
 	const handleRestart = useCallback(() => {
 		// Reset store state first (clears isGameOver, etc.)
@@ -154,10 +166,16 @@ export function App() {
 				return;
 			}
 
-			// Enter - Restart (only when game over)
-			if (e.key === "Enter" && isGameOver) {
-				handleRestart();
-				return;
+			// Enter - Start game (when on menu) or Restart (when game over)
+			if (e.key === "Enter") {
+				if (appScreen === "menu") {
+					handleStartGame();
+					return;
+				}
+				if (isGameOver) {
+					handleRestart();
+					return;
+				}
 			}
 
 			// Space - Resume (only when paused, not during overlays)
@@ -210,12 +228,14 @@ export function App() {
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, [
+		appScreen,
 		isPaused,
 		isGameOver,
 		isLootSelection,
 		lootPowers,
 		isDebugPowerOverlay,
 		bagCount,
+		handleStartGame,
 		handleResume,
 		handleDebugPowerClose,
 		handleLootSelect,
@@ -224,6 +244,16 @@ export function App() {
 		handleRestart,
 	]);
 
+	// Show launch screen when on menu
+	if (appScreen === "menu") {
+		return (
+			<div className="relative w-screen h-screen overflow-hidden">
+				<LaunchScreen onStartGame={handleStartGame} />
+			</div>
+		);
+	}
+
+	// Show game when playing
 	return (
 		<div className="relative w-screen h-screen overflow-hidden">
 			{/* Loading screen - shows until Phaser is ready */}

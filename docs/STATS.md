@@ -171,22 +171,35 @@ critDamage = baseDamage * critMultiplier  // Default critMultiplier = 2
 
 ### Luck
 
-**Base Value:** 20%
-**Purpose:** Chance for enemies to drop loot on kill
+**Base Value:** 10
+**Purpose:** Affects loot drop chance from enemies
 
 **Formula:**
 ```
-dropsLoot = random(0, 100) < totalLuck
+dropChance = max(1%, 10% + luck% - orcLevel * 2%)
 ```
 
-**Cap:** 100 (100% drop rate)
+**Mechanics:**
+- Base drop chance: 10%
+- Each luck point: +1% drop chance
+- Each orc level: -2% drop chance
+- Minimum drop chance: 1% (never 0%)
+
+**Scaling Examples:**
+| Luck | Orc Level | Drop Chance |
+|------|-----------|-------------|
+| 10 (base) | 1 | 10% + 10% - 2% = 18% |
+| 10 (base) | 5 | 10% + 10% - 10% = 10% |
+| 15 | 5 | 10% + 15% - 10% = 15% |
+| 20 | 10 | 10% + 20% - 20% = 10% |
+| 50 | 20 | 10% + 50% - 40% = 20% |
 
 **Affected By:**
-- Minor Luck (+2%)
-- Luck (+4%)
-- Major Luck (+7%)
-- Superior Luck (+12%)
-- Godlike Luck (+20%)
+- Minor Luck (+2)
+- Luck (+4)
+- Major Luck (+7)
+- Superior Luck (+12)
+- Godlike Luck (+20)
 
 ---
 
@@ -741,17 +754,17 @@ These bonuses are added per wave, separate from level multipliers:
 Higher level orcs have reduced drop chance:
 
 ```
-dropChance = max(50, totalLuck - (level - 1) * 1)
+dropChance = max(1, 10 + luck - orcLevel * 2)
 ```
 
-| Orc Level | Drop Reduction | With 20% Luck |
-|-----------|----------------|---------------|
-| 1 | 0% | 20% |
-| 5 | -4% | 16% |
-| 10 | -9% | 11% |
-| 20+ | -19%+ | 50% (minimum) |
+| Orc Level | With 10 Luck | With 20 Luck |
+|-----------|--------------|--------------|
+| 1 | 18% | 28% |
+| 5 | 10% | 20% |
+| 10 | 1% (min) | 10% |
+| 20 | 1% (min) | 1% (min) |
 
-**Minimum:** 50% drop chance (never goes below)
+**Minimum:** 1% drop chance (never goes below)
 
 #### Example: Wave 10 Orc
 
@@ -761,7 +774,7 @@ dropChance = max(50, totalLuck - (level - 1) * 1)
 - **Speed:** (80 + 45) × 1.9 = 237.5 → 237
 - **Armor:** min(100, 18) = 18%
 - **Dodge:** min(100, 9) = 9%
-- **Drop Chance:** max(50, 20 - 9) = 11% (with base 20% luck)
+- **Drop Chance:** max(1, 10 + 10 - 20) = 1% (with base 10 luck)
 
 #### Combat Log
 

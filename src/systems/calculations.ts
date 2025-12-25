@@ -287,3 +287,24 @@ export function calculateAgilityDodge(agility: number): number {
 	if (agility <= 100) return 0;
 	return (agility - 100) * 0.1;
 }
+
+/**
+ * Calculate drop chance based on luck and orc level.
+ * Formula: dropChance = max(minDropChance, 10 + luck - orcLevel * levelReduction)
+ * @param luck - Total luck value
+ * @param orcLevel - Level of the orc
+ * @param levelReduction - Drop reduction per orc level (default 2)
+ * @param minDropChance - Minimum drop chance (default 1)
+ * @returns Drop chance as 0-100 percentage
+ */
+export function calculateDropChance(
+	luck: number,
+	orcLevel: number,
+	levelReduction = 2,
+	minDropChance = 1,
+): number {
+	const baseDropChance = 10; // 10% base
+	const luckBonus = luck; // Each luck point = 1% drop chance
+	const levelPenalty = orcLevel * levelReduction;
+	return Math.max(minDropChance, baseDropChance + luckBonus - levelPenalty);
+}
