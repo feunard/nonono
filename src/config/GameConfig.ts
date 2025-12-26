@@ -22,7 +22,7 @@ export const GAME_CONFIG = {
 		agility: 50, // 1-1000, reduces attack intervals (1000 = 10ms bow interval)
 		strength: 50, // 1-100, increases damage (100 = 50% more damage)
 		critical: 10, // 0-100, % chance to deal x2 damage
-		luck: 10, // Base luck stat, affects drop chance (10% + luck% - orcLevel*2%)
+		luck: 20, // Base luck stat, affects drop chance (10% + luck% - orcLevel*2%)
 		dodge: 10, // 0-100, % chance to avoid an attack
 		accuracy: 0, // 0-100, % subtracted from target's dodge before roll
 		armor: 5, // 0-100, % damage reduction
@@ -50,7 +50,7 @@ export const GAME_CONFIG = {
 		energy: {
 			max: 100, // Maximum energy
 			drainRate: 50, // Energy drained per second (empty in 2 seconds)
-			regenRate: 10, // Energy regenerated per second (full in 10 seconds)
+			regenRate: 20, // Energy regenerated per second (full in X seconds)
 			sprintThreshold: 20, // Minimum energy % to start sprinting
 			speedMultiplier: 1.8, // Speed multiplier while sprinting (1.8 = +80%)
 		},
@@ -73,10 +73,10 @@ export const GAME_CONFIG = {
 		knockbackDuration: 250, // ms
 		attackRange: 25, // pixels - distance to trigger attack
 		damageRange: 30, // pixels - distance for damage to apply
-		dodge: 0, // 0-100, base % chance to avoid attack (scales with wave)
-		dodgePerWave: 1, // % dodge added per wave
+		dodge: 10, // 0-100, base % chance to avoid attack (scales with wave)
+		dodgePerWave: 2, // % dodge added per wave
 		accuracy: 0, // 0-100, % subtracted from hero's dodge
-		armor: 0, // 0-100, base % damage reduction (scales with wave)
+		armor: 10, // 0-100, base % damage reduction (scales with wave)
 		armorPerWave: 2, // % armor added per wave
 		hitboxWidth: 8,
 		hitboxHeight: 8,
@@ -94,9 +94,9 @@ export const GAME_CONFIG = {
 		minDropChance: 1, // minimum 1% drop chance
 	},
 	waves: {
-		initialSpawnInterval: 1000,
+		initialSpawnInterval: 4000,
 		orcsPerWave: 10,
-		difficultyMultiplier: 1.4,
+		difficultyMultiplier: 1.2,
 		waveDuration: 60000,
 	},
 	sprites: {
